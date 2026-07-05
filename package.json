@@ -17,25 +17,25 @@
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
-    "@bufbuild/protobuf": "^2.12.0",
-    "undici": "^8.4.1"
+    "@bufbuild/protobuf": "^2.12.1",
+    "undici": "^8.7.0"
   },
   "devDependencies": {
-    "@bufbuild/buf": "^1.70.0",
-    "@bufbuild/protoc-gen-es": "^2.12.0",
+    "@bufbuild/buf": "^1.71.0",
+    "@bufbuild/protoc-gen-es": "^2.12.1",
     "@tsconfig/node24": "^24.0.4",
-    "@types/node": "^25.9.3",
-    "memfs": "^4.57.7",
+    "@types/node": "^25.9.4",
+    "memfs": "^4.57.8",
     "oxfmt": "^0.54.0",
-    "oxlint": "^1.69.0",
+    "oxlint": "^1.72.0",
     "oxlint-tsgolint": "^0.23.0",
-    "rolldown": "^1.1.1",
-    "vitest": "^4.1.8"
+    "rolldown": "^1.1.4",
+    "vitest": "^4.1.9"
   },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "^11.5.2",
+      "version": "^11.5.3",
       "onFail": "download"
     },
     "runtime": {
