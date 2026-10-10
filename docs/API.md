@@ -9,9 +9,9 @@ access. `/svc/radmin/*` administrative endpoints are deliberately excluded.
 
 ## Installation and basic use
 
-Install `requests` from `requirements-terminal.txt`. The client supports a
-pre-existing session cookie, and login credential acquisition through the
-existing `ankiweb_auth` helper:
+Install `requests` from `requirements-terminal.txt`. Provide a valid session
+cookie for authenticated requests, or configure credentials and explicitly
+call `login()`:
 
 ```python
 from ankiweb_client import AnkiWebClient
@@ -19,6 +19,11 @@ from ankiweb_client import AnkiWebClient
 client = AnkiWebClient(cookie="your-session-cookie")
 mine = client.shared_list_mine(request={})
 print(mine)
+
+# Alternatively, after setting ANKIWEB_USERNAME and ANKIWEB_PASSWORD:
+client = AnkiWebClient()
+client.login()
+mine = client.shared_list_mine(request={})
 
 # Public endpoint; GET arguments are query-string values.
 item = client.shared_item_info(query={"sharedId": 2055492159})
@@ -43,6 +48,8 @@ has not been identified.
   client; it does not imply the endpoint is fully understood.
 - `ankiweb_client.py` is a generic transport, not a curated stable API. Check
   field names and required values in `SCHEMA` before calling an endpoint.
+- `AnkiWebClient()` does not automatically read `.env`; set the credential
+  environment variables or pass `env_file=...` explicitly, then call `login()`.
 - Login and account actions can have effects. Prefer public/read-only methods
   and synthetic/offline fixtures during development. Do not use a real
   `.ankiaddon` for upload tests; follow the repository's synthetic-fixture

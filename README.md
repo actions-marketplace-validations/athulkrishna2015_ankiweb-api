@@ -1,11 +1,13 @@
-# Upload Anki Add-on
+# AnkiWeb API Client and Add-on Tools
 
-[![CI](https://github.com/danny900714/upload-anki-addon/actions/workflows/ci.yml/badge.svg)](https://github.com/danny900714/upload-anki-addon/actions/workflows/ci.yml)
+[![CI](https://github.com/athulkrishna2015/ankiweb-api-client/actions/workflows/ci.yml/badge.svg)](https://github.com/athulkrishna2015/ankiweb-api-client/actions/workflows/ci.yml)
 
-Upload an [Anki](https://apps.ankiweb.net/) add-on to [AnkiWeb](https://ankiweb.net/shared/addons) — from GitHub Actions or from your terminal.
+An experimental Python client for AnkiWeb's reverse-engineered `/svc/*` API,
+plus tools to inspect, download, and upload [Anki](https://apps.ankiweb.net/)
+add-ons from your terminal or GitHub Actions.
 
 > Fork of [danny900714/upload-anki-addon](https://github.com/danny900714/upload-anki-addon) (`upstream/main` remote).
-> The Node upload engine (`dist/index.js`) is unmodified upstream code; this fork adds the terminal tooling below.
+> The Node upload engine (`dist/index.js`) is unmodified upstream code. The repository adds terminal tooling and an experimental, schema-driven API client.
 
 ## Features
 
@@ -17,9 +19,10 @@ Upload an [Anki](https://apps.ankiweb.net/) add-on to [AnkiWeb](https://ankiweb.
 
 ## Table of contents
 
-- [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
-- [Tests](#tests)
 - [AnkiWeb API client](docs/API.md)
+- [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
+- [List your own shared items](#list-your-own-shared-items)
+- [Tests](#tests)
 - [GitHub Actions usage](#github-actions-usage) — [inputs](#inputs) · [outputs](#outputs)
 
 ## Terminal usage
@@ -30,8 +33,8 @@ Requires Python 3.9+ with `requests`, plus Node 24 if you upload (the action eng
 ### Setup
 
 ```sh
-git clone https://github.com/athulkrishna2015/upload-anki-addon.git
-cd upload-anki-addon
+git clone https://github.com/athulkrishna2015/ankiweb-api-client.git
+cd ankiweb-api-client
 pip install -r requirements-terminal.txt
 ```
 
@@ -191,11 +194,14 @@ curl -sL "https://ankiweb.net/shared/download/805854302?v=2.1&p=250902" -o addon
 ```sh
 python3 test_terminal_ankiweb.py          # offline, no network
 python3 test_terminal_ankiweb.py --live   # + live AnkiWeb round-trips
+python3 -m unittest -v test_ankiweb_proto.py  # API codec and schema regressions
 ```
 
 Offline tests parse real captured responses in `fixtures/` (private add-on and
 AnkiConnect, which carries 133 KB of reviews) and cover CLI exit codes.
-Live tests hit `info` / `download` / error paths.
+Live tests hit `info` / `download` / error paths. The API client and codec
+documentation is in [docs/API.md](docs/API.md); its endpoints are undocumented
+AnkiWeb internals and are not a supported public API.
 
 ## GitHub Actions usage
 
