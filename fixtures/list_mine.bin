@@ -1,0 +1,637 @@
+
++È®ñòAI-Hints and Options (€€¦Ö0Ø8
+%ç–â}Anki Math Randomizer(€À±Î0a8
+,ùëÜ‚Anki_Terminator_Companion(€ˆÓÔ0É8
+gÅø¼²PAnki Terminator V2 (Multi-Fields Fork)[depricated use Anki_Terminator_Companion] (€“®Ô0Å8
+*ñõ€µAudioVisual feedback Fix(€‘—Î088
+*¥Æ’lBackground Auto Sync (€óÖÕ0 8
+#î—à¼Create Subdeck(€‘—Î0±8
+%ÎÛÑ]csv import plus (€áåÒ0•!8
+8¨ı»`'csv paste [depricated use csv import +](€²…È0=8
+@ü§Ï,csv to subdeck [depricated use csv import +] (€²…È008
+"ÔïˆÕDeck Centerer(€ƒ±Ò0ä8
++±ø©êDeck Name & Tags in Title(€•¢Õ08
+>†¥İñ)Edit Field During Review (Native) [EFDRN](€ÿëÕ0¯"8
+&¿èâüFix MathJax in Cloze(€Ù•Ï0f8
+%—ÈòTImage Search v3 (€ŸÃÔ0·8
+4íî¬ÍMath Delimiters Replacer Plus (€ªûÎ0™8
+â©ÎMerge Notes(€ÆÑ0Ê8
++åËœÆNo-Sync Note Converter(€ÎİÔ0†8
+#é³ê Physics GRE MathJax(€ùÉÈ0C
+Bª±„o.Remove Clozes â€” Cursorâ€‘aware cloze remover(€ÜÃĞ0¥8
+2ØÏáöReview Hotmouse Plus Overview(€–ÜÕ0’8
+/Ş¸¡€testingaddon for me [private](€€¦Ö08Ó
+Å‚˜úÕ"$It works now, thanks for the tip!!!!*Thanks for the report!
+
+This looks like a stale install rather than anything wrong with the add-on
+itself. Could you try this?
+
+1. Close Anki completely.
+2. Delete this folder:
+   `%APPDATA%\Anki2\addons21\2117554822`
+3. Reinstall the add-on and restart Anki.
+
+Your notes and card reviews are not in that folder, so nothing will be lost â€”
+this only resets the add-on's own files, and your settings come back on
+reinstall.
+
+If it still shows the error after a fresh reinstall, let me know and I'll take
+another look.
+
+Thanks!0·˜øÕ†¥İñ©ÆÌÌ
+¿ò‹óÕ"Works great!* Thank you for the review, 
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660ˆŠøÕ¥Æ’l¬€ÿ±
+¤€ÿÔ"qAwesome! Was Just Looking for this exact Feature which should actually be inbuilt into Anki. Thank you very much!* Thank you for the review, 
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660Œ¾‘Ô¥Æ’léõ²š
+‚©ÿÓ"(1. unreliable
+2. slows my review session*ÔSorry it has been unreliable and has slowed down your review sessions.
+Background Auto Sync intentionally delays syncing while reviewing, while Anki is focused, or while dialogs are open. This is controlled under Tools â†’ Background Auto Sync Optionsâ€¦ â†’ Settings â†’ Interruption avoidance. You can disable Avoid sync while reviewing or increase/decrease the override timeout depending on your preferred behavior.
+Version 5.0.0 also reduces repeated timer logging and writes the current session to auto_sync.log, which helps diagnose unreliable syncs. If the issue continues, please share the log from a session where the slowdown occurs, along with your Anki version and operating system, so I can investigate further.0ÌÎ€Ô¥Æ’lëåš
+„Ç÷Ó"Unreliable. I often use the desktop app, leave it open, and then when I sync on mobile a day later it turns out that the last desktop session from the day before has been ignored. The logs are not helpful. It says: "Can't start sync timer (Main Window is not on deck browser or overview screen (state: review)â€”not sure what that means, but I know the app is not syncing correctly for some reason. *ìThanks for reporting this. The log message explains the behavior:
+state: review
+Anki is still on the reviewer screen, so Avoid sync while reviewing is intentionally preventing the background sync. The add-on does not consider the reviewer a safe state by default.
+There is also a second setting that affects this use case. With Only sync when changes are detected enabled and When idle, sync every set to Off, the desktop app does not periodically poll AnkiWeb for changes made on mobile.
+For a desktop replica that should update while left open:
+1. Go to Tools â†’ Background Auto Sync Optionsâ€¦
+2. Under Sync behavior, turn off Only sync when changes are detected, or configure When idle, sync every in the Background and network section.
+3. Under Interruption avoidance, either disable Avoid sync while reviewing or set its override timeout so syncing is allowed after inactivity.
+Version 5.0.0 also includes clearer effective-timeout logging and writes the current session to auto_sync.log. The message should be clearer in a future update, but state: review itself means the sync was deliberately deferred rather than failing.0ûÎ€Ô¥Æ’l°ıÖó(
+æ(’ïÓ"»	Phenomenal add on. Only issue is that on mobile, i'm unable to click on Options choices. When I try to click on an options answer choice, It just says undefined. How do I fix this?
+
+2nd update: 
+The "undefined" message does not pop up anymore. However, now clicking on an option choice does nothing. It just registered I've clicked on an option choice by turning that choice slightly darker grey. Otherwise nothing happens.
+
+Also, i'd like to permanently hide hints (but show options). when i uncheck the "Auto Show Hints" button, hints still show up each card.
+
+
+
+Updated answers:
+1. AnkiMobile for iPhone/iPad
+2. When i tap an option, the card flips to a blank screen with "undefined" at the very top
+3. "undefined" is just a text on the card
+4. "undefined" appears immediately when tapping on the question side. When on the blank screen with "undefined" at the top, if i tap anywhere, it takes me to the back of the card where now the correct hint answer is green
+5. The options show up on the question side and the answer side after I tap anywhere on the "undefined" screen
+6. Yes, answer reveals normally after tapping anywhere on the blank "undefined" screen
+7. Yes, "tap anywhere" is set to "Show Answer"*—2026 - 08 - 26
+Released v6.0.0
+Generation Master Switch (Hints / Options): Added two independent master toggles in the General settings â€” Generate Hints and Generate Options (MCQ), both enabled by default. They control every generation path (manual, auto, pre-generation, and batch):
+
+    Unchecking Generate Hints stops hint generation only (options still produced).
+    Unchecking Generate Options stops MCQ/option generation only (hints still produced). The prompt is adjusted so the LLM only returns what is enabled.
+    Turning both off effectively disables the addon â€” no API calls are made anywhere (manual/auto/pregen/batch) until you re-enable a toggle.
+---
+please move your bug reports to github issue session (on the contact button in anki web)
+-  Regarding ankimobile the issue is unfixable ( it is due to ios web view limitations ), and it works fine on ankidroid (android version)
+- If "Auto Show Hints" is disabled hints would not show on the front side of the card , but on the back side after revealing the answer both hints and options would show this is an intended behavior 
+yes there is a bug for cards which already reviewed in current review session the hints are not hidden untill you restart that review session 
+---
+2026 - 08 - 11
+Thanks for the detailed report â€” that was a great help! I've identified and fixed the issue.
+Root cause: On AnkiMobile (iOS), there is no JavaScript API for revealing the answer. When you tapped an option, the add-on called pycmd('ans') (the reveal command used on Desktop). On iOS that call makes the WebView navigate to a blank page whose content is the literal text undefined â€” which is exactly why you saw the blank screen with "undefined" at the top. Your selection was still saved in the browser's session storage, which is why a second tap revealed the back side with the correct answer highlighted green.
+It wasn't a problem on AnkiDroid because that call is silently ignored there and the app's own native "tap anywhere" did the reveal â€” hence AnkiDroid already working fine.
+The fix (in v5.8.2+): On mobile, tapping an option now only saves your selection and lets AnkiMobile's native tap-to-reveal flip the card â€” no JavaScript reveal call is attempted, so no more undefined screen. Your choice still shows up green/red correctly on the back.
+To get it on your phone:
+1. Update the add-on, then go to Tools â†’ Add-ons â†’ AI-Hints â†’ Config â†’ Mobile Support â†’ (optionally Remove from All Note Types, then) One-Click Install: Setup All Note Types.
+2. Sync Anki on your PC, then sync AnkiMobile.
+3. Force-close AnkiMobile (swipe it away in the app switcher) and reopen it.
+Important: since the flip now uses the native tap zones, keep Review â†’ Tap Zones â†’ When Question Shown â†’ "tap anywhere" â†’ Show Answer enabled (you already have this set, which is perfect).
+Thanks again for reporting this â€” please let me know if the issue persists after updating!
+--- original reply
+1. Which app exactly are you on? (AnkiMobile for iPhone/iPad, or AnkiWeb in a mobile browser?) â€” AnkiDroid already works, so this is the critical differentiator.
+2. When you tap an option, does the card flip to the answer side at all? (yes/no)
+3. What does "undefined" look like exactly? Is it a popup/dialog, a small toast, text on the card, or nothing visible at all?
+4. Where does "undefined" appear â€” immediately when tapping on the question side, or only after the answer is revealed?
+5. Do the options show up at all? Can they tap "Show Options" and see the choices listed?
+6. If they tap the same card again (blank area, not an option), does the answer reveal normally? (tests whether taps-to-show-answer are configured on AnkiMobile)
+7. On AnkiMobile specifically: In Review â†’ tap zones in preferences, is "tap anywhere" set to "Show Answer"? (default)
+8. A screenshot or screen recording of the "undefined" would be ideal if they can share one.
+
+could you check the "Mobile Setup & Troubleshooting" in readme ?0í“ñÓÈ®ñòÍşFË
+½¿ÄŠÓ" give ability to close the ai tab*ŒSee the description no longer maintained,
+you may use the companion [add-on](https://ankiweb.net/shared/info/542586361) with original add-on0šÜÓÅø¼²êĞñ#
+÷÷Ò"Works right!åËœÆá¢²ğ%
+â%ÿôÓÒ"›Anki 26.05 (e64c6b1a) (ao)
+Python 3.13.13 Qt 6.11.0 PyQt 6.11.0
+Platform: Windows-11-10.0.26200-SP0
+
+Traceback (most recent call last):
+  File "D:\a\anki\anki\out\installer\build\anki\windows\app\src\app_packages\aqt\addons.py", line 1051, in onConfig
+  File "C:\Users\UsuÃ¡rio\AppData\Roaming\Anki2\addons21\2119980872\config_ui\__init__.py", line 48, in on_config_dialog
+    from .main_dialog import on_config_dialog as actual_on_config
+  File "C:\Users\UsuÃ¡rio\AppData\Roaming\Anki2\addons21\2119980872\config_ui\main_dialog.py", line 23, in <module>
+    from .tab_logs import LogTabMixin
+  File "C:\Users\UsuÃ¡rio\AppData\Roaming\Anki2\addons21\2119980872\config_ui\tab_logs.py", line 6, in <module>
+    from ..batch_manager import batch_manager
+  File "C:\Users\UsuÃ¡rio\AppData\Roaming\Anki2\addons21\2119980872\batch_manager.py", line 14, in <module>
+    class BatchManager:
+    ...<1180 lines>...
+            logger.info(f"AI-Hints Thread for {provider} stopped.")
+  File "C:\Users\UsuÃ¡rio\AppData\Roaming\Anki2\addons21\2119980872\batch_manager.py", line 54, in BatchManager
+    def current_job(self) -> Optional[Dict[str, Any]]:
+                             ^^^^^^^^
+NameError: name 'Optional' is not defined
+
+Error in sys.excepthook:
+Traceback (most recent call last):
+Traceback (most recent call last):
+
+Original exception was:
+Traceback (most recent call last):
+Traceback (most recent call last):
+===Add-ons (active)===
+(add-on provided name [Add-on folder, installed at, version, is config changed])
+AI-Hints ['2119980872', 2026-07-13T11:13, '5.1.0', '']
+AMBOSS Official  Medical School Step  Shelf Study Resource ['1044112126', 2998-12-31T21:00, 'None', mod]
+Advanced Review Bottom Bar ['1136455830', 2025-10-03T16:55, 'None', mod]
+AnKing Note Types Easy Customization ['952691989', 2026-06-12T16:36, 'None', mod]
+Anki Leaderboard - Compete with friends to boost motivation Custom by Shige ['175794613', 2026-06-04T10:02, 'None', mod]
+Anki Terminator Companion ['542586361', 2026-07-13T09:34, '1.7.8', mod]
+Anki Terminator V2 - ChatGPT DeepSeek Sidebar for Reviewer Created by Shige ['1468920185', 2026-05-16T00:54, 'None', mod]
+Anki Terminator V2 - ChatGPT DeepSeek Sidebar for Reviewer Multi-Fields Fork ['1448033349', 2025-11-28T07:24, 'None', mod]
+AnkiCord - Discord Rich Presence Customized by Shige ['933207442', 2025-11-20T08:38, 'None', '']
+AnkiHub ['1322529746', 2026-07-01T14:28, 'None', mod]
+AnkiRestart V2 - Quick Anki Rebooter Created by Shige ['1766024579', 2026-06-14T06:25, 'None', mod]
+Ankimote - Free Anki Remote by Smartphone via Wifi Custom by Shige ['1960305789', 2024-12-06T06:48, 'None', mod]
+Caixa de dialogo no estilo Bloco de notas Notepad style dialog box ['453523389', 2024-12-03T02:14, 'None', '']
+Deltinha - Timer de Controle de Horas de Estudos ['2080612123', 2026-04-30T14:37, 'None', mod]
+Discord RP for Anki Leaderboard - study activity status Created by Shige ['978245457', 2025-11-27T10:05, 'None', mod]
+Edit Field During Review Native EFDRN ['2117554822', 2026-06-26T04:40, '7.4.1', mod]
+Editor Live Preview Fixed by Shige ['90407377', 2025-07-13T14:13, 'None', mod]
+Editor auto show or hide during review Created by Shige ['1715279230', 2024-03-23T12:51, 'None', mod]
+FSRS Helper Postpone  Advance  Load Balance  Easy Days  Disperse Siblings ['759844606', 2026-05-14T03:49, 'None', mod]
+Image Paster - avoid Unexpected response code 403 Created by Shige ['1833358130', 2026-07-09T10:54, 'None', '']
+Lecturio (Lecturio) ['lecturio-lecturio', 0, 'None', '']
+Picmonic Anki Add-On ['40737180', 2025-12-12T10:33, 'None', mod]
+Review Heatmap ['1771074083', 2022-06-29T22:43, 'None', '']
+Review Highlighter - Auto highlight card text in order Created by Shige ['452681944', 2024-07-05T10:34, 'None', mod]
+Subfolder for Anki Terminator V2 by Shige ['Anki Terminator Subfolder', 0, 'None', '']
+Zoom for Anki25 - Keep zoom level after reboot Fixed by Shige ['1923741581', 2026-05-27T04:38, 'None', mod]
+
+===IDs of active AnkiWeb add-ons===
+1044112126*µShould be fixed now, Please rate the addon with thumbs up 
+(please not that I don't own a windows device to test)
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+
+5.1.1 (2026-07-13)
+    LaTeX False-Positive Fix for Text Conjunctions: Fixed a bug where hints containing &amp; as a text conjunction (e.g. "Commerce & Industry", "Power & Coal") were incorrectly parsed as LaTeX matrix column separators and wrapped in math delimiters. The isWordAmp guard regex now accounts for optional spaces around &amp; and & in word contexts.
+    Windows / Python 3.13 Config Crash Fix: Fixed NameError: name 'Optional' is not defined in batch_manager.py that crashed the Settings dialog on Anki 26.05 (Windows). Added Optional to the typing imports.0Ñ¥ÔÒÈ®ñòÆ­Éğ
+ãõ©¿Ò"lThe tool is amazing, but the auto-detection option really annoys me.  
+Please add an option to disable it!!!*ä12/07/2026
+Your requested feature has been added, Check advanced tab 
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+----
+you can change auto detected one to correct one from Field separator drop down
+#notetype Directive
+
+To ensure your CSV file is always imported with a specific note type, add a line at the top of your file or pasted text like this:
+
+#notetype: My Custom Note Type
+...your,csv,data,here...
+
+The add-on will read this directive and automatically select "My Custom Note Type", overriding the auto-detection.0—™ÍÒÎÛÑ]´æŸã
+ÕÚÚ±Ò""Ã“timo complemento, agilizar muito* Thank you for the review, 
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660Ì¯²Òî—à¼’£ò
+å¹Æ„Ñ"üæˆ‘èŠ±äº†ä¸€äº›æ—¶é—´æ‰å­¦ä¼šæ€ä¹ˆè‡ªå·±ä» Excel é¢˜åº“å¯¼å‡ºåˆ° Anki è½¯ä»¶ã€‚é‡ç‚¹æ˜¯ Excel ä¸­çš„åˆ—é¡ºåºå¯¹åº”å¡ç‰‡æ¨¡æ¿çš„å­—æ®µé¡ºåºï¼Œæ¯”å¦‚æˆ‘å¯¼å…¥é€‰æ‹©é¢˜ï¼Œå°±æ–°å»ºäº†ä¸€ä¸ªå¡ç‰‡æ¨¡æ¿ï¼Œå­—æ®µåˆ†åˆ«æ˜¯ï¼šQuestionã€Optionsã€Answerã€Explanationï¼Œè¿™å››ä¸ªå­—æ®µè‡ªåŠ¨å¯¹åº” Excel ä¸­çš„ 1-4 åˆ—ã€‚ç„¶ååœ¨å¡ç‰‡é…ç½®é‡ŒæŠŠå­—æ®µæ”¾åˆ°æ­£åé¢æ˜¾ç¤ºå³å¯ã€‚æ¯”å¦‚è¿™æ ·ï¼Œè¿™æ˜¯å¡ç‰‡æ­£é¢é…ç½®ï¼š{{Question}}{{Options}}ï¼Œå¡ç‰‡èƒŒé¢é…ç½®ï¼šAnswer: {{Answer}}{{Explanation}}
+*ÕTo import data from Excel, you would first need to save/export your spreadsheet as a CSV (Comma Separated Values) or TSV (Tab Separated Values) file from Excel, and then drag or open that file in the addon.
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660Àã‰ÑÎÛÑ]–œä
+Ö¥şÿĞ"¢Works good. To circumvent the problem with double Dollar signs "$$"  being converted incorrect write them in one line like
+
+$$ -math- $$
+
+instead of
+
+$$
+-math-
+$$* Thank you for the review, 
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660¾ã‰Ñíî¬Í›ÁĞ 
+’õÖûĞ">May 31st update causing issues with saving settings. **fixed***Ácan you explain the issue?,
+would you try clicking the remove from all note types and then one click install from the mobile support tab, it would refresh the java script,
+
+pls provide the logs0Ò–ôĞÈ®ñò…»¶¢	
+•	ğ¬ãĞ"´Great, i often forget to sync anki after working through most of my cards on desktop, then go to do the balance on my phone and mess it all up!
+
+One small issue that I've noticed: on manually syncing cards, the window will forcefully de-focus and go behind whatever else i have open. Not exactly a massive problem, but thought it was worth mentioning.
+
+[09:56:03] Sync initiated
+[09:56:05] Sync completed
+[09:56:05] Waiting 0.2 minutes to start sync timer
+[09:56:05] Can't start sync timer (Main Window has focus)
+[09:56:05] Waiting 0.2 minutes to start sync timer*ÍThanks for the feedback. This manual-sync focus issue was fixed in version 5.0.0.
+The log shows:
+Sync initiated
+Sync completed
+Can't start sync timer (Main Window has focus)
+The Main Window has focus message is from the background-sync safety check after the manual sync completed. It does not indicate that the manual sync failed. Previously, the add-onâ€™s window-state restoration could still move Anki behind other windows; now restoration only applies to syncs initiated by the add-on itself.
+Manual syncs using Ankiâ€™s Sync button should retain normal Anki focus behavior in v5.0.0.0¥Ï€Ô¥Æ’l£‡ì
+Şú¸¬Ğ"Good*ÇThank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660™¬ÊĞÈ®ñò€äÑó
+åàÌáÏ"Very useful*ÇThank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660—ÑâÏíî¬ÍäŞ«Ä
+¶¼ìÈÏ"‚Thanks for your work on this, yet somehow for me $$ gets transformed into \(\), while single $ transform correspondingly as stated. I tried fixing this with my limited knowledge of coding but always ran into similar issues... Any help is greatly appreciated!*¢I wonder why you are the only one with this issue, 
+everyone including myself do not have this issue
+provide example text you are having issues with for debugging0ïÉÑÏíî¬ÍŸİÚì
+ßÎ—Ï"good
+*ÇThank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660×î£Ï¥Æ’lÂœÔı
+ğ‚š–Ï"ßHey @athulkrishna2015
+github does not have a issues page and the original addon doesn't seem to be being updated. My addon is bugging out and giving me this issue. [12:17:29] No internet connection, delaying sync for 0.9 minutes
+Manual sync however works fine: 
+[12:18:08] Sync initiated
+[12:18:13] Sync completed
+
+Do you have any insight in to a fix?*ıHi there! Thanks for reporting this issue.
+
+I've investigated what's causing this, and the good news is that we've found the exact culprit and implemented a fix for it.
+
+Why this is happening: Before initiating a background sync, the add-on explicitly tests for an active internet connection by trying to reach Google's DNS (8.8.8.8) on Port 53. While this works for the vast majority of users, many enterprise networks, university Wi-Fi, or restrictive routers actively intercept or block outbound traffic on Port 53 to prevent unauthorized DNS tunneling.
+
+When you trigger a Manual Sync, Anki successfully connects to AnkiWeb over Port 443 (HTTPS), which is universally allowed by all firewalls. Because the add-on couldn't get a successful ping through Port 53, it assumed your internet was entirely down and backed off to avoid throwing errors.
+
+The Fix: I have updated the add-on with two major improvements to solve this:
+
+Smarter Connection Profiling: The network check now goes through Port 443 instead of 53, and features a robust fallback sequence that checks connectivity securely against ankiweb.net natively if the first ping fails.
+New Configuration Option: We've added a new "Disable pre-sync internet check" toggle directly in the add-on's Options menu. If you are ever on an extremely strict firewall where even the fallback fails, you can toggle this setting on to skip the connectivity checks entirely and push straight into the sync.
+These changes will be included in the next update. Thanks again for the report!0ˆÙ–Ï¥Æ’lû³ñî
+áÇî•Ï"ÒI was looking for an addon that allowed the use of Left click to flip and review the card â€“ so it was great to find this addon. 
+
+Though similar to the other reviewer, I found that there was a noticeable delay when pressing subsequent mouse clicks. 
+
+But after editing some files with AI this delay is gone and the addon has been great!*ûThe delay was introduced to fix accidental clicks 
+
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660ÅÛ–ÏØÏáöˆg™
+‹”¼ıÎ"!Thank you, saves me alot of time.*×15/04/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---0¸…ÿÎíî¬Í‘ù#
+ÿ"‚ÎÈÎ"şI got this bug whenever I press e:
+Anki 25.07.5 (7172b2d2) (ao)
+Python 3.13.5 Qt 6.9.1 PyQt 6.9.1
+Platform: macOS-26.4-arm64-arm-64bit-Mach-O
+
+Traceback (most recent call last):
+  File "/Users/admin/Library/Application Support/Anki2/addons21/2117554822/reviewer.py", line 649, in _on_review_edit_shortcut
+    if self._editor_is_visible():
+       ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/admin/Library/Application Support/Anki2/addons21/2117554822/reviewer.py", line 480, in _editor_is_visible
+    return bool(self.editor_widget and not self.editor_widget.isHidden())
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+RuntimeError: wrapped C/C++ object of type QWidget has been deleted
+
+===Add-ons (active)===
+(add-on provided name [Add-on folder, installed at, version, is config changed])
+AI Card Translator Full Version ['543442841', 2025-12-25T01:10, 'None', mod]
+Add Hyperlink ['318752047', 2023-06-18T18:39, 'None', '']
+Anki Leaderboard - Compete with friends to boost motivation Custom by Shige ['175794613', 2026-03-18T00:13, 'None', mod]
+Anki Note Linker ['1077002392', 2026-03-31T15:20, 'None', mod]
+AnkiWebView Inspector ['31746032', 2023-06-28T02:26, 'None', '']
+Auto Sync ['501542723', 2023-11-20T23:14, 'None', '']
+BetterSearch ['1052724801', 2026-03-03T19:58, 'None', mod]
+Custom Background Image and Gear Icon ['1210908941', 2025-12-17T20:00, 'None', mod]
+Edit Field During Review Native EFDRN ['2117554822', 2026-04-03T01:29, '7.2.5', mod]
+Google Translate ['1536291224', 2025-02-13T04:57, 'None', mod]
+HyperTTS - Add speech to your flashcards ['111623432', 2026-03-22T06:46, 'None', mod]
+Image Occlusion Enhanced ['1374772155', 2022-04-09T14:15, 'None', '']
+Onigiri Beta - A more modern Anki for your studies by Peace ['1011095603', 2026-01-29T19:01, 'None', '']
+Quizlet to Anki 21 Importer with audio support ['1362209126', 2026-01-18T03:44, 'None', '']
+Review Heatmap ['1771074083', 2022-06-30T08:43, 'None', '']
+Review Lookup - Search and Popup cards by selected text Customize by Shige ['364219370', 2026-01-27T18:06, 'None', mod]
+Search Bar - Search text in Editor and Reviewer Fixed by Shige ['342408518', 2025-07-27T20:58, 'None', mod]
+Sticky Notes for Anki - Create Beautiful Stickies in Anki Reviews ['2073533957', 2026-01-31T20:26, 'None', '']
+Study Time Stats ['1247171202', 2024-02-24T23:59, 'None', '']
+Symbols As You Type ['2040501954', 2026-01-25T23:25, 'None', '']
+Zoom for Anki25 - Keep zoom level after reboot Fixed by Shige ['1923741581', 2025-10-18T09:25, 'None', mod]
+extended editor for field for tables searchreplace ['805891399', 2025-07-06T17:41, 'None', mod]
+
+===IDs of active AnkiWeb add-ons===
+1011095603 1052724801 1077002392 111623432 1210908941 1247171202 1362209126 1374772155 1536291224 175794613 1771074083 1923741581 2040501954 2073533957 2117554822 31746032 318752047 342408518 364219370 501542723 543442841 805891399
+
+===Add-ons (inactive)===
+(add-on provided name [Add-on folder, installed at, version, is config changed])
+Customize Keyboard Shortcuts ['24411424', 2023-11-01T16:17, 'None', '']
+Edit Field During Review Cloze ['385888438', 2025-08-04T21:13, '6.23', mod]
+No Distractions Full Screen Fixed by Shige ['1370336700', 2025-06-23T11:58, 'None', mod]
+Progress bar - Visualize reviewed cards and remaining Fixed by Shige ['1708250053', 2024-11-11T03:00, 'None', mod]
+
+And this bug when i press n:
+Anki 25.07.5 (7172b2d2) (ao)
+Python 3.13.5 Qt 6.9.1 PyQt 6.9.1
+Platform: macOS-26.4-arm64-arm-64bit-Mach-O
+
+Traceback (most recent call last):
+  File "/Users/admin/Library/Application Support/Anki2/addons21/2117554822/reviewer.py", line 672, in _on_review_native_edit_shortcut
+    self._open_native_reviewer_editor()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/admin/Library/Application Support/Anki2/addons21/2117554822/reviewer.py", line 657, in _open_native_reviewer_editor
+    if self._editor_is_visible():
+       ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/admin/Library*í05/04/2026 
+I have tried to fix the issue from the crash log you have provided. please note that I do not own a Mac device to reproduce the error my self. So let me know whether the bug is fixed or not!
+---
+Thank you for using the add-on!,If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/1963739660ÕÌÉÎ†¥İñÂ«Èå
+×–õ´Î"mVery very useful. It makes it so easy to edit something quickly and pretty. Thank you so much for the add-on.*×02/04/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---0ğÿ·Î†¥İñ‡â¢
+®Á´Î"¥Great Add-on!!! I use AI to create cards and sometimes I have to adjust clozes. This realy saves me time. Thank you for the addon and frequent updates/improvements!!*×02/04/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---0ìÿ·Îª±„o‡â¢Í
+¿ô« Î"èPressing the E key opens the addon editor instead of the anki editor.
+
+2026-03-25
+I tried different combinations by changing them in the settings. After today's update, everything worked.
+2026-03-24
+Does not work. Nothing happens when using Trigger Modifier.
+
+Anki 25.09.2 (3890e12c) (ao) 
+Python 3.13.5 Qt 6.9.1 PyQt 6.9.1 
+Platform: Windows-10-10.0.19045-SP0*Ã30/03/2026 
+Have you updated the addon? Pressing N would open addon editor and pressing E would open anki editor,
+ Maybe Try enabling the Show edit (N) button from addon config ?
+---
+27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+Tested and working fine on Linux as shown in demo video, Have you used ctrl+click to trigger the edit window?
+
+Version â¨25.09.2 (3890e12c)â©
+Python 3.14.3 Qt 6.10.2 Chromium 1340úà¥Î†¥İññíĞ´	
+§	ª¾öÍ"ÅBig fan of the Add-on, I make AI create me a lot of Flashcards and sometimes I have to remove the clozes added by AI and add my own. This makes the whole thing way easier, and now I can even assign a hotkey! Relieved to see that the developer still updates the add-on to this day, thank you for your contributions to the community, I think this add-on will be needed tremendously more in the future as lots of peopel are using AI to prepare flashcards. *Î27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+22-02-26
+I decided to make this addon due to these exact issue
+
+If you want to import csv fast check out: https://ankiweb.net/shared/info/196373966
+To fix mathjax inside cloze: https://ankiweb.net/shared/info/1066972223
+To update latex delimiters with anki supported ones: https://ankiweb.net/shared/info/699086701
+
+---
+Thank you for your comment, check out my other addons0³åšÎª±„o¹âºí
+àØ¡ëÍ"Õ[update 2026-03-19]
+
+wanted to say thank you for the latest update (v2.7) .. which added the ability to only update items that are specific to a chosen deck.
+
+Great job.
+
+---
+
+[original post]
+
+happened upon this great plugin while looking for "ways" to update existing notes .. works great for importing
+
+>> --- no longer a problem as of update v2.7
+>
+> but (not sure if this is a bug), when I chose to "update existing notes .." it will update ALL existing (duplicate) notes throughout 
+> the deck when I only want to update note(s) IN the specific sub-deck I chose. (I misunderstood and thought "Lock Target Deck" 
+> would target notes in the specified sub-deck, but now understand it only pertains to the "settings" of this plugin.)
+>
+> is there a way/option to ONLY update notes in a specific sub-deck (vocabulary::chapter-2) and ignore "outside" duplicate notes (in 
+> vocabulary::chapter-1), while continuing to create new notes/duplicates in the specified sub-deck (vocabulary::chapter-2) if the notes
+> do not exist IN the sub-deck (vocabulary::chapter-2)?
+>
+>> --- no longer a problem as of update v2.7
+
+a QOL suggestion:
+perhaps add an "info" line below "Add Subdeck: " showing the full path of the "sub-deck" (that will be created) would be helpful to others. I made the mistake of creating a sub-sub-deck (i.e. "vocabulary::chapter-1::chapter-2") not understanding that sub-deck didn't mean "first-level" only. (my intention was to create "vocabulary::chapter-2")
+
+thank you for the great plug-in!
+
+---
+
+[edit] .. to the person who posted on 2026-01-22 .. 
+
+I noticed your Anki version is 25.02.6 .. I had the same problem as I was using a portableapps version 25.02 (038d85b1)â©
+Python 3.9.18 Qt 6.6.2 PyQt 6.6.1.
+
+You'll may need to update/upgrade your Anki to their "new"er version (currently 25.09.2) in order to run this plugin.  If you need a "portable" version of Anki, there are instructions on how to install is as a (limited) portable copy of Anki (executed from a batch file).
+
+---ÎÛÑ]é‰‘Ä
+·–Ø¼Í"
+Lifesaver!*š27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for you review,
+Check out my other addons in my profile0¹åšÎÎÛÑ]ˆöq
+e”û–Í"#The images are always very small <(*2you may use official api from google for HQ images0ÌË—Í—ÈòT‘±îş
+ñ‹Í"îI was having issues when trying to remove cloze from the entire block of text, as it was removing all new line characters. I asked gemini and it suggested to replace "<" with "<=" in this logic
+```
+      if (remaining <= len) {
+        return { node, offset: remaining };
+      }
+```
+
+Now it works without removing any new lines ğŸ‘
+
+Edit:
+Sample Card:
+Cloze Field:
+Scope of Audit - Includes
+- Cover adequately {{c1::all aspects of an Enterprise}}
+- Fin Info is {{c2::Reliable and Sufficient}} > jdgmnt based on {{c2::Study + Assess of A/c sys and IC}} and Carryout {{c2::Test, enquiries and procedures}}
+- Info is {{c3::relevant and properly disclosed}} > by ensuring {{c3::Transactions and Events}} are properly summarised and {{c3::Jdgmnts of Mngmnt}} is considered. Auditor to evaluate {{c3::selection and consistent}} application of {{c3::accounting policy}}
+- It is based on Historical Fin info
+
+Steps to Reproduce:
+1. Select All
+2. Use the RC button on the editor (Both browser and normal)
+3. Instead of only removing the cloze, it removes the newlines too.
+
+After using the fix as mentioned below, the newlines are preserved.*ï27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+Thnk you for your review I will look into it
+
+Hi, I could not replicate the issue,
+could you share the original flashcard so I can try out it in my end0ËåšÎª±„oĞ®èŒ
+ş¢Ô‚Í"its very gud*ß8/06/2026
+use https://ankiweb.net/shared/info/542586361 (anki terminator companion)
+
+27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+Please note that this fork is no longer maintained0ç•šÑÅø¼²¢–«”
+‡çúÌ"±I just can't believe this. This works with "Edit Field During Review Cloze" now. The combination of these 2 speeds up workflow so much that I can't even thank the author enough.*Â02/04/2026
+Since you use EFDRC addon you might love my fork EFDRN: https://ankiweb.net/shared/info/2117554822 check it out  ğŸ˜‰
+---
+27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Working fine on Version â¨25.09.2 (3890e12c)â© ,Python 3.13.7 Qt 6.9.2 Chromium 130 - Linux
+
+you don't have to select the entire cloze to remove it,
+Just put the curser inside cloze you want to remove and click the (RC) button0Î‚¸Îª±„o“ğîŒ
+ÿ­ÍÌ"ĞThis add-on worked perfectly first time. The author has brought care and great coding skills to the project. It is clear that he thought threw just how to make this comprehensive yet user-friendly. Thank you!*›27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thnk you for your review , Try out my other addons from my profile0àåšÎÎÛÑ]Ö—åÓ
+ÅÇ‘—Ì"-Thanks! 
+Surprising that this isn't built in.*…27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Exactly,
+It is available on ankidroid though0äåšÎî—à¼ëÍÇÌ
+¾±éË"AMAZING THANK YOU*š27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for your reply 
+try out my other addons from my profile0êåšÎíî¬Í’¦ÚØ
+
+Ë
+¯‡ÈË"ö	I couldnt install the Addon. I got the following message. 
+They may need to be updated to support this version of Anki. Click the Check for Updates button to see if any updates are available.
+You can use the Copy Debug Info button to get information that you can paste in a report to the add-on author.
+For add-ons that don't have an update available, you can disable or delete the add-on to prevent this message from appearing.
+Anki 25.02.6 (6381f184)  (ao)
+Python 3.9.18 Qt 6.6.2 PyQt 6.6.1
+Platform: Windows-10-10.0.26200
+
+When loading csv import plus:
+Traceback (most recent call last):
+  File "aqt.addons", line 250, in loadAddons
+  File "C:\Users\flash\AppData\Roaming\Anki2\addons21\196373966\__init__.py", line 3, in <module>
+    from . import main
+  File "C:\Users\flash\AppData\Roaming\Anki2\addons21\196373966\main.py", line 8, in <module>
+    from .dialog import CSVImportPlusDialog
+  File "C:\Users\flash\AppData\Roaming\Anki2\addons21\196373966\dialog.py", line 18, in <module>
+    class CSVImportPlusDialog(QDialog):
+  File "C:\Users\flash\AppData\Roaming\Anki2\addons21\196373966\dialog.py", line 63, in CSVImportPlusDialog
+    def refresh_decks(self, select_name: str | None = None):
+TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+
+*DTested and working fine on linux
+Don't have a Windows device to test0ÚôîËÎÛÑ]¤É‘…
+÷‹ãµÊ"ÕThis plugin is PERFECT and that's not an exaggeration
+There are no errors, everything works perfectly. I had a lot of flashcards where formulas were written as $formula$, but anki doesn't accept that. It's good that this plugin solves this problem, and I don't have to manually rewrite the cards or ask the AI â€‹â€‹to do it
+Thank you Author*27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for your comment, check out my other addons0ùåšÎíî¬ÍáÑƒÁ
+´†¶úÉ"Works well. Thanks *27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for your comment, check out my other addons0şåšÎÎÛÑ]ÿï¿”
+‡‚Ö°É"lVery fast and intuitive but anyway to change the resolution? Only getting tiny thumbs (max 150px resolution)*ˆ27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Use Google Custom Search (images) for HQ images0ƒæšÎ—ÈòT·îŸê
+İËª¸È"-There is not enough preview before importing.*27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+verify your data before importing, this addon is for quick importing0ˆæšÎÎÛÑ]ñíĞÆ
+¸¾»®È"ˆOMG such a life saving addon. this is the default behavior on iOS apps but don't know why they don't implement this in the desktop app. *œ27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for your review,
+Try out my other add-ons from my profile0æšÎÔïˆÕ°úï‹
+ıñ€¬È"šThe addon is amazing but please decrease the delay when between two subsequent mouse clicks, everything in the addon is golden, just please fix the delay and i will sell you my soul, i will pledge alligiance to you, sell you my house for a can of Dr. Pepper, whatever you want, just please fix the delay between clicks, it never goes away, even when i tried modifying the mouse scroll threshold to the minimum.*Ï27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for your review,
+Please update the add-on it should be added by now
+Try out my other add-ons from my profile0—æšÎØÏáö„àæÄ
+·Ï¡¥È"Amazing!*œ27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for your review,
+Try out my other add-ons from my profile0æšÎª±„oïÈ¦Â
+¶ÊÉ“È"good :D*œ27/03/2026 
+Thank you for using the add-on! Iâ€™m happy itâ€™s working well for you. If youâ€™d like to support the work that goes into keeping this project free and updated, feel free to buy me a coffee:
+
+Support on Ko-fi: https://ko-fi.com/D1D01W6NQT
+check out other addons from my profile: https://ankiweb.net/shared/by-author/196373966
+---
+
+Thank you for your review,
+Try out my other add-ons from my profile0¢æšÎ—ÈòT†±kÕ
+Ç¾¤€È"DOSEN T WORK *©are you sure?
+working fine on my end
+you have to import csv via tools > csv file import (not via official File > import )
+then click create sub deck button before import0¾šÈü§ÏÀñ

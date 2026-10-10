@@ -20,6 +20,7 @@ import requests
 BASE = "https://ankiweb.net"
 SHARED = f"{BASE}/shared/"
 ITEM_INFO_URL = f"{BASE}/svc/shared/item-info"
+LIST_MINE_URL = f"{BASE}/svc/shared/list-mine"
 
 
 class AnkiWebError(RuntimeError):
@@ -238,6 +239,71 @@ def parse_item_info(buf: bytes) -> dict:
         "items_shared_by_user": shared_by,
         "timestamps_seen": times,
     }
+
+
+def parse_list_mine(buf: bytes) -> dict:
+    """Decode ListMineResponse (schema from AnkiWeb's frontend chunk):
+
+      ListMineResponse{ items=1[]OwnItem, reviews=2[], expired_decks=3[] }
+      OwnItem{ id=1, title=2, thumbs_up=3, thumbs_down=4, mtime=5,
+               downloads=6, max_supported_version=7(opt int32) }
+    """
+    items: list[dict] = []
+    reviews = 0
+    for d, f, w, v in _walk(buf):
+        if d != 0:
+            continue
+        if f == 2 and w == 2:
+            reviews += 1
+            continue
+        if f != 1 or w != 2:
+            continue
+        item: dict = {"id": 0, "title": "", "thumbs_up": 0, "thumbs_down": 0,
+                      "mtime": 0, "downloads": 0, "max_supported_version": None}
+        for _d, id_, fw, wv in _walk(v):
+            if _d != 0:
+                continue
+            if id_ == 1 and fw == 0:
+                item["id"] = int(wv)
+            elif id_ == 2 and fw == 2 and isinstance(wv, bytes):
+                item["title"] = wv.decode("utf-8", "replace")
+            elif id_ == 3 and fw == 0:
+                item["thumbs_up"] = int(wv)
+            elif id_ == 4 and fw == 0:
+                item["thumbs_down"] = int(wv)
+            elif id_ == 5 and fw == 0:
+                item["mtime"] = int(wv)
+            elif id_ == 6 and fw == 0:
+                item["downloads"] = int(wv)
+            elif id_ == 7 and fw == 0:
+                # proto int32: wire gives unsigned; reinterpret signed
+                item["max_supported_version"] = (
+                    int(wv) - (1 << 32) if int(wv) & 0x80000000 else int(wv)
+                )
+        items.append(item)
+    return {"items": items, "review_count": reviews}
+
+
+def fetch_list_mine(cookie: str, timeout: int = 30) -> dict:
+    """POST svc/shared/list-mine with your session cookie (empty body)."""
+    r = requests.post(
+        LIST_MINE_URL,
+        data=b"",
+        headers={
+            "Accept": "*/*",
+            "Content-Type": "application/octet-stream",
+            "Cookie": f"has_auth=1; ankiweb={cookie}",
+            "Referer": f"{BASE}/shared/mine",
+        },
+        timeout=timeout,
+    )
+    if r.status_code in (401, 403):
+        raise AnkiWebError(
+            f"list-mine HTTP {r.status_code}: session not valid; re-check credentials"
+        )
+    if r.status_code != 200:
+        raise AnkiWebError(f"list-mine HTTP {r.status_code}: {r.text[:300]}")
+    return parse_list_mine(r.content)
 
 
 def fetch_item_info(shared_id: int, timeout: int = 30) -> dict:

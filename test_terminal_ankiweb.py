@@ -116,6 +116,48 @@ def test_offline() -> None:
     check("empty payload is tiny", len(empty) <= 3)
 
 
+def test_login_codec() -> None:
+    """Round-trip the LoginRequest/Response protobuf codec (offline)."""
+    from ankiweb_auth import decode_login_response, encode_login_request
+
+    req = encode_login_request("user@example.com", "p@ss w0rd")
+    check("login request encodes username", b"user@example.com" in req)
+    check("login request encodes password", b"p@ss w0rd" in req)
+
+    # LoginResponse{status=1(AUTHENTICATED), token="tok"}
+    resp = bytes([0x08, 0x01, 0x12, 0x03]) + b"tok"
+    status, token = decode_login_response(resp)
+    check("login status decoded", status == 1, str(status))
+    check("login token decoded", token == "tok", repr(token))
+
+    status, _ = decode_login_response(bytes([0x08, 0x03]))  # INVALID_PASS
+    check("invalid pass decoded", status == 3, str(status))
+
+
+def test_list_mine_parse() -> None:
+    """Decode a captured list-mine response: items vs reviews must not mix."""
+    fixture = FIXTURES / "list_mine.bin"
+    if not fixture.is_file():
+        print("  SKIP  list-mine fixture not present")
+        return
+    from terminal_ankiweb import parse_list_mine
+
+    data = parse_list_mine(fixture.read_bytes())
+    items = data["items"]
+    check("list-mine returns items", len(items) > 0, str(len(items)))
+    titles = [i["title"] for i in items]
+    check("items have real titles", all(titles), "some title empty")
+    check("reviews counted separately", data["review_count"] > 0, str(data["review_count"]))
+    first = items[0]
+    check("item id is numeric", isinstance(first["id"], int) and first["id"] > 0, str(first["id"]))
+    check("mtime is a unix ts", first["mtime"] > 1_500_000_000, str(first["mtime"]))
+    # Regression: an earlier walk matched reviews as items, so titles were
+    # blank and id/title columns were shifted.
+    check("no review text as title",
+          not any("thanks" in t.lower() or "works" in t.lower() for t in titles),
+          str(titles[:3]))
+
+
 def test_live() -> None:
     print("live (network)")
     try:
@@ -165,6 +207,8 @@ def test_cli() -> None:
 
 if __name__ == "__main__":
     test_offline()
+    test_login_codec()
+    test_list_mine_parse()
     if LIVE:
         test_live()
     test_cli()

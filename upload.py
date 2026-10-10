@@ -27,25 +27,17 @@ import subprocess
 import sys
 from pathlib import Path
 
+from ankiweb_auth import load_dotenv as load_env_file
+
 HERE = Path(__file__).resolve().parent
 
 
 def load_dotenv(path: Path) -> None:
-    """Minimal .env loader (no dependency). Existing env vars win."""
-    if not path.is_file():
-        return
-    for raw in path.read_text(encoding="utf-8").splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#"):
-            continue
-        if line.startswith("export "):
-            line = line[len("export "):].strip()
-        if "=" not in line:
-            continue
-        key, val = line.split("=", 1)
-        key = key.strip()
-        val = val.strip().strip('"').strip("'")
-        os.environ.setdefault(key, val)
+    """Minimal .env loader (no dependency). Existing env vars win.
+
+    Shared with ankicli.py via ankiweb_auth.load_dotenv.
+    """
+    load_env_file(path)
 
 
 def validate_branch(branch: str) -> None:

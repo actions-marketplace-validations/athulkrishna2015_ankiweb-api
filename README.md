@@ -107,6 +107,32 @@ Multi-branch works the same way — one branch and one file per line, in matchin
 > "and all future versions". Reproduce an existing range by reading it first:
 > `minpt`/`maxpt` from `./ankicli.py download <id> -o -` output map to it.
 
+### List your own shared items
+
+Everything on your account (add-ons and decks), with download counts and votes.
+Uses the credentials from `.env`.
+
+```sh
+./ankicli.py mine
+./ankicli.py mine --json
+```
+
+```text
+22 shared item(s), 46 review(s):
+
+          ID  UPD             DL    +   -  TITLE
+------------------------------------------------
+  2119980872  2026-10-10     856    3   1  AI-Hints and Options
+   226796325  2026-09-25    2080    5   2  Background Auto Sync
+  196373966  2026-07-17    4245    7   1  csv import plus
+```
+
+Pair it with `info` for full metadata on any id from the list:
+
+```sh
+for id in $(./ankicli.py mine --json | jq -r '.[].id'); do ./ankicli.py info "$id"; done
+```
+
 ### Info (add-on metadata)
 
 Public, no auth. Reads title, tags, support page, size, versions, and description
