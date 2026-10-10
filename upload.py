@@ -48,6 +48,30 @@ def load_dotenv(path: Path) -> None:
         os.environ.setdefault(key, val)
 
 
+def validate_branch(branch: str) -> None:
+    """Catch bad notation before spending a network round-trip.
+
+    Mirrors upstream parseBranchNotation rules: exactly MIN-MAX, each side a
+    2.1.x patch or major[.minor[.patch]], trailing '+' on max = open-ended.
+    """
+    parts = branch.strip().split("-")
+    if len(parts) != 2:
+        raise ValueError(
+            f"branch must be MIN-MAX (e.g. '2.1.1-25.09.4+'), got {branch!r}"
+        )
+    for ver in parts:
+        v = ver.strip()
+        if v.endswith("+"):
+            v = v[:-1]
+        if v.startswith("2.1."):
+            if not v[4:].isdigit():
+                raise ValueError(f"invalid 2.1.x version in branch {branch!r}")
+        else:
+            segs = v.split(".")
+            if len(segs) > 3 or not all(s.isdigit() and int(s) < 100 for s in segs):
+                raise ValueError(f"invalid version in branch {branch!r}")
+
+
 def build_env(args) -> dict:
     load_dotenv(Path(args.env_file).expanduser() if args.env_file else HERE / ".env")
     env = dict(os.environ)
@@ -116,15 +140,25 @@ def main() -> int:
 
     if len(args.branches) != len(args.addon_files):
         sys.exit("error: --branches and --addon-files must have the same length")
+    for b in args.branches:
+        try:
+            validate_branch(b)
+        except ValueError as e:
+            sys.exit(f"error: {e}")
     for f in args.addon_files:
         if f != "-" and not Path(f).is_file():
             sys.exit(f"error: addon file not found: {f}")
+    if len(args.title) >= 80:
+        sys.exit("error: --title must be fewer than 80 characters")
+    if args.support_page and not args.support_page.startswith("http"):
+        sys.exit("error: --support-page must start with http")
 
     env = build_env(args)
     if args.dry_run:
         for k in sorted(k for k in env if k.startswith("INPUT_")):
             v = env[k]
-            print(f"{k}={'(secret)' if 'PASSWORD' in k else v[:200]}")
+            masked = any(s in k for s in ("PASSWORD", "USERNAME"))
+            print(f"{k}={'(secret)' if masked else v[:200]}")
         print(f"engine: {HERE/'dist/index.js'}")
         return 0
 

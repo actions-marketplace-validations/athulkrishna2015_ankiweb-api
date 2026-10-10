@@ -140,3 +140,6 @@ dist
 __pycache__/
 *.pyc
 *.ankiaddon
+
+# test fixtures are intentionally tracked
+!fixtures/*.ankiaddon

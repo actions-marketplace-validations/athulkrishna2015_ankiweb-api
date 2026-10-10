@@ -47,6 +47,18 @@ $EDITOR .env     # ANKIWEB_USERNAME=... / ANKIWEB_PASSWORD=...
 Same inputs as the action, as CLI flags. `upload.py` maps them to the action's `INPUT_*`
 variables and runs the upstream engine — no separate upload implementation.
 
+> [!WARNING]
+> **Never test uploads with a real add-on file.** An upload replaces the file on the target
+> add-on id, and the previous version is **not** recoverable from AnkiWeb. Build the synthetic
+> fixture instead and use a throwaway add-on id:
+>
+> ```sh
+> python3 make_test_addon.py          # -> fixtures/test.ankiaddon
+> ./upload.py --addon-id <test-id> --title "CLI Test" \
+>     --description "test" --branches "2.1.1-2.1.1+" \
+>     --addon-files fixtures/test.ankiaddon
+> ```
+
 ```sh
 # New add-on (omit --addon-id)
 ./upload.py --title "My Anki add-on" \
@@ -142,6 +154,7 @@ curl -sL "https://ankiweb.net/shared/download/805854302?v=2.1&p=250902" -o addon
   ("Your version of Anki is too old"). `p` is Anki's `int_version()`.
 - The `.ankiaddon` must be a zip with `__init__.py` at the root — no wrapping
   folder, no `__pycache__` (see [Anki's sharing docs](https://addon-docs.ankiweb.net/sharing.html)).
+  `make_test_addon.py` builds a compliant fixture you can inspect.
 - Never commit `.env` or AnkiWeb credentials.
 
 ## GitHub Actions usage
