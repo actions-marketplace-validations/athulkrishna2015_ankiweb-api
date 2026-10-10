@@ -13,11 +13,13 @@ Upload an [Anki](https://apps.ankiweb.net/) add-on to [AnkiWeb](https://ankiweb.
 - **Description file**: Use a separate file for the add-on description, making it easier to edit and format.
 - **Terminal CLI**: Upload, inspect, and download add-ons without GitHub Actions.
 - **Metadata-only updates**: Change title/description/tags without re-uploading the `.ankiaddon`.
+- **Reverse-engineered API client**: Schema-driven access to discovered AnkiWeb `/svc/*` endpoints.
 
 ## Table of contents
 
 - [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
 - [Tests](#tests)
+- [AnkiWeb API client](docs/API.md)
 - [GitHub Actions usage](#github-actions-usage) — [inputs](#inputs) · [outputs](#outputs)
 
 ## Terminal usage
