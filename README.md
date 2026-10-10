@@ -1,25 +1,28 @@
-# AnkiWeb API Client and Add-on Tools
+# AnkiWeb API — full `/svc/*` compatibility + add-on tools
 
-[![CI](https://github.com/athulkrishna2015/ankiweb-api-client/actions/workflows/ci.yml/badge.svg)](https://github.com/athulkrishna2015/ankiweb-api-client/actions/workflows/ci.yml)
+[![CI](https://github.com/athulkrishna2015/ankiweb-api/actions/workflows/ci.yml/badge.svg)](https://github.com/athulkrishna2015/ankiweb-api/actions/workflows/ci.yml)
 
-An experimental Python client for AnkiWeb's reverse-engineered `/svc/*` API,
-plus tools to inspect, download, and upload [Anki](https://apps.ankiweb.net/)
-add-ons from your terminal or GitHub Actions.
+A complete Python client for AnkiWeb's reverse-engineered `/svc/*` API —
+**all 41 public endpoints** as typed `AnkiWebClient` methods — plus tools to
+inspect, download, and upload [Anki](https://apps.ankiweb.net/) add-ons from
+your terminal or GitHub Actions.
 
 > Fork of [danny900714/upload-anki-addon](https://github.com/danny900714/upload-anki-addon) (`upstream/main` remote).
-> The Node upload engine (`dist/index.js`) is unmodified upstream code. The repository adds terminal tooling and an experimental, schema-driven API client.
+> The Node upload engine (`dist/index.js`) is unmodified upstream code. This repository adds terminal tooling and a full schema-driven API client decoded from AnkiWeb's own frontend bundle.
 
 ## Features
 
+- **Full API coverage**: All 41 public `/svc/*` endpoints as typed methods
+  ([reference](docs/ENDPOINTS.md)) — account, decks, editor, search, shared,
+  study — decoded from AnkiWeb's own frontend bundle, verified live.
 - **Multiple branches**: Upload different add-on files targeting different Anki version ranges.
 - **Description file**: Use a separate file for the add-on description, making it easier to edit and format.
-- **Terminal CLI**: Upload, inspect, and download add-ons without GitHub Actions.
+- **Terminal CLI**: Upload, inspect, download, and call any endpoint (`ankicli.py call ...`) without GitHub Actions.
 - **Metadata-only updates**: Change title/description/tags without re-uploading the `.ankiaddon`.
-- **Reverse-engineered API client**: Schema-driven access to discovered AnkiWeb `/svc/*` endpoints.
 
 ## Table of contents
 
-- [AnkiWeb API client](docs/API.md)
+- [AnkiWeb API client](docs/API.md) · [full endpoint reference](docs/ENDPOINTS.md)
 - [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
 - [List your own shared items](#list-your-own-shared-items)
 - [Tests](#tests)
@@ -33,8 +36,8 @@ Requires Python 3.9+ with `requests`, plus Node 24 if you upload (the action eng
 ### Setup
 
 ```sh
-git clone https://github.com/athulkrishna2015/ankiweb-api-client.git
-cd ankiweb-api-client
+git clone https://github.com/athulkrishna2015/ankiweb-api.git
+cd ankiweb-api
 pip install -r requirements-terminal.txt
 ```
 

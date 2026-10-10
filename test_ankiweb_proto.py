@@ -16,7 +16,15 @@ class ProtoCodecTests(unittest.TestCase):
             [f["name"] for f in SCHEMA[login["response"]]["fields"]],
             ["status", "token"],
         )
-        self.assertIsNone(endpoint("/svc/shared/get-addon-info")["response"])
+        # get-addon-info resolves to {addon} (verified Oct 2026 against the
+        # live bundle: k(sr,new xt(n),Pt,e)); the old None mapping was a
+        # parser artifact.
+        addon_info = endpoint("/svc/shared/get-addon-info")
+        self.assertEqual(addon_info["response"], "SharedGetAddonInfoResponse")
+        self.assertEqual(
+            [f["name"] for f in SCHEMA[addon_info["response"]]["fields"]],
+            ["addon"],
+        )
         upload = endpoint("/svc/shared/upload-addon")
         self.assertEqual(upload["response"], "SharedUploadAddonResponse")
 

@@ -41,28 +41,55 @@ TYPES: dict[int, tuple[str, int]] = {
 
 
 def discover_bundle() -> str:
-    """Follow the SvelteKit app shell to the chunk holding the schemas."""
+    """Follow the SvelteKit app shell to the chunk holding the schemas.
+
+    Newer shells use Vite's __vite__mapDeps table instead of entry/app.*.mjs
+    + nodes/*.mjs imports, so probe several strategies in order:
+      1. legacy entry/app.*.mjs + nodes/*
+      2. Vite mapDeps table (../chunks/frontend.*.mjs entry)
+      3. direct scan of likely chunk names
+    """
     with urllib.request.urlopen("https://ankiweb.net/shared/mine", timeout=30) as r:
         shell = r.read().decode("utf-8", "replace")
-    app = None
-    for m in re.finditer(r'/_app/immutable/entry/app\.([A-Za-z0-9_-]+)\.mjs', shell):
-        app = m.group(0)
-    if app is None:
-        raise SystemExit("could not find app entry chunk")
-    with urllib.request.urlopen("https://ankiweb.net" + app, timeout=30) as r:
-        app_js = r.read().decode("utf-8", "replace")
-    # The frontend chunk is imported by node chunks; find it via the nodes list.
-    nodes = sorted(set(re.findall(r"nodes/(\d+\.[A-Za-z0-9_-]+\.mjs)", app_js)))
-    for node in nodes:
-        url = f"https://ankiweb.net/_app/immutable/nodes/{node}"
+
+    def fetch(path: str) -> str | None:
         try:
-            with urllib.request.urlopen(url, timeout=30) as r:
-                body = r.read().decode("utf-8", "replace")
+            with urllib.request.urlopen("https://ankiweb.net" + path, timeout=30) as r:
+                return r.read().decode("utf-8", "replace")
         except Exception:
+            return None
+
+    # Strategy 2 (current): Vite mapDeps table in entry/app.*.mjs
+    for m in re.finditer(r'/_app/immutable/entry/app\.[A-Za-z0-9_-]+\.mjs', shell):
+        app_js = fetch(m.group(0))
+        if not app_js:
             continue
-        if "makeMessageType" in body and "/svc/" in body:
-            return body
-    raise SystemExit("no node chunk contained both makeMessageType and /svc/")
+        for dep in sorted(set(re.findall(r'"(\.\./(?:chunks|nodes)/[^"]+\.mjs)"', app_js))):
+            if "frontend." not in dep:
+                continue
+            body = fetch("/_app/immutable/chunks/" + dep.split("/")[-1])
+            if body and "makeMessageType" in body and "/svc/" in body:
+                return body
+        # fall through: scan every dep for the schema chunk
+        for dep in sorted(set(re.findall(r'"(\.\./(?:chunks|nodes)/[^"]+\.mjs)"', app_js))):
+            body = fetch("/_app/immutable/chunks/" + dep.split("/")[-1])
+            if not body:
+                # nodes live under a different prefix
+                body = fetch("/_app/immutable/nodes/" + dep.split("/")[-1])
+            if body and "makeMessageType" in body and "/svc/" in body:
+                return body
+
+    # Strategy 1 (legacy): nodes/*.mjs imports in app chunk
+    for m in re.finditer(r'/_app/immutable/entry/app\.([A-Za-z0-9_-]+)\.mjs', shell):
+        app_js = fetch(m.group(0))
+        if not app_js:
+            continue
+        nodes = sorted(set(re.findall(r"nodes/(\d+\.[A-Za-z0-9_-]+\.mjs)", app_js)))
+        for node in nodes:
+            body = fetch(f"/_app/immutable/nodes/{node}")
+            if body and "makeMessageType" in body and "/svc/" in body:
+                return body
+    raise SystemExit("no chunk contained both makeMessageType and /svc/")
 
 
 # Response types for endpoints whose call site hides the type behind a shared
@@ -91,9 +118,10 @@ SHARED_RESPONSE_ALIASES: dict[str, str] = {
 # The frontend's minifier can reuse message variables and the call-site regex
 # can associate a neighbouring message with an endpoint. Keep verified
 # endpoint-specific corrections here (values are minified message variables).
+# As of Oct 2026 the precise call-site parser reads responses directly, so no
+# overrides are needed; login is kept as a pinned sanity check.
 ENDPOINT_RESPONSE_OVERRIDES: dict[str, str] = {
     "/svc/account/login": "Jn",  # {status, token}; Xn is needs_to_confirm
-    "/svc/shared/get-addon-info": "",  # not the upload response {addon_id}
 }
 
 
@@ -120,7 +148,7 @@ FIELD_RE = re.compile(
     r'\{no:(\d+),name:"([^"]+)",kind:"([^"]+)",T:([^,}]+)'
     r'(,repeated:!0)?(,opt:!0)?(?:,oneof:"([^"]+)")?(?:,default:[^}]*)?\}'
 )
-MSG_START = re.compile(r'(\w+)=r\.makeMessageType\(')
+MSG_START = re.compile(r'([\w$]+)=r\.makeMessageType\(')
 LOCAL_NAME = re.compile(r'localName:"([^"]+)"')
 
 
@@ -211,7 +239,7 @@ def iter_message_defs(src: str):
                 if lm:
                     local = lm.group(1)
         yield var, local, body
-ENUM_RE = re.compile(r'(\w+)=r\.makeEnum\("([^"]*)",\[(.*?)\]\)', re.S)
+ENUM_RE = re.compile(r'([\w$]+)=r\.makeEnum\("([^"]*)",\[(.*?)\]\)', re.S)
 ENUM_ITEM_RE = re.compile(r'\{no:(\d+),name:"([^"]+)",localName:"([^"]+)"\}')
 
 
@@ -280,27 +308,38 @@ def get_query_params(src: str, var: str, method: str) -> list[str]:
 
 
 def parse_endpoints(src: str) -> list[dict]:
-    """endpoint path -> {method, fn, req var, resp var, query params}."""
-    var_of = dict(re.findall(r'(\w+)="(/svc/[a-zA-Z0-9/_-]+)"', src))
+    """endpoint path -> {method, fn, req var, resp var, query params}.
+
+    Call sites have the exact shape (verified Oct 2026 against the live bundle):
+        await k(VAR, new REQ(n), RESP, e)   POST
+        await K(VAR, n, RESP, e)            GET  (query keys unrecoverable, see below)
+    """
+    var_of = dict(re.findall(r'([\w$]+)="(/svc/[a-zA-Z0-9/_-]+)"', src))
     rows: dict[str, dict] = {}
-    for var, path in var_of.items():
-        for m in re.finditer(r'\b([Kk])\(' + re.escape(var) + r'\b', src):
-            method = "GET" if m.group(1) == "K" else "POST"
-            pre = src[max(0, m.start() - 140):m.start()]
-            fns = re.findall(r'async function (\w+)\(', pre)
-            fn = fns[-1] if fns else "?"
-            rest = src[m.end():m.end() + 140]
-            req = resp = ""
-            mm = re.match(r'\s*,\s*new (\w+)\(', rest)
-            if mm:
-                req = mm.group(1)
-            tail = rest.split("},")[0]
-            mm = re.findall(r',\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*,', tail)
-            if mm:
-                resp = mm[-1]
-            rows.setdefault(path, {"path": path, "method": method, "fn": fn,
-                                   "req": req, "resp": resp,
-                                   "query": get_query_params(src, var, method)})
+    for m in re.finditer(r'\b([Kk])\(([\w$]+),new ([\w$]+)\(\w+\),([\w$]+),\w+\)', src):
+        method = "GET" if m.group(1) == "K" else "POST"
+        var, req, resp = m.group(2), m.group(3), m.group(4)
+        path = var_of.get(var)
+        if not path:
+            continue
+        pre = src[max(0, m.start() - 140):m.start()]
+        fns = re.findall(r'async function ([\w$]+)\(', pre)
+        fn = fns[-1] if fns else "?"
+        rows.setdefault(path, {"path": path, "method": method, "fn": fn,
+                               "req": req, "resp": resp,
+                               "query": get_query_params(src, var, method)})
+    # GET sites carry no request constructor; match them separately.
+    for m in re.finditer(r'\bK\(([\w$]+),\w+,([\w$]+),\w+\)', src):
+        var, resp = m.group(1), m.group(2)
+        path = var_of.get(var)
+        if not path or path in rows:
+            continue
+        pre = src[max(0, m.start() - 140):m.start()]
+        fns = re.findall(r'async function ([\w$]+)\(', pre)
+        fn = fns[-1] if fns else "?"
+        rows.setdefault(path, {"path": path, "method": "GET", "fn": fn,
+                               "req": "", "resp": resp,
+                               "query": get_query_params(src, var, "GET")})
     return sorted(rows.values(), key=lambda r: r["path"])
 
 
@@ -357,7 +396,7 @@ def semantic_names(msgs: dict, eps: list[dict]) -> dict[str, str]:
     referenced: dict[str, list[tuple[str, str]]] = {}
     for var, m in msgs.items():
         for f in m["fields"]:
-            if f["type"] == "message" and re.fullmatch(r"\w+", str(f["T"])):
+            if f["type"] == "message" and re.fullmatch(r"[\w$]+", str(f["T"])):
                 referenced.setdefault(f["T"], []).append((var, f["name"]))
 
     def pascal(text: str) -> str:

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Terminal CLI for AnkiWeb: info, download, mine.
+"""Terminal CLI for AnkiWeb: info, download, mine, + full /svc/* access.
 
   ./ankicli.py info 805854302
   ./ankicli.py download 805854302 -o /tmp/test.ankiaddon
   ./ankicli.py mine                 # your shared decks + add-ons (needs login)
+  ./ankicli.py call shared_item_info --query sharedId=805854302
+  ./ankicli.py call shared_list_addons
+  ./ankicli.py endpoints            # list all 41 endpoints
 
 Uploads go through ./upload.py (thin wrapper over the forked upstream action).
 """
@@ -119,8 +122,54 @@ def cmd_mine(args) -> int:
     return 0
 
 
+def cmd_endpoints(args) -> int:
+    from ankiweb_schema import public_endpoints
+    for ep in public_endpoints():
+        print(f"{ep['method']:4} {ep['path']:40} req={ep['request']} resp={ep['response']}")
+    return 0
+
+
+def cmd_call(args) -> int:
+    import json as _json
+    from ankiweb_client import AnkiWebClient, AnkiWebError, _method_name
+    from ankiweb_schema import endpoint as _endpoint, public_endpoints
+
+    # find endpoint by method name
+    target = None
+    for ep in public_endpoints():
+        if _method_name(ep["path"]) == args.method or ep["path"] == args.method:
+            target = ep
+            break
+    if target is None:
+        print(f"error: unknown method '{args.method}' (see: ankicli.py endpoints)",
+              file=sys.stderr)
+        return 1
+    query = {}
+    for kv in args.query:
+        if "=" not in kv:
+            print(f"error: --query must be K=V, got '{kv}'", file=sys.stderr)
+            return 1
+        k, v = kv.split("=", 1)
+        try:
+            v = int(v)
+        except ValueError:
+            pass
+        query[k] = v
+    request = _json.loads(args.request) if args.request else None
+    client = AnkiWebClient(cookie=args.cookie or None,
+                           env_file=args.env_file or None)
+    try:
+        out = client._call(target["path"], request,
+                           query=query or None)
+    except AnkiWebError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    print(_json.dumps(out, indent=2, default=str))
+    return 0
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="AnkiWeb terminal: info + download (no auth)")
+    ap = argparse.ArgumentParser(description="AnkiWeb terminal: full /svc/* access")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("info", help="fetch public title/description/size via svc/shared/item-info")
@@ -139,6 +188,18 @@ def main() -> int:
     p.add_argument("--env-file", default="", help="default: ./.env")
     p.add_argument("--json", action="store_true", help="also print raw JSON")
     p.set_defaults(fn=cmd_mine)
+
+    p = sub.add_parser("endpoints", help="list all 41 public endpoints")
+    p.set_defaults(fn=cmd_endpoints)
+
+    p = sub.add_parser("call", help="call any public endpoint by method name")
+    p.add_argument("method", help="e.g. shared_item_info, shared_list_addons, decks_create_deck")
+    p.add_argument("--request", default="", help="request body as JSON (for POST)")
+    p.add_argument("--query", action="append", default=[], metavar="K=V",
+                   help="query param (repeatable; for GET)")
+    p.add_argument("--env-file", default="", help="default: ./.env (only needed for auth endpoints)")
+    p.add_argument("--cookie", default="", help="session cookie (else login via .env for auth endpoints)")
+    p.set_defaults(fn=cmd_call)
 
     args = ap.parse_args()
     return args.fn(args)

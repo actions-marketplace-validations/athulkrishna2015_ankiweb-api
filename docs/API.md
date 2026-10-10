@@ -1,83 +1,78 @@
 # AnkiWeb API client
 
-This project includes an experimental Python client for the protobuf-based
-`/svc/*` endpoints used by AnkiWeb's web frontend. There is no official,
-supported public AnkiWeb API. These endpoints and their wire schemas are
-reverse-engineered, may change without notice, and may be subject to AnkiWeb's
-terms and rate limits. Use only with an account and data you are authorized to
-access. `/svc/radmin/*` administrative endpoints are deliberately excluded.
+Full Python client for AnkiWeb's protobuf-based `/svc/*` endpoints — the same
+wire protocol the AnkiWeb web frontend uses. There is no official, supported
+public AnkiWeb API: endpoints and schemas here are reverse-engineered, may
+change without notice, and are subject to AnkiWeb's terms and rate limits. Use
+only with an account and data you are authorized to access.
+`/svc/radmin/*` administrative endpoints are decoded in the schema but
+intentionally not exposed on the client.
+
+**Coverage: 41/41 public endpoints** as typed `AnkiWebClient` methods, plus a
+complete reference in [ENDPOINTS.md](ENDPOINTS.md). Schema revision 2026-10-10
+(174 messages; all request/response/nested names resolve).
 
 ## Installation and basic use
 
-Install `requests` from `requirements-terminal.txt`. Provide a valid session
-cookie for authenticated requests, or configure credentials and explicitly
-call `login()`:
+Install `requests` from `requirements-terminal.txt`. Pass a session cookie, or
+configure credentials and call `login()` (`.env` is auto-loaded):
 
 ```python
 from ankiweb_client import AnkiWebClient
 
 client = AnkiWebClient(cookie="your-session-cookie")
-mine = client.shared_list_mine(request={})
-print(mine)
+print(client.shared_list_mine()["items"])
 
 # Alternatively, after setting ANKIWEB_USERNAME and ANKIWEB_PASSWORD:
 client = AnkiWebClient()
 client.login()
-mine = client.shared_list_mine(request={})
+print(client.shared_list_mine()["items"])
 
-# Public endpoint; GET arguments are query-string values.
-item = client.shared_item_info(query={"sharedId": 2055492159})
-print(item)
+# Public endpoint (no auth needed):
+item = client.shared_item_info(shared_id=2055492159)
+print(item["available"]["title"])
 ```
 
-Endpoint methods are generated lazily from `ankiweb_schema.ENDPOINTS`. Their
-Python names combine the final path segments with underscores (for example,
-`shared_list_mine`, `shared_item_info`, `account_login`). For POST methods with
-a request message, pass `request={...}` using the field names in the schema.
-For GET endpoints pass `query={...}`. `response_as=` is a low-level escape
-hatch for selecting a known response schema when the endpoint's response type
-has not been identified.
+Method names are `<area>_<action>` (`shared_list_mine`, `shared_item_info`,
+`account_login`, ...). Legacy aliases `login`, `list_mine`, `item_info` still
+work. Any other public endpoint is also reachable via the generic fallback
+`client.<area>_<action>(request={...}, query={...})`.
 
-## Current scope and limitations
+POST methods take keyword arguments matching the request fields (see
+[ENDPOINTS.md](ENDPOINTS.md)); `editor_add_or_update(request)` takes the full
+request mapping. GET methods take `shared_id=` or `query={...}`.
 
-- `ankiweb_schema.py` currently contains 174 recovered messages and 62
-  discovered endpoints: 41 normal-user endpoints and 21 `/svc/radmin/*`
-  endpoints. `public_endpoints()` excludes admin endpoints.
-- Some endpoints have unresolved response mappings or nested message
-  references. A `None` response mapping returns the raw response from the
-  client; it does not imply the endpoint is fully understood.
-- `ankiweb_client.py` is a generic transport, not a curated stable API. Check
-  field names and required values in `SCHEMA` before calling an endpoint.
-- `AnkiWebClient()` does not automatically read `.env`; set the credential
-  environment variables or pass `env_file=...` explicitly, then call `login()`.
-- Login and account actions can have effects. Prefer public/read-only methods
-  and synthetic/offline fixtures during development. Do not use a real
-  `.ankiaddon` for upload tests; follow the repository's synthetic-fixture
-  instructions in the README.
+## Safety
+
+- Read-only/public methods (`shared_item_info`, `shared_list_addons`,
+  `shared_list_decks`, `shared_list_mine`, ...) are safe to explore.
+- Account actions (`update-settings`, `remove-account`, `deck-share`,
+  `remove-item`, `upload-addon`, ...) have real effects. Prefer synthetic or
+  offline fixtures during development. **Never test uploads with a real add-on
+  file** — an upload replaces the file on AnkiWeb irreversibly; follow the
+  synthetic-fixture instructions in the README.
 
 ## Schema regeneration
 
-The generator extracts protobuf message declarations and call sites from the
-frontend bundle. It can discover a current bundle or consume a local file:
+The generator decodes protobuf definitions and call sites from AnkiWeb's live
+frontend bundle (Vite `__vite__mapDeps` discovery + precise
+`k(VAR,new REQ(n),RESP,e)` call-site parsing). Refresh with:
 
 ```sh
-python3 tools/generate_schema.py
-python3 tools/generate_schema.py --bundle /path/to/frontend.mjs --json /tmp/ankiweb-schema.json
+python3 tools/generate_schema.py                      # download + regenerate
+python3 tools/generate_schema.py --bundle /path/to/frontend.mjs
 ```
 
-Review generated diffs before accepting them. Minification and bundle changes
-can confuse endpoint association; known corrections are maintained in
-`ENDPOINT_RESPONSE_OVERRIDES` and `SHARED_RESPONSE_ALIASES` in
-`tools/generate_schema.py`. A generator warning about unnamed nested messages
-means some field references still need investigation.
+Review generated diffs before accepting them. `tools/generate_schema.py` keeps
+`SHARED_RESPONSE_ALIASES` (verified response-var corrections) and a pinned
+`ENDPOINT_RESPONSE_OVERRIDES` sanity entry for login.
 
 ## Codec
 
 `ankiweb_proto.py` provides `encode(message_name, mapping)` and
-`decode(message_name, bytes)`. The codec supports scalar, repeated, nested,
-packed, and optional fields represented in the extracted schema, and retains
-unknown fields for round-tripping. It is a focused implementation for this
-schema, not a general-purpose protobuf library. Offline regression tests:
+`decode(message_name, bytes)` — pure stdlib, no protobuf dependency. Supports
+scalar, repeated (packed/unpacked), nested, optional and map fields, and
+retains unknown fields for round-tripping. Offline regression tests:
 
 ```sh
 python3 -m unittest -v test_ankiweb_proto.py
