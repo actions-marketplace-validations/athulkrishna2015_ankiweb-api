@@ -38,8 +38,17 @@ Test addon: [805854302](https://ankiweb.net/shared/info/805854302)
 
 ## Upload / description update (auth, via upstream)
 
+Credentials (`.env` is gitignored; never commit it):
+
 ```sh
-export ANKIWEB_USERNAME='you@example.com' ANKIWEB_PASSWORD='...'
+cp .env.example .env
+$EDITOR .env          # ANKIWEB_USERNAME=... / ANKIWEB_PASSWORD=...
+```
+
+`upload.py` reads `./.env` automatically (existing exported vars take precedence,
+`--env-file PATH` to override, or `--username/--password` flags).
+
+```sh
 # file + metadata update on the test addon:
 ./upload.py --addon-id 805854302 --title "testingaddon for me [private]" \
     --description-file DESCRIPTION.md \

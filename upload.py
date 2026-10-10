@@ -30,14 +30,38 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 
 
+def load_dotenv(path: Path) -> None:
+    """Minimal .env loader (no dependency). Existing env vars win."""
+    if not path.is_file():
+        return
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[len("export "):].strip()
+        if "=" not in line:
+            continue
+        key, val = line.split("=", 1)
+        key = key.strip()
+        val = val.strip().strip('"').strip("'")
+        os.environ.setdefault(key, val)
+
+
 def build_env(args) -> dict:
+    load_dotenv(Path(args.env_file).expanduser() if args.env_file else HERE / ".env")
     env = dict(os.environ)
     def inp(name: str, value: str):
         env[f"INPUT_{name.upper().replace('-', '_')}"] = value
     username = args.username or os.environ.get("ANKIWEB_USERNAME", "")
     password = args.password or os.environ.get("ANKIWEB_PASSWORD", "")
-    if not username or not password:
-        sys.exit("error: username/password required via flags or ANKIWEB_USERNAME/ANKIWEB_PASSWORD env")
+    missing = [n for n, v in (("ANKIWEB_USERNAME", username), ("ANKIWEB_PASSWORD", password)) if not v]
+    if missing:
+        sys.exit(
+            f"error: missing {' and '.join(missing)}\n"
+            f"       set them in {HERE / '.env'} (copy .env.example), export them, "
+            f"or pass --username/--password"
+        )
     inp("username", username)
     inp("password", password)
     inp("addon-id", str(args.addon_id or ""))
@@ -78,8 +102,9 @@ def main() -> int:
                     help=".ankiaddon paths in branch order; use - to skip a branch file")
     ap.add_argument("--description", default="")
     ap.add_argument("--description-file", default="")
-    ap.add_argument("--username", default="")
-    ap.add_argument("--password", default="")
+    ap.add_argument("--username", default="", help="default: $ANKIWEB_USERNAME")
+    ap.add_argument("--password", default="", help="default: $ANKIWEB_PASSWORD")
+    ap.add_argument("--env-file", default="", help="default: ./.env next to this script")
     ap.add_argument("--node", default="node")
     ap.add_argument("--dry-run", action="store_true", help="print INPUT_* mapping, don't run node")
     args = ap.parse_args()
