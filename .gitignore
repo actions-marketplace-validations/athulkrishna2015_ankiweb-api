@@ -136,10 +136,11 @@ dist
 # GitHub Actions
 !/dist/index.js
 
-# Python / anki-web-api additions
+# Python / ankiweb-api additions
 __pycache__/
 *.pyc
 *.ankiaddon
+.sentry-native/
 
 # test fixtures are intentionally tracked
 !fixtures/*.ankiaddon
