@@ -1,0 +1,71 @@
+name: Upload Anki add-on to AnkiWeb
+description: Upload Anki add-on to AnkiWeb inside your GitHub Actions workflow.
+author: Tzu-Hsien Chao
+branding:
+  icon: upload
+  color: blue
+inputs:
+  username:
+    description: Your AnkiWeb username.
+    required: true
+  password:
+    description: Your AnkiWeb password.
+    required: true
+  addon-id:
+    description: The download code for the add-on. If not provided, a new add-on will be created.
+    required: false
+    default: ""
+  title:
+    description: The title of the add-on. Must be fewer than 80 characters.
+    required: true
+  tags:
+    description: Space-separated tags for this add-on.
+    required: false
+    default: ""
+  support-page:
+    description: A bug tracker, forum link, or other page where users can reach you. Must start with http.
+    required: false
+    default: ""
+  branches:
+    description: >
+      A list of branch notations, one per line.
+
+      The branch notation is defined as <start-version>-<end-version>(+),
+      where <start-version> and <end-version> are Anki version numbers,
+      and the optional + means the add-on is compatible with all future versions after <end-version>.
+
+      For example,
+      2.1.1-2.1.66 means the add-on is compatible with Anki versions from 2.1.1 to 2.1.66, inclusive;
+      23.10.0-25.09.4+ means the add-on is compatible with Anki versions from 23.10.0 to 25.09.4, inclusive, and all future versions after 25.09.4.
+    required: true
+  addon-files:
+    description: >
+      A list of paths to add-on files, one per line.
+
+      The number of paths must match the number of branches, and the order must correspond to each other.
+      To skip uploading an add-on file for a branch, use a dash (-) on the corresponding line.
+
+      For example, to upload an add-on file for the second branch but not the first:
+        -
+        path-to-addon-file.ankiaddon
+    required: true
+  description:
+    description: >
+      The description of the add-on. Markdown and basic HTML are supported.
+
+      If both description and description-file are provided, description will take precedence.
+    required: false
+    default: ""
+  description-file:
+    description: >
+      Path to a file containing the add-on description. Markdown and basic HTML are supported.
+
+      If both description and description-file are provided, description will take precedence.
+    required: false
+    default: ""
+outputs:
+  addon-id:
+    description: The add-on ID of the uploaded add-on. You can use this ID to update the add-on in the future.
+runs:
+  using: node24
+  main: dist/index.js

@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  check-dist:
+    name: Check dist/
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      - name: Generate protobuf
+        run: pnpm generate
+      - name: Build dist/ Directory
+        run: pnpm build
+      # This will fail the workflow if the `dist/` directory is different than
+      # expected.
+      - name: Compare Directories
+        id: diff
+        run: |
+          if [ ! -d dist/ ]; then
+            echo "Expected dist/ directory does not exist.  See status below:"
+            ls -la ./
+            exit 1
+          fi
+          if [ "$(git diff --ignore-space-at-eol --text dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build. See status below:"
+            git diff --ignore-space-at-eol --text dist/
+            exit 1
+          fi
+      # If `dist/` was different from expected, upload the expected version as a
+      # workflow artifact.
+      - if: ${{ failure() && steps.diff.outcome == 'failure' }}
+        name: Upload Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      - name: Lint
+        run: pnpm lint:github
+      - name: Check formatting
+        run: pnpm format:check
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      - name: Run tests
+        run: pnpm test
+        env:
+          ANKIWEB_ADDON_ID: ${{ vars.INTEGRATION_TEST_ADDON_ID }}
+          ANKIWEB_COOKIE: ${{ secrets.ANKIWEB_COOKIE }}
+          ANKIWEB_USERNAME: ${{ secrets.ANKIWEB_USERNAME }}
+          ANKIWEB_PASSWORD: ${{ secrets.ANKIWEB_PASSWORD }}
+
+  test-action:
+    name: GitHub Actions Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Generate test addon
+        run: |
+          mkdir -p test-addon
+          echo "from aqt.utils import showInfo" > test-addon/__init__.py
+          echo "EVENT_NAME = '${{ github.event_name }}'" >> test-addon/__init__.py
+          echo "REF = '${{ github.ref_name }}'" >> test-addon/__init__.py
+          echo "JOB_URL = '${{ format('{0}/{1}/actions/runs/{2}/job/{3}', github.server_url, github.repository, github.run_id, job.check_run_id) }}'" >> test-addon/__init__.py
+          echo "showInfo(f'Event name: {EVENT_NAME}\nBranch: {REF}\nGitHub Actions Job URL: {JOB_URL}')" >> test-addon/__init__.py
+          cd test-addon && zip -r ../test-addon-1.ankiaddon *
+      - name: Test action
+        id: test-action
+        uses: ./
+        with:
+          addon-id: ${{ vars.ADDON_ID }}
+          username: ${{ secrets.ANKIWEB_USERNAME }}
+          password: ${{ secrets.ANKIWEB_PASSWORD }}
+          title: "Test for @danny900714/upload-anki-addon"
+          tags: "github action test upload"
+          support-page: "https://github.com/danny900714/upload-anki-addon"
+          branches: |
+            2.1.1-25.09.4+
+          addon-files: |
+            test-addon-1.ankiaddon
+          description: |
+            This is a test add-on uploaded by GitHub Actions workflow.
+              
+            **Repository:** [${{ format('{0}/{1}', github.server_url, github.repository) }}](${{ format('{0}/{1}', github.server_url, github.repository) }})  
+            **Triggering event:** ${{ github.event_name }}  
+            **Branch:** ${{ github.ref_name }}  
+            **Commit:** ${{ github.sha }}  
+            **GitHub Actions Job URL:** [${{ format('{0}/{1}/actions/runs/{2}/job/{3}', github.server_url, github.repository, github.run_id, job.check_run_id) }}](${{ format('{0}/{1}/actions/runs/{2}/job/{3}', github.server_url, github.repository, github.run_id, job.check_run_id) }})
+      - name: Print output
+        run: echo "${{ steps.test-action.outputs.addon-id }}"
