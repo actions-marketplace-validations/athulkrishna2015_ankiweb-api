@@ -13,12 +13,15 @@ import argparse
 import datetime
 import sys
 
-from terminal_ankiweb import download_addon, fetch_item_info, AnkiWebError
+from terminal_ankiweb import download_addon, fetch_item_info, AnkiWebError, NotFoundError
 
 
 def cmd_info(args) -> int:
     try:
         info = fetch_item_info(args.addon_id)
+    except NotFoundError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
     except AnkiWebError as e:
         print(f"error: {e}", file=sys.stderr)
         return 1

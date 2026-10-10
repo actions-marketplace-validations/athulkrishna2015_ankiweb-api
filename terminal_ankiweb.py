@@ -26,6 +26,10 @@ class AnkiWebError(RuntimeError):
     pass
 
 
+class NotFoundError(AnkiWebError):
+    """The id does not exist, or its item is not publicly visible."""
+
+
 def download_addon(
     addon_id: int, dest: str | None = None, point_version: int = 250902, timeout: int = 60
 ) -> dict:
@@ -90,9 +94,14 @@ def _varint_decode(buf: bytes, pos: int) -> tuple[int, int]:
             raise ValueError("varint too long")
 
 
-def _walk(buf: bytes, depth: int = 0, max_depth: int = 4):
-    """Yield (depth, field_no, wire, value). Recurses into nested messages
-    only when the payload itself parses cleanly as protobuf fields."""
+def _walk(buf: bytes, depth: int = 0, max_depth: int = 6):
+    """Yield (depth, field_no, wire, value), recursing into nested messages.
+
+    Always attempts recursion on wire-type-2 payloads: a container message can
+    itself be valid UTF-8 (e.g. ItemInfo wrapping a title), so "looks like text"
+    is not a safe test for "is a message". Callers pick fields by exact
+    (depth, field_no), so over-walking is harmless.
+    """
     pos = 0
     while pos < len(buf):
         key, pos = _varint_decode(buf, pos)
@@ -105,18 +114,18 @@ def _walk(buf: bytes, depth: int = 0, max_depth: int = 4):
             v = buf[pos : pos + ln]
             pos += ln
             yield (depth, field, wire, v)
-            if depth < max_depth and len(v) >= 2 and not _is_printable_text(v):
-                try:
-                    # validate: must consume exactly and have sane field nos
-                    inner = list(_walk(v, depth + 1, max_depth))
-                    # heuristic: accept nesting only if it re-serializes plausibly
-                    # (at least one varint or nested msg inside)
-                    if any(w == 0 or d > depth + 1 for d, f, w, vv in inner for d in [d]):
-                        pass
-                    # re-walk lazily instead: yield from inner
-                    yield from inner
-                except Exception:
-                    pass
+            if depth < max_depth and ln >= 2:
+                # Yield incrementally: a payload can parse as a message for a
+                # few fields and then hit an invalid wire type. Keep what we
+                # already decoded instead of discarding the whole subtree.
+                it = _walk(v, depth + 1, max_depth)
+                while True:
+                    try:
+                        yield next(it)
+                    except StopIteration:
+                        break
+                    except Exception:
+                        break  # not a nested message past this point
         else:
             raise ValueError(f"unsupported wire type {wire}")
 
@@ -143,28 +152,38 @@ def fetch_item_info_raw(shared_id: int, timeout: int = 30) -> bytes:
         headers={"Accept": "*/*"},
         timeout=timeout,
     )
-    if r.status_code != 200:
+    if r.status_code != 400 and r.status_code != 404 and r.status_code != 200:
         raise AnkiWebError(f"item-info HTTP {r.status_code}: {r.text[:300]}")
+    if r.status_code in (400, 404):
+        raise NotFoundError(f"item-info HTTP {r.status_code} for id {shared_id}: {r.text[:200]}")
+    # A missing/private id still returns 200, but with an empty response message
+    # (no ItemInfo payload). Anything under ~4 bytes carries no fields.
+    if len(r.content) <= 3:
+        raise NotFoundError(
+            f"no shared item {shared_id} (empty response; wrong id, or not public)"
+        )
     return r.content
 
 
 def parse_item_info(buf: bytes) -> dict:
-    """Heuristically extract title/description/size/timestamps/versions.
+    """Extract title/description/tags/size/versions from an ItemInfoResponse.
 
-    Field numbers observed (2026-10, may drift with frontend deploys):
-      ItemInfo{title=f5, tags?=f6, size=f7, last_updated=f8, description=f9,
-               addon=f11{v2_1=f2, versions=f3[{description=f1, updated_at=f2}]},
-               items_shared_by_user=f13}
-    We don't rely on exact numbers: strings are classified by content,
-    varints by magnitude (unix time vs size vs small flags).
+    Field numbers verified against fixtures/ on 2026-10:
+      ItemInfo @ depth1: title=f5, tags=f6, size=f7, last_updated=f8,
+                        description=f9, support_url=f12, items_shared_by_user=f13
+      AddonVersion @ depth3: description=f1 ("2.1.45+", "2.1.0-2.1.44")
+
+    Every field is addressed by exact (depth, field_no). Heuristic matching
+    by content/length is deliberately avoided: reviews live at f1/f4 and are
+    often far longer than the title, and review ids are plausible varints.
     """
     strings: list[tuple[int, int, bytes]] = []  # (depth, field, raw)
-    varints: list[int] = []
-    for _d, _f, w, v in _walk(buf):
+    varints_at: list[tuple[int, int, int, int]] = []  # (depth, field, wire, varint)
+    for d, f, w, v in _walk(buf):
         if w == 2 and isinstance(v, bytes) and _is_printable_text(v):
-            strings.append((_d, _f, v))
+            strings.append((d, f, v))
         elif w == 0 and isinstance(v, int):
-            varints.append(v)
+            varints_at.append((d, f, w, v))
 
     def txt(raw: bytes) -> str:
         return raw.decode("utf-8", "replace")
@@ -198,12 +217,16 @@ def parse_item_info(buf: bytes) -> dict:
                 and re.fullmatch(r"[\d.\-]+\+?", txt(r).strip())
             }
         )
-    # timestamps: varints in plausible unix range (2020-01-01 .. 2035-01-01)
-    times = sorted({v for v in varints if 1577836800 <= v <= 2051222400})
-    last_updated = max(times) if times else 0
-    # size: largest varint that is NOT a timestamp and < 500MB
-    sizes = [v for v in varints if v not in times and 0 < v < 500_000_000]
-    size = max(sizes) if sizes else 0
+    # Scalars by exact position (magic-number guessing picked up review ids
+    # as "size" on busy add-ons, e.g. AnkiConnect reporting 67 MB):
+    #   ItemInfo @ depth1: size=f7, last_updated=f8, items_shared_by_user=f13
+    def vat(depth: int, field: int) -> list[int]:
+        return [v for d, f, w, v in varints_at if d == depth and f == field]
+
+    size = vat(1, 7)[0] if vat(1, 7) else 0
+    last_updated = vat(1, 8)[0] if vat(1, 8) else 0
+    shared_by = vat(1, 13)[0] if vat(1, 13) else 0
+    times = sorted({v for _d, _f, _w, v in varints_at if 1577836800 <= v <= 2051222400})
     return {
         "title": title,
         "description": description,
@@ -212,6 +235,7 @@ def parse_item_info(buf: bytes) -> dict:
         "versions": versions,
         "last_updated": last_updated,
         "size": size,
+        "items_shared_by_user": shared_by,
         "timestamps_seen": times,
     }
 
@@ -219,5 +243,11 @@ def parse_item_info(buf: bytes) -> dict:
 def fetch_item_info(shared_id: int, timeout: int = 30) -> dict:
     raw = fetch_item_info_raw(shared_id, timeout)
     info = parse_item_info(raw)
+    # Defensive: a real ItemInfo always carries a title or a description.
+    if not info["title"] and not info["description"]:
+        raise NotFoundError(
+            f"no usable metadata for id {shared_id} "
+            f"(wrong id, deleted, or not public)"
+        )
     info["shared_id"] = shared_id
     return info

@@ -143,3 +143,5 @@ __pycache__/
 
 # test fixtures are intentionally tracked
 !fixtures/*.ankiaddon
+
+!fixtures/*.bin

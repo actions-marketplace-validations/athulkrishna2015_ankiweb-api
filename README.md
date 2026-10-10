@@ -17,6 +17,7 @@ Upload an [Anki](https://apps.ankiweb.net/) add-on to [AnkiWeb](https://ankiweb.
 ## Table of contents
 
 - [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
+- [Tests](#tests)
 - [GitHub Actions usage](#github-actions-usage) — [inputs](#inputs) · [outputs](#outputs)
 
 ## Terminal usage
@@ -156,6 +157,17 @@ curl -sL "https://ankiweb.net/shared/download/805854302?v=2.1&p=250902" -o addon
   folder, no `__pycache__` (see [Anki's sharing docs](https://addon-docs.ankiweb.net/sharing.html)).
   `make_test_addon.py` builds a compliant fixture you can inspect.
 - Never commit `.env` or AnkiWeb credentials.
+
+## Tests
+
+```sh
+python3 test_terminal_ankiweb.py          # offline, no network
+python3 test_terminal_ankiweb.py --live   # + live AnkiWeb round-trips
+```
+
+Offline tests parse real captured responses in `fixtures/` (private add-on and
+AnkiConnect, which carries 133 KB of reviews) and cover CLI exit codes.
+Live tests hit `info` / `download` / error paths.
 
 ## GitHub Actions usage
 

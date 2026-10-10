@@ -1,0 +1,1021 @@
+
+›Ÿ
+·‡‹Ö".
+EÖÓ‡Ö";Excellent, opens up so many new ways to interact with Anki!
+'šÅıÕ"just what I was looking for. 
+B²ÎáÕ"8This add-on is awesome for making cards through yomitan!
+ Ú´Õ"Essential pretty much.
+Á‰Õ"	Excelente
+‡©Õ"cool
+(ÄÑˆÕ"Works perfectly with cursor ai
+À¨…Õ"
+Good stuff
+4÷óƒÕ"*It works, needed ai for assistance though 
+¯•­Ô"very helpful
+zÑàªÔ"pThis add-on is amazing. It helps me a lot. Now I can use AI to analyze my cards and improve my learning process.
+£«¾‚Ô"˜Ğ˜ÑĞ¿Ğ¾Ğ»ÑŒĞ·ÑƒÑ Ğ´Ğ»Ñ ÑĞ¸Ğ½Ñ…Ñ€Ğ¾Ğ½Ğ¸Ğ·Ğ°Ñ†Ğ¸Ğ¸ Ñ Obsidian. Ğ Ğ°Ğ½ÑŒÑˆĞµ Ñ Ğ¿Ğ¾Ğ¼Ğ¾Ñ‰ÑŒÑ Yanki, Ñ‚ĞµĞ¿ĞµÑ€ÑŒ Ñ Ğ¿Ğ¾Ğ¼Ğ¾Ñ‰ÑŒÑ Simple Anki Sync.
+!Ÿ÷øÓ"Works great, thank you!
+VÜÓïÓ"Lallows claude code (or your agent of choice) to directly make and edit cards
+“š¸Ó"Nice.
+şÿÒ"
+Crazy good
+CğƒÌÒ"9good, AI agents can use this addon to interact with anki
+
+³†²Ò"Very helpful!
+L§¬™Ò"BNew Anki-Connect Homepage: https://git.sr.ht/~foosoft/anki-connect
+·ˆ“Ò"Works great!
+TÑ‘ˆÑ"JI've been using this with Yomitan and it does exactly what i need it to do
+şŞ„Ñ"great
+Ç¬ÉĞ"
+real good
+
+:Î®ÆĞ"0Looking forward to exploring this functionality.
+Ğš÷Ï"í•´ë³´ê²Œìš”
+EÖóİÏ";The new homepage is https://git.sr.ht/~foosoft/anki-connect
+WâæµÏ"Mthe link to homepage is dead. please remove it. otherwise plugin works great.
+²õ“Ï"
+Nice works
+I–ÔïÎ"?Instrumental in using Anki programmatically. Thank you so much!
+ÆÂŠÏÎ"»This worked perfectly! It took me a minute to get it to work with claude desktop but claude just talked me through it. This is going to be very helpful. Thank you for sharing this add on!
+ùúËÎ"Wow! Works fine.
+¸Šù£Î"­Works well (Anki 25.02.5) and enables easy mass edits with a just few lines of your favorite scripting language.
+Documentation is at https://git.sr.ht/~foosoft/anki-connect/
+•´ÍÍ"Great addon!
++½±‰Í"!I like how it works with Obsidian
+…¶ôÌ"Actually works lol
+Üƒ±ÿË"ÑWhen connecting the Subtiplayer app to Anki using the AnkiConnect add-on, I encountered a CORS error. To fix this issue, I had to slightly modify the add-onâ€™s code. Unfortunately, I was unable to contact the original author, so I temporarily published the fixed version as AnkiConnect Fixed (https://ankiweb.net/shared/info/734459859).
+®¡üòË"£People with issues due to App Nap in recent Mac OS may try my fork at lower_cpu_usage_qtcpserver branch
+
+https://git.sr.ht/~self-perfection/anki-connect/tree/lower_cpu_usage_qtcpserver
+
+It replaces polling on timer, which produced constant small CPU load, with event-driven I/O. I do not know anything about MacOS and do not use it, but _probably_ it will not freeze background app if it does not use CPU in background.
+­«Ã…Ë"¢To disable App Nap on Mavericks, I followed the suggestion on this comment: https://forums.ankiweb.net/t/recent-anki-updates-bundle-id-change-disabling-app-nap-macos-anki-connect/65550/7
+and added this code to __init.py__
+
+from aqt._macos_helper import macos_helper as h
+h.disable_appnap()
+
+¼·Á‰Ê"±(answering a few of the recent questions)
+On my webapp, I needed to use 127.0.0.1:8765 and NOT localhost:8765 - as chrome seems to try IPv6 first, and AnkiConnect only listens on IPv4. (at least, I think this is what fixed it for me!)
+The 'new' homepage seems to be https://git.sr.ht/~foosoft/anki-connect
+KÁû‚Ê"CLink to homepage is dead.
+
+Please delete this comment after fixing.
+ãÖßÉ"ØOn December 8, 2025, AnkiConnect stopped working on the WebApp I developed. After countless tests, updates, downgrades, and configuration changes, I verified that the problem was not with the browser, the app, Anki, or AnkiConnect, but rather with the flag permissions in Edge and Chrome. To fix the error, simply access chrome://flags (or edge://flags), search for 'Local Network Access check', and change the setting from 'Default' to 'Disabled'. Click 'Relaunch'. Done!
+ı¼ÙÉ".
+¥ÚÀÉ"Invaluable indeed!
+4Ğã²É"*This is an invaluable addon
+Thanks so much
+İœä”É"ÒThis is just a gift, many thanks for developers, you are doing awesome job.
+People who's downrate it here just because lack of knowledge, well, go to docs/github issues and try to solve it. The plugin is a gem.
+»ûúÈ"Awesome!
+²‹ÿÒÈ"§UPDATE: I went into chrome settings and gave the extension access to everything and then gave uworld access and now it works.
+
+old: Uworld to anki no longer working since yesterday 11/3/2025. Pressing the "search anki for missed ?s" does nothing at all. This has helped me pass every shelf exam of med school but I have my second to last this weekend and neeeeed this lol. Neither the STEP 1 or STEP 2 version works for me 
+yà©ÊÈ"oIF ERRO. YOU CAN ACCESS CHROME EXTENSTION AND OPEN ALOW ACCESS ULR, ALOW IN INCOGINOTO. I DO SUCCESS. THANK ALL
+”êÙÈÈ"‰If anyone else is having a problem with AnkiConnect not opening the browse window in Anki, make sure you give Chrome permission to access your local network. Otherwise Anki cannot access the local host data! The newest Chrome update seems to default turning it off!
+ñã¤ÇÈ"èAn error occurred:
+Anki error: You must provide a "data", "path", or "url" field.
+
+and
+
+
+Access to fetch at 'http://localhost:8770/?term=%E5%88%BA%E5%AE%A2&reading=%E3%81%97%E3%81%8B%E3%81%8F' from origin 'chrome-extension://likgccmbimhjbgkjambclfkhldnlhbnn' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+²îæ°È"§there is currently a "failed to fetch" Cors error with aspplayer that I found a fix for by adding "https://app.asbplayer.dev" to webCorsOriginList in the AnkiConnect config in Anki and then restarting anki. "https://killergerbah.github.io" should also be there but it was there by default for me
+sí¯È"kI was using it in n8n to add cards with front, back, and audio, but suddenly the audio stopped being added.
+Zµê®È"RGot CORS issues with asbplayer since last update, tried downgrading but can't help
+ï„±«È"ä--- Edit: 2025-11-05 ---
+Hi I'm add-on developer Shigeà¶! I added a feature to Anki Connect Downgrader to select and install recent versions. If the default version 23.10.29 does not work fine please try another version. (add-on: https://ankiweb.net/shared/info/1485099361 ) After the original Anki Connect has been fixed this fork add-on is not needed.
+---  2024-03-14 ---
+I uploaded an add-on to AnkiWeb for easy downgrading of Anki Connect.
+Once the original Anki Connect supports the old Anki, this Add-on is not needed.
+ğŸ”™Anki Connect Downgrader (Fork by Shige)
+https://ankiweb.net/shared/info/1485099361
+·¥æªÈ"¬For those encountering issues with the latest version, you can download older versions here: https://git.sr.ht/~foosoft/anki-connect/refs
+
+Seems like 25.9.6.0 works for me.
+aÅªÈ"YAs off 11/03/2025 it does not work anymore with asbplayer, sends "Failed to fetch" error.
+­Òí¦È"¢Great, but the 02/11/2025 update caused a bug with asbplayer not adding audio to new cards. If you have this issue check your recycle bin for a folder with the name 2055492159 and put it back in the addons location, this will but you back to the previous version and fixed the issue for me.
+²á¦È"†After the latest update, audio and video import stopped working with ASBPlayer. It was fine before, now nothing is added to the cards.
+Q¨Æ¦È"ILatest update broke embedding media into cards via the audio/video fields
+¥È"ølatest update broke writes.  Reads still seem fine.  one example is "updateNote" no longer updates a note.  Heres a chunk of example python that was working 5 minutes before I upgraded.
+
+
+        # Create gTTS object and specify the language
+        tts = gTTS(text=kanji, lang='ja', slow=False)
+
+        # Save the speech as an audio file
+        audio_file = f"{args.output_path}/{note_id}.wav"
+        tts.save(audio_file)
+
+        # grab the sound from disk
+        sound_data = base64.b64encode(open(audio_file, "rb").read()).decode('utf-8')
+        sound_field = {"filename": f"{note_id}.wav", "data": sound_data, "fields":[used_field], "deleteExisting":True}
+
+        # create our note update
+        updated_note = {
+            "id" : note_id,
+            "fields" : {},
+            "audio" : sound_field,
+            "tags" : []
+        }
+
+        # convert our existing fields over
+        for key, value in data_fields.items():
+            updated_note['fields'][key] = value['value']
+
+        # clean the existing "used" field
+        updated_note['fields'][used_field] = re.sub(r'\[.*?\]', '', updated_note['fields'][used_field])
+        
+        # insert the sound in our deck
+        payload = json.dumps({
+        "action": "updateNote",
+        "version": 6,
+        "params": {
+            "note": updated_note
+            }
+        })
+        response = requests.post(url, data=payload)
+        result = response.json()
+        if result['error'] is not None:
+            print(f" ERROR: {result['error'] }")
+1¤ì¢È")since the last update, didnt work anymore
+†¡Ø¡È"|This addon has helped me a lot with automations to my Anki collection, greatly reducing the time I need for card grooming <3
+$É™úÇ"muy bueno, muchas gracias!
+ÀÂİÇ"Thanks
+·…“Ç"®Hello, this is not a bad review but I just wanted to let you know that the plugin's homepage & contact page both give a 404 error ğŸ˜¬
+The foosoft website still exists but I can't find the anki-connect pages anymore.
+
+Could you update the links if they still exist? Or provide an alternative?
+Thank you
+[ÀœìÆ"QIndispensable.
+
+Repo is now located here: https://git.sr.ht/~foosoft/anki-connect
+‚°åÆ"good
+bŸ¿ßÆ"XAwesome, I asked chatgpt to write me a script and used ankiconnect and python to run it!
+WÅÙŸÆ"MHow does it work on macbook? I downloaded anki app from the official website.
+'Õü‘Æ"Works great! Tested on Linux.
+¤´ŞøÅ"™This add-on works perfectly! I even built a simple Python project using it. It automatically creates flashcards with definitions, pronunciation, and example sentences from a free dictionary API. Feel free to check it out here: https://github.com/muzammilnt/Anki-Flashcard-Generator
+Í­–ğÅ"Â25 å¹´ 09 æœˆè‡ªç”¨ä¿®å¤ç‰ˆï¼ˆTemporary patch versionï¼‰ï¼šhttps://pan.baidu.com/s/1BEeh_jn7sxPZ03GFfgVMcg?pwd=xxhk 
+
+After upgrading to the latest beta version, the plugin encountered an error.
+Reason for the issue:After upgrading to Anki version 25.08b5, the version number now includes a beta identifier (b5)
+The original version parsing mechanism of the plugin is limited to purely numeric version formats and fails to handle version numbers that include alphabetic characters.When attempting to convert the string '08b5' to an integer, Python throws a ValueError exception
+ˆáÄ"Very useful 
+jß»Ä"`using anki connect to connect to a mcp server. works like a charm. 
+thank you for building this!
+YŠªÄ"OReally Nice Addon 
+But does it work on Linux?
+If no are there any alternatives?
+RôÁÔÃ"H7/14/25: yomitan integration works with chrome, not working with firefox
+®ƒ™ŒÃ"£Anki 25.06b7 (ad34b76f) (ao)
+Python 3.13.5 Qt 6.8.1 PyQt 6.8.0
+Platform: Windows-11-10.0.26100-SP0
+
+When loading AnkiConnect:
+Traceback (most recent call last):
+  File "C:\Users\skyfox\AppData\Local\AnkiProgramFiles\.venv\Lib\site-packages\aqt\addons.py", line 250, in loadAddons
+    __import__(addon.dir_name)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\skyfox\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 19, in <module>
+    anki_version = tuple(int(segment) for segment in aqt.appVersion.split("."))
+  File "C:\Users\skyfox\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 19, in <genexpr>
+    anki_version = tuple(int(segment) for segment in aqt.appVersion.split("."))
+                         ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '06b7'
+
+
+Å
+ëÙˆÃ"º
+If you use beta version of anki, you probably has error with AnkiConnect when you start the Anki application. It's because the add-on can't parse beta versions correctly. To fix it, you need to change the top of the init.py file from 
+=========
+import aqt
+
+required_anki_version = (23, 10, 0)
+anki_version = tuple(int(segment) for segment in aqt.appVersion.split("."))
+
+if anki_version < required_anki_version:
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+==========
+
+to:
+
+=============
+import re
+import aqt
+
+required_anki_version = (23, 10, 0)
+def parse_anki_version(version_string):
+    version_clean = re.split(r'[a-zA-Z]', version_string)[0]
+    
+    segments = version_clean.split(".")
+    
+    version_tuple = []
+    for i in range(3):
+        if i < len(segments):
+            try:
+                version_tuple.append(int(segments[i]))
+            except ValueError:
+                version_tuple.append(0)
+        else:
+            version_tuple.append(0)
+    
+    return tuple(version_tuple)
+
+anki_version = parse_anki_version(aqt.appVersion)
+
+if anki_version < required_anki_version:
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+
+============
+
+ÓŠâòÂ"Êstopped working with the last anki beta:
+Anki 25.06b5 (782645d9) (ao)
+Python 3.13.5 Qt 6.8.1 PyQt 6.8.0
+Platform: Windows-10-10.0.19044-SP0
+
+When loading AnkiConnect:
+Traceback (most recent call last):
+  File "C:\Users\satoko\AppData\Local\AnkiProgramFiles\.venv\Lib\site-packages\aqt\addons.py", line 250, in loadAddons
+    __import__(addon.dir_name)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\satoko\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 19, in <module>
+    anki_version = tuple(int(segment) for segment in aqt.appVersion.split("."))
+  File "C:\Users\satoko\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 19, in <genexpr>
+    anki_version = tuple(int(segment) for segment in aqt.appVersion.split("."))
+                         ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '06b5'
+Œî°Â"good
+7°¼ŠÂ"-Thanks! Working on Anki 25.02 (linux-flatpak)
+Ö´ÉÍÁ"ÍIf not broken then why break intentionally? If you updated and it's broken you need to modify the init.py file. 
+
+Change 
+
+required_anki_version = (23, 10, 0)
+anki_version = tuple(int(segment) for segment in aqt.appVersion.split("."))
+
+if anki_version < required_anki_version:
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+
+
+
+
+To
+
+
+
+anki_version = tuple(int(segment) for segment in aqt.appVersion.split("."))
+
+if anki_version < (24, 6, 3):
+raise Exception("Minimum Anki version supported: 24.6.3")
+
+•¥©Á"
+Invaluable
+òş¦Á"Good app
+ïØ¹·À"äLevel up your Duolingo game!
+Duo2Anki auto-syncs your vocab to Anki â€” no more manual copying.
+âœ”ï¸ One-click flashcards
+âœ”ï¸ Smart language detection
+âœ”ï¸ Works inside your browser
+
+ğŸš€ Get it now 
+https://chromewebstore.google.com/detail/duo2anki/ilcpcjkfnmgmjknmoclnlelkcaiibnkf
+
+ğŸ¥ See it in action
+https://www.youtube.com/watch?v=HL5Gp1SRNkM
+0•İ™À"&good plugin, essential for vocabsieve
+
+©	’Œí¿"	
+Hi,
+
+I encountered an issue when calling the `guiDeckReview` action via the AnkiConnect API. While it successfully navigated to the deck overview screen, it failed to transition to the actual review screen. Clicking the "Study Now" button on the overview screen after the API call resulted in an "unrecognized anki link: study" error in Anki. Manually navigating through the Anki GUI worked correctly.
+
+I investigated the addon code and found a potential fix. The issue seems to be related to missing initialization (`startTimebox()`) and possibly a timing issue when transitioning states immediately after loading the overview.
+
+I modified the `guiDeckReview` function in `__init__.py` as follows:
+
+```python
+from aqt.qt import QTimer # Add this import if not already present
+
+# ... inside the AnkiConnect class ...
+
+@util.api()
+def guiDeckReview(self, name):
+    if self.guiDeckOverview(name):
+        # Call startTimebox() to initialize the study session
+        self.collection().startTimebox()
+        # Delay the state transition slightly to avoid timing issues
+        QTimer.singleShot(100, lambda: self.window().moveToState('review'))
+        return True
+
+    return False
+<‘àÀ¾"2Helped so much to create my own Anki-related stuff
+èÀ¾"this + yomitan
+­‡µ¾"¤Does not work when using API Key.
+No issue tracking system anymore so can't tell author.
+Waiting for someone to fork/make an alternative.
+Really shitty thing to do.
+Ÿ³ü½"Good!
+Û‘†ú½"ÒAnki 25.02 (038d85b1)  (ao)
+Python 3.9.18 Qt 6.6.2 PyQt 6.6.1
+Platform: Windows-10-10.0.26100
+
+Traceback (most recent call last):
+
+
+  File "C:\Users\user\AppData\Roaming\Anki2\addons21\2055492159\web.py", line 180, in handlerWrapper
+    params = json.loads(req.body.decode('utf-8'))
+  File "json", line 346, in loads
+  File "json.decoder", line 337, in decode
+  File "json.decoder", line 355, in raw_decode
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\...\Anki2\addons21\2055492159\__init__.py", line 95, in advance
+    self.server.advance()
+  File "C:\...\Anki2\addons21\2055492159\web.py", line 136, in advance
+    self.advanceClients()
+  File "C:\...\Anki2\addons21\2055492159\web.py", line 151, in advanceClients
+    self.clients = list(filter(lambda c: c.advance(), self.clients))
+  File "C:\...\Anki2\addons21\2055492159\web.py", line 151, in <lambda>
+    self.clients = list(filter(lambda c: c.advance(), self.clients))
+  File "C:\...\Anki2\addons21\2055492159\web.py", line 68, in advance
+    self.writeBuff += self.handler(req)
+  File "C:\...\Anki2\addons21\2055492159\web.py", line 190, in handlerWrapper
+    return self.buildResponse(headers, body)
+  File "C:\...\Anki2\addons21\2055492159\web.py", line 267, in buildResponse
+    resp += body
+TypeError: can't concat dict to bytes
+
+===Add-ons (active)===
+(add-on provided name [Add-on folder, installed at, version, is config changed])
+AnkiConnect ['2055492159', 2025-02-24T21:26, 'None', '']
+
+===IDs of active AnkiWeb add-ons===
+2055492159
+
+===Add-ons (inactive)===
+(add-on provided name [Add-on folder, installed at, version, is config changed])
+
+My Version
+Version â¨25.02 (038d85b1)â©
+Python 3.9.18 Qt 6.6.2 PyQt 6.6.1
+
+
+
+---------
+Got it to work.
+
+Update - you must go to https://apps.ankiweb.net/downloads/archive/
+Delete your current version.
+Download an older version: I am using 23.10.1
+
+Íâ½÷½"Äthere is an issue with web.js(line 185) in the latest version.
+variable "body" is a dict object, but in function "buildResponse" attemps to concat "body" to "resp" which is a string type variable
+
+Tàµ÷½"LPlease make this compatible with version 2.1.45+ like it says in the page :\
+˜é½"Please 
+U›×Ú½"Kwhen combined with yomitan, this is a life changing for learning languages 
+&æ¢½"Absolutely Remarkable Add-On
+kÎ­Ş¼"agreat addon! helps a lot for any japanese learner who also uses yomichan or yomitan for browsers
+
+Ÿ·Ê¼"Wow! Thank you!
+ìÖµ¼" peak
+
+à‹¬¼"
+nice addon
+Aı®†¼"7Use it for Yomitan, makes creating new cards super fast
+eı™ê»"]why the latest version installed, i can't see this tool in the window after i start the Anki.
+ÉäÎŞ»"ÀI don't see why the update matters and I wasn't told why some errors happened, all I know is that my time is wasted in uninstalling and reinstalling both this add-on and the Anki app, too bad.
+%çìº"Issues. findCards failing :( 
+9²“¦º"/Stable and perfect addon for language learning.
+"Ï×›º"Most useful addon for me
+¢¹•º"works 
+j‡¸ä¹"`Used it with some Python code I generated through ChatGPT to add some frequency data to my notes
+€ö­İ¹"õæ‰¾åˆ°æ’ä»¶æ–‡ä»¶å¤¹ä¸­çš„ç¨‹åº2055492159/__init__.py
+
+# ä¿®æ”¹å‰
+required_anki_version = (23, 10, 0)
+
+# ä¿®æ”¹å
+required_anki_version = (2, 1, 50)
+
+æŠŠç‰ˆæœ¬å·çš„æ¯”ä½ å½“å‰ankiç‰ˆæœ¬ä½ä¸€äº›çš„ç‰ˆæœ¬å·ï¼Œæ’ä»¶å°±èƒ½æ­£å¸¸è¿è¡Œäº†ã€‚
+¯ôõÙ¹"¦delete line 22 from __init__.py in C:\Users\you\AppData\Roaming\Anki2\addons21\2055492159 and it still functions
+i would also suggest you rename 2055492159 to prevent the addon from updating in the future
+stop huffing your own farts and think about the people who use your addon
+nice work guys!
+½­ÿÂ¹"²My anki is updated and its still not letting me use the add on. I get a popup when opening anki similar to what others have posted. I have tried restarting anki and my mac book multiple times. can anyone help?
+
+- replying to my own post ^^^ download the lastest anki version and it should fix your problems
+©”†À¹"I was sobbing because it stopped working for a few days. Downloading and installing latest Anki version fixed everything. Now all is right in the world. :DDDD
+iöµ¾¹"_Really awesome. I use it with my own scripts for automatically creating cards and bulk editing.
+Q™³µ¹"GUpdated to the latest Anki version fixed my issue. 
+
+Works as intended 
+cÊ´¹"Yä¸€åˆ‡åˆé †åˆ©å·¥ä½œäº†
+éå¸¸è¬è¬ä½ çš„ç„¡ç§çš„å¥‰ç»
+è®“æˆ‘èƒ½å¤ ç¹¼çºŒå¥®é¬¥ä¸‹å»
+ôˆ³¹"‚Sei que tanta cobranÃ§a pode parecer frustrante as vezes. Isso sÃ³ mostra o quanto Ã© Ãºtil e apreciamos o seu trabalho! Obrigado!
+ ×±¹"Working again. Thanks!
+›Î‹±¹"’é”™è¯¯
+ä¸‹åˆ—æ’ä»¶åŠ è½½å¤±è´¥ã€‚å¦‚æœè¯¥é—®é¢˜æŒç»­å‡ºç°ï¼Œè¯·åœ¨ã€Œå·¥å…·ã€>ã€Œæ’ä»¶ã€ä¸­ç¦ç”¨æˆ–åˆ é™¤æ­¤æ’ä»¶ã€‚
+
+åŠ è½½â¨AnkiConnectâ©æ—¶ï¼š
+â¨Traceback (most recent call last):
+  File "aqt.addons", line 247, in loadAddons
+  File "C:\Users\dell\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 22, in <module>
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+Exception: Minimum Anki version supported: 23.10.0
+â©
+˜°Ñ°¹"æ›´æ–°åå‡ºé”™æ˜¯å› ä¸ºankiè½¯ä»¶çš„åŸå› ï¼Œæˆ‘æŠŠankiæ›´æ–°åˆ°ã€ç‰ˆæœ¬ â¨24.06.3 (d678e393)â©Python 3.9.18 Qt 6.6.2 PyQt 6.6.1ã€‘åyomichançš„è¯å°±èƒ½ä¼ åˆ°ankiäº†ã€‚ä½œè€…è¯´yomichanä¸æ”¯æŒv3ç‰ˆæœ¬ï¼Œçœ‹æ¥è¦è½¬åˆ°yomitanäº†ã€‚å¼€æºå…è´¹æ˜¯äººç±»ä¼Ÿå¤§çš„è¡Œä¸ºã€‚
+
+[The following text uses Google Translate]
+The error occurred after the update because of the anki software. After I updated anki to [version 24.06.3 (d678e393) Python 3.9.18 Qt 6.6.2 PyQt 6.6.1], yomichan's words can be transferred to anki. The author said that yomichan does not support the v3 version, and it seems that it will be switched to yomitan. 
+Hope it helps you
+ºº¯°¹"±Stopped working once I updated- too bad.... 
+Anki 23.12.1 (1a1d4d54)  (ao)
+Python 3.9.15 Qt 6.5.3 PyQt 6.5.3
+Platform: macOS-13.7-x86_64-i386-64bit
+
+When loading AnkiConnect:
+Traceback (most recent call last):
+  File "aqt.addons", line 245, in loadAddons
+  File "/Users/jatnielservian/Library/Application Support/Anki2/addons21/2055492159/__init__.py", line 22, in <module>
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+Exception: Minimum Anki version supported: 24.6.3
+
+ûº °¹"òBroken when updates.
+
+My brother downstairs's comments are useful, thank you
+
+This: "on 2024-11-06
+If the latest update is not working for you. You can "downgrade" to previous version like this :
+Remove the current AnkiConnect from Anki....."
+®„‹°¹"£Should I continue using the older version (23.12.1), or do I need to update to the latest one? Some add-ons only work with my current version, so I'm a bit unsure.
+/ „°¹"'Would be pretty cool if it didn't break
+zòø¯¹"pBe sure to update to latest version of Anki (24.06.3) to get today's update to work.
+
+Insanely powerful add-on. 
+öÉÕ¯¹"ëAnki 23.12.1 (1a1d4d54)  (ao)
+Python 3.9.15 Qt 6.6.1 PyQt 6.6.1
+Platform: Windows-10-10.0.26100
+
+When loading AnkiConnect:
+Traceback (most recent call last):
+  File "aqt.addons", line 245, in loadAddons
+  File "C:\Users\javie\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 22, in <module>
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+Exception: Minimum Anki version supported: 24.6.3
+
+
+-çÓ¯¹"%Don't fucking break what's not broken
+«êŞ®¹" Absolutely vital add-on for basically any workflow. With this integration it makes it easy to pull readings and content from web pages, and works great with integrated dictionaries such as Yomitan.
+
+PLEASE NOTE THAT YOU NEED TO ENSURE TO UPDATE YOUR ANKI WITH THE MOST RECENT UPDATE in order to match compatibility requirements!
+If it doesn't work, it is user error. Please use a different version of the addon if you are using incompatible Anki versions :)
+
+Thank you for your hard work and support, and I look forward to more stable releases!
+ÈË”®¹"½If the latest update is not working for you. You can "downgrade" to previous version like this :
+Remove the current AnkiConnect from Anki
+Download AnkiConnect from github.com/FooSoft/anki-connect/releases 
+Put it in your addons folder. On windows its -> Run (system app.)-> type %appdata% -> Anki2 -> Addons folder
+
+ 
+(Ï­¹" where can i find out loadAddons 
+‚¶Ê­¹"÷it doesn't work.Anki 24.06.2 (33a92379)  (ao)
+Python 3.9.18 Qt 6.6.2 PyQt 6.6.1
+Platform: Windows-10-10.0.22621
+
+When loading AnkiConnect:
+Traceback (most recent call last):
+  File "aqt.addons", line 247, in loadAddons
+  File "C:\Users\L\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 22, in <module>
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+Exception: Minimum Anki version supported: 24.6.3
+
+
+´ÿº­¹"©This has been an amazing addon for my learning journey. Thanks to the author.
+Stopped working with the latest updat (6/Nov)e, Im on Ubuntu.
+
+____
+Error
+An add-on you installed failed to load. If problems persist, please go to the Tools>Add-ons menu, and disable or delete the add-on.
+
+When loading 'â¨AnkiConnectâ©':
+â¨Traceback (most recent call last):
+  File "aqt.addons", line 246, in loadAddons
+  File "/home/xxxx/.local/share/Anki2/addons21/2055492159/__init__.py", line 22, in <module>
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+Exception: Minimum Anki version supported: 24.6.3
+Üœ¦­¹"ÑYes, it's not working right now, don't give downvotes for that. This stuff happens. Otherwise, it's a tool that has helped my language journey tremendously and I hope the developer can fix it soon.
+
+Windows 11
+1Öè¬¹")Not working on MacOS starting from Nov 6
+
+ï¨À¬¹"æAnki 24.06 (9b4dd543)  (ao)
+Python 3.9.18 Qt 6.6.2 PyQt 6.6.1
+Platform: Windows-10-10.0.19045
+
+When loading AnkiConnect:
+Traceback (most recent call last):
+  File "aqt.addons", line 247, in loadAddons
+  File "C:\Users\user\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 22, in <module>
+    raise Exception(f"Minimum Anki version supported: {required_anki_version[0]}.{required_anki_version[1]}.{required_anki_version[2]}")
+Exception: Minimum Anki version supported: 24.6.3
+ñ´À¥¹"èI tried running "changedeck" (using `invoke('changeDeck', cards=cardsToTransfer, deck=newDeckName)`), but it doesn't change the deck of the cards. It successfully creates the deck however.
+Using Anki Version â¨24.06.3 (d678e393)â©
+*›¹Ş¸" Great complemente, thanks a lot.
+N°„Ú¸"DWorks Great I have used this addon to connect with my VSCode Editor.
+îÏ·"Great
+ŸéÌ·"very useful
+µïÈ·"very useful.
+µ¦¨·"works, thanks
+çì™¦·"ŞI'm sorry but this doesn't work with Yomitan for some reason. I tried making a separate deck and had the right card format configurations yet it doesn't allow me to add new cards, the plus buttons just simply aren't there.
+ïŸ·"its working
+å¬•·"Works as promised!
+;£²Œ·"1Very very good.  I love Yomichan and AnkiConnect.
+}ûõş¶"uThis is my first time trying to get something like this so I might have done it wrong but it won't work with Yomitan.
+l¾“ô¶"dAnki connect will not let me quick add with yomitan.  Troubleshooting did not help. Please fix this.
+ú•¶¶"awesome
+‡Æôµ"Good
+ŠĞºµ"great for yomitan
+ñ¿£µ"Great! 
+nğ˜µ"dbuenas tardes estoy tratando de copiar el codigo para pegarlo en la app de anki pero no me funsiona 
+ºïÇ´"Great!!
+îš„½´"ãAs another review mentioned; I'm also seeing the following error since the last update:
+
+```
+...
+RustBackend' object has no attribute 'get_scheduling_states
+...
+```
+
+It seems to be originating from this commit: https://git.foosoft.net/alex/anki-connect/compare/24.2.26.0...24.6.17.0#diff-1834053ded6c137ce9a079b8d43818c7e8d38195
+
+Specifically from this line:
+
+https://git.foosoft.net/alex/anki-connect/compare/24.2.26.0...24.6.17.0#diff-1834053ded6c137ce9a079b8d43818c7e8d38195:~:text=states%20%3D%20self.collection()._backend.get_scheduling_states(card.id)
+
+Could you please address this when you're available?
+¤°ÿ³"	Lifesaver
+UáÊõ³"KProbably the most important addon if you're learning Japanese with Yomitan.
+!Ï‡Û³"A must have for Yomitan
+¸ïÊÇ³"­Updated today and there is a bug:
+
+Traceback (most recent call last):
+  File "/home/user/bin/anki-add", line 66, in <module>
+    card_info = anki_request('cardsInfo', cards=[max(card_ids)])['result'][0]
+  File "/home/user/bin/anki-add", line 52, in anki_request
+    raise Exception(f"{action} failed: {resp}")
+Exception: cardsInfo failed: {'result': None, 'error': "'RustBackend' object has no attribute 'get_scheduling_states'"}
+6Ú™º³",Backbone for so many other addons/extensions
+Bµ‡¡³"8Incredibly useful, thank you so much for providing this!
+¥öù±"Great! 
+Š Ø±"ÿI connected to Obsidian!
+If you have error:
+"Traceback (most recent call last):
+  File "aqt\addons.py", line 230, in loadAddons
+  File "C:\Users\Admin\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 44, in <module>
+    from anki.scheduler.base import ScheduleCardsAsNew
+ImportError: cannot import name 'ScheduleCardsAsNew' from 'anki.scheduler.base' (C:\Program Files\Anki\anki\scheduler\base.pyc)"
+Change version https://github.com/FooSoft/anki-connect/releases/download/23.10.29.0/AnkiConnect.zip
+§ö§±"w
+½­”°"æ–¹ä¾¿
+&³°"Helpful for Obsidian to Anki
+îğï¯"ãEDIT: fix here https://youtu.be/vxNJzoueK9M
+
+has been working until recently: 
+When loading 'â¨AnkiConnectâ©':
+â¨Traceback (most recent call last):
+  File "aqt\addons.py", line 230, in loadAddons
+  File "C:\Users\Admin\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 44, in <module>
+    from anki.scheduler.base import ScheduleCardsAsNew
+ImportError: cannot import name 'ScheduleCardsAsNew' from 'anki.scheduler.base' (C:\Program Files\Anki\anki\scheduler\base.pyc)
+â©
+The scheduler directory it is searching for doesn't exist so I'm not sure what to do here... I haven't updated anki recently 
+¥úÊ¯"Works great!
+ræ±§¯"jhttps://www.youtube.com/watch?v=vxNJzoueK9M
+
+my man fix that error by deleting line 44 on __init__.py file
+¿ø¯"
+Excellent.
+òš‹¯"
+2055492159
+¬ÜÛŠ¯"£Cï¼š\Users\OWNER\AppData\Roaming\Anki2\addons21\2055492159\__init__.pyâ€ï¼Œç¬¬ 44 è¡Œï¼Œåœ¨ <æ¨¡å—>
+ from anki.scheduler.base import ScheduleCardsAsNew
+ImportErrorï¼šæ— æ³•ä»â€œanki.scheduler.baseâ€ï¼ˆCï¼š\Program Files\Anki\anki\scheduler\base.pycï¼‰å¯¼å…¥åç§°â€œScheduleCardsAsNewâ€
+/Ç³‰¯"'not working with the latest anki update
+¶œ‰†¯"­** EDIT: Jouzu Juls has posted a fix for the current bug https://youtu.be/vxNJzoueK9M
+
+CÃ³mo solucionar el problema https://youtu.be/vxNJzoueK9M
+
+-----------------
+Will update my review when this gets fixed but I can't seem to find a contact button anywhere on Foosoft's page so I'll post it here. Feb 29 2024, suddenly Anki Connect stopped working. Getting this error message:
+
+'â¨AnkiConnectâ©' èª­ã¿è¾¼ã¿ã®éš›:
+â¨Traceback (most recent call last):
+  File "aqt\addons.py", line 230, in loadAddons
+  File "C:\Users\OWNER\AppData\Roaming\Anki2\addons21\2055492159\__init__.py", line 44, in <module>
+    from anki.scheduler.base import ScheduleCardsAsNew
+ImportError: cannot import name 'ScheduleCardsAsNew' from 'anki.scheduler.base' (C:\Program Files\Anki\anki\scheduler\base.pyc)
+
+Windows 10, Anki v2.1.49
+¹»„¯"That's very good.
+â©
+©Ç‚¯"I updated this addon and had the same problem with the last review. Then I updated my anki from 2.1.49 to 2.1.65 qt6 version, but this addon still can't work.
+O¿Œ€¯"EI really appreciate your work, but it's not working after the update!
+6¸åş®".It's not working after the update, please fix!
+İıı®"Great
+“ı®"123
+’çø®"ok
+YØàø®"OIt's a very helpful add-on but I have the same problem as in the comments below
+P›Øø®"FAfter the latest update have the same problem as in the comment below.
+•Í¿î®"ŠI am using this to connect Yomitan to Anki, everything set up but unfortunately I dont understand why sometimes the "Add expression" button is greyed out, and only the "Add reading" button works. This is really annoying since the Anki cards are not added correctly. 
+'Õó±®"Supports Obsidian integration
+Ùã±®"good
+
+·–¨®"Good. Manu likes it
+ËåŸ®"Epic
+àÕ®"Super useful
+/‡Ìë­"%Used the F out of this with Yomichan.
+å«ï¬"very useful
+×îÕ¬"Nice
+©£¶¬"vv
+ ‚â¯¬"very useful, thanks!!!
+ú‘ß¯¬"ïI love the add-on, but it started crashing my (local) Anki app, recently... Every time I click "Browse", Anki crashes (MacOS, QT5 version 23.12). The same happens when I try to open Preferences.
+
+I've tried exporting and importing the decks, creating a new profile, nothing worked. The only thing that works is disabling this add-on so I have to assume it is related.
+ÜÈ‹¬"super useful
+8–¯€¬".Best addon for integration with other programs
+µò³ğ«"¬Not user friendly
+Impossible to access the Add-Ons even after following the process
+The explanation page doesn't answer the problem, very frustrating
+Would not recommend it
+!¶ˆÆ«"To answer the questions
+™‡«"good
+–Øèª"good
+Õ”ª"good
+Á„Ñ©"The legendary addon.
+'º–ÿ¨"Easy to set up and works well
+5çú¨"+è®©å…¶ä»–ç¨‹åºå¯ä»¥å’Œankiäº¤äº’ï¼Œå¼ºï¼
+üúÃ¨"Awesome tool
+ìÊÃ¨"
+2055492159
+dïä§"ZA must have addon for working with org-mode! https://rgoswami.me/posts/anki-decks-orgmode/
+åã‚§"wThis and Yomichan are just so important to my Japanese learning, can't live without them any more.
+Thank you so much!!!
+‚ÆÉø¦"xAnkiConnect is amazing!
+
+Recommend trying Limbiks Flashcard Generator if you are looking for tools that use this add-on.
+š©Á¦"Indispensable
+$Ê£º¦"Really helpful, thank you.
+ÑÑ¦"best
+'ÚÓ€¥"API looks weird, but it works
+†ŞÒ¤"
+Excellent!
+U¯†Ò¤"KWorks as described. Super useful to integrate Anki with other applications.
+àÅÅ¤"works great
+–™À¤"Extremely useful!
+šŒ»¤"wow
+^¿ÀÏ£"TThis add-on is super powerful. Because of this Add-on, we can do advance automation.
+¨Ûµ£"å±±ä¹
+!Œ£ñ¢"It's an awesome plugin!
+ÉÃ¢"best one
+«ë¼Â¢" I updated to the newest version of Anki that was released today and I'm not sure if there is an issue but I've added many addons before and can't get this to work. I put in the code and click ok and it does nothing. Sorry for the hassle, I just thought maybe the update caused an issue:).
+•ë´¢"ŠQuick tips, if you are using WSL2 and your anki is on the windows host - the magic trick is setting port forwarding on windows: Run powershell as admin and then run `netsh interface portproxy add v4tov4 listenport=8765 listenaddress=0.0.0.0 connectport=8765 connectaddress=127.0.0.1`    Then in wsl2, you can test with `curl windows_ipv4_ip` .... took me several hours and going through all kinds of unsuccessful solution everywhere and finally find this one out. Great adds-on, I can finally create decks effectively!!!!!
+›¤ƒ¢"Very useful
+ñ¨ò¡"	No worker
+ßäÍ¡"ğŸ‘
++ïÄ·¡"!Easy to use and sync - thank you!
+ş¢«¡"	Excellent
+¹¸ ¡"Awesome!
+F‹—œ¡"<I use this for Ruzu Anki pop-ups extension for Google Chrome
+%Êµ¡"good extension very helpful
+Î´ú "1
+a¶‚ğ "WThis is a great extension for developers! Thanks a lot for developing this extension :)
+¬Ó¾ "¡AnkiConnect is, in my opinion, the single most useful add-on available for Anki. It opens up a bunch of Anki internals, and lets other applications use them. The myriad uses of this extension are truly astounding. Personally, I have used it for automatic card creation through browser extensions, external statistical analysis, integration with a front-end, and generation (and linking) cards to my notes in org-mode.
+·İëŸ"shuan q
+¦˜õ"Awesome! Thank you!
+6Ï«ô".I don't know how to use it, seems good anyway.
+$‡ı¿"very useful and dependable
+[×©¾"QIt's easy for us to build anki api to develop different functions to support Anki
+$´ºº"Works great, thanks a lot!
+@†ƒ´"6helped create an seamless workflow for myself, thanks!
+	‰ì›".
+P¹ó"FMakes integration with amazing tools like asbplayer possible! Love it.
+6ş«Ö",Thank you! Now i can automate personal wiki)
+²Í"great add-on
+2àœÉ"(i dunno how to use it but thnanks anyway
+)¸ìÂ"Good connection with obsidian !
+”á×œ"‰I use this along with anki quick adder extension to add new notes directly from my browser to Anki. Thank you a lot. That's a great help.
+¯×Œ"Useful
+ì¡‚"Very use
+æÜšœ"That's great
+_™¬ş›"UJust what I needed. Very complete interface. You can do almost anything with this API
+D¬˜­›":Very helpful to integrate with other apps like Obsidian.md
+"‘Áª›"works well with yomichan
+Æƒî¢›"»Great addon! I used it to create a web-app that can be helpful for English learners:
+https://awa.up.railway.app/
+Free uptime is limited, so it may be unavailable at the end of the month
+)¶½»š"It's essential and very useful.
+Ûû¯š"Great!
+"üâ°™"å¾ˆå¥½ç”¨ï¼Œæ„Ÿè°¢ä½œè€…
+•Âëˆ™"ŠNice for automation (fetching sample sentences from certain websites and putting them into Anki if one knows basic coding in e.g. Python).
+3¶ç³˜")Can't live without this addon, seriously!
+áç±˜"Great!
+°Àù—"Thank
+Îñ×—"ğŸŒ
+ÙÑ·—"very helpful
+%ÑŞª—"can't work with anki 2.1.49
+›¶§—"Any way to make work with anki 2.1.49? don't work for me.
+
+Update / 
+Fixed, just put the code on anki again and download the plugin normally.
+EÖÓ–—";Simple and very useful. Works great with Emacs anki-editor.
+5×ÎÊ–"+It makes work with Emacs possible and easy.
+˜ØÂ–"It's awesome! Thanks
+Ÿô‹–"Very helpful
+§“Å•"good to use.
+@ŒÆ’•"6This API makes things really easy to update Anki deck.
+³Ú‚•"awesome(*^_^*)
+%‡ş€•"hope more connect in future
+”µ¸¯”"‰It's an amazing work that this guy did, Obsidian/Logseq provide much better functionality for editing & building a database of knowledge, but they still lack good Spaced Repetition funcitonality. To be able to combine both with this plugin is amazing, thanks a lot!
+Oì¦”"ELove it. Really helps to create flashcards for words as I learn them.
+†™ú¢”"|Thanks for the timely fix!
+BTW, is there anyone using Obsidian to Anki but having issues? It doesn't work for me  right now
+Ì¸”"it didn't work for me
+JÓ¥ˆ”"@This plugin is so critical to my workflow. Really appreciate it.
+äšˆ”"OK
+ÖşÈ†”"ËNew version suddenly decided to stop working with 2.1.49, although I've been using 2.1.49 with AnkiConnect for a few months now with no problems whatsoever.
+
+Edit: works now. Thanks for the timely fix.
+”„Ö…”"‰Great, thanks for fixing whatever the issue with version 2.1.49 or above was so quickly. Seems to be working perfectly for me once again!
+cË¸„”"[Used to work fine in 2.1.49 ... until it updated itself to say it only worked up to 2.1.44.
+=¹²„”"3This latest version is not available on Anki 2.1.49
+è°„”"Pleaseï¼2.1.49
+„…öƒ”"zIt literally says what Anki versions work with AnkiConnect, these morons giving negative ratings need to learn how to read
+ÀÃ½“"Thanks!
+%ƒ—“"Works great out of the box!
+ïùú’"useful to other tools
+Z¹»·‘"PI used this add-on to enable the "Obsidian to Anki" plugin. Brilliant workflow!!
+.”´é"$Perfect integrating vscode into Anki
+YêúÔ"OWonderful! This is add-on is essential in order to connect to Obsidian. Thanks!
+3Á‚¥")This is really, really useful! Thank you!
+Ü¬ÑÖ"ÑThis plugin is extremely handy! I managed to write a simple command-line utility that generates bulk text-to-speech for many different note fields just in one evening! If I wrote a full-fledged Anki GUI plugin, it would take ages as I'm not fluent in Python & Qt.
+
+Thank you very much for the effort you put to develop and maintain it!
+ŸÆÈ"Very Useful!
+ê¤œ"best
+7ÓÎ˜"-Amazing, Anki wouldn't be the same without it
+Ñó•"Very helpful
+È¸Ú"Great!
+ ‘ğ"works out of box. thx.
+•ØİŒ"thx
+Ï„ô‹"wonderful add-on!
+ññÖ‹"its good
+«ö‹¢Š" Wonderful add-on for adding external functionality to Anki ğŸ—ƒğŸ¤–
+I use it for reviewing decks in a random order (https://gitlab.com/-/snippets/2177504) ğŸ²
+ÒÙ¨‰"Good
+4¼›Š‰"*Works like a charm, never had any problems
+ªÕ÷ˆ"Ok
+•¦ìˆ"ä»£ç åœ¨é‚£å„¿ï¼Ÿ
+±ÑÌˆ"1
+öãÀˆ"Perfect
+ÀĞ»ˆ"Cool! Nice sync tho
+î İ³ˆ"ãdefaults write net.ankiweb.dtop NSAppSleepDisabled -bool true
+defaults write net.ichi2.anki NSAppSleepDisabled -bool true
+defaults write org.qt-project.Qt.QtWebEngineCore NSAppSleepDisabled -bool true
+
+need to run on Mac OS
+µº‹ˆ"Good
+NÃ ‡"DAmazing! Must have together with VS Code extension "Anki for VSCode"
+œ Š‡"it's gut
+*ÍÒ¿†" It's very helpful for web users.
+»¼µ†"Cool
+æŠ´†"Amazing!
+¨Çà…"Cool!!!
+ÜÁ¶…"helpful
+‘ÑÊ„"yes!!
+°ÿ„"Good
+xÙŞÙƒ"nMaybe now somebody can connect GoldenDict with Anki so that GoldenDict also looks up words in Anki collection.
+ †Öî‚"Essential! Works well.
+4­‹ô"*good for python developer and js developer
+İ€ó"1
+²„Ó"§This is awesome ~I'm learning Korean it really help me. I think it would be great if you add it to Morphman to let Morphman process the Korean context like this Japanese plug in: MeCab UniDic Japanese Dictionary (https://ankiweb.net/shared/info/13462835). It supports Morphman. Thank you so much
+<½¯"2Thanks for creating such an amazing tool for Anki!
+$ĞóĞ€"æš—è¨˜= Anki= memorisation
+§”Ë€"
+Thanks! :)
+üş£€"	Good Job!
+¡Ã‘€"so cool
+)­¯üÿ"Essential add-on that is solid.
+Â•ëãÿ"·Thank you very much. It's a fantastic tool for learning languages!!
+
+At this moment, using the AnkiConnect addon, the Back Template of the card is not created well. But you can edit it and copy it from here: https://github.com/dobladov/youtube2Anki
+
+I prefer to work on my listening, so I removed this two lines from the Front Template:
+{{text}}
+<br>
+
+And put in the Black Template:
+{{FrontSide}}
+
+<hr id=answer>
+{{text}}
+<br>
+ºµÁÿ"perfect
+ÏÅµÿ"great
+c†å¬ÿ"YI cannot download the plug-in digitally. Is there an address to obtain the file directly?
+€‚¤ÿ"Fucking awesome
+·œõı"
+Thank you!
+öîÄı"Ğ—Ğ°ĞµĞ±Ğ¸ÑÑŒ!
+ªğ–ı"“Makes anki run slowly for me, but this is yomichans fault. I have a large deck and it might be related to yomichans duplicate check
+
+ Had to start anki with Shift key held to disable all addons, then disabled ankiconnect. Everything besides ankiconnect is working fine now.
+Ûäúü"FANSTASTICO!!!!!!!!
+şáåü"	Excellent
+ì™Õü"	very good
+~®ÊÑü"tVery nice way to integrate with other softwares. With vscode extension I can create cards without leaving my editor.
+MÉÅÄü"CI use AnkiConnect for connecting extension Online Dictionary Helper
+¨ô·ü"Works as advertised!
+7È”“ü"-Very useful for iterations with Anki via API.
+æ„Àû"a bridge over Anki
+P’û"FI use it with a chrome extension creating cards has never been so fast
+5á™ãú"+good job but doesnt work on old version 2.0
+ß÷Îú"Incredibly useful
+8íœÏù".Thank you soooo much for this wonderful addon!
+—›§ãø"ŒThis add-on is fantastic but it will be greater if we can add not only a word but also a phrase or something like that
+thank you  very much
+é†¿ø"like it!
+Oë¦¯ø"EInvaluable tool for use with Yomichan. ã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã™
+ñÉ¢ø"good
+œ§Ê÷"Because it's cool.
+¡Ï½÷"666
+şªøõ"Great add-on!
+8¬üáõ".Works with no problem, PolarConnect didnt work
+$ŞîÊõ"Makes life so much easier.
+¬ø–õ"Works great
+"üËîô"Amazing and useful tool!
+Î†İô"Amazing
+ãìÛô"Awesome
+¯ÂÁô"so cool!!!!
+ç˜–ô"	thank you
+`¢–’ô"VGreat plugin! Thanks!
+
+I use it in my project:
+https://github.com/ivan-volnov/keybr
+¸¥‚ô"	Love it !
+’§ó"ååˆ†å®ç”¨æ˜“ç”¨
+ó¬¡ó"Good
+2“ªŒó"(useful! will yomichan for 2.1 come soon?
+øÒÎò"yeahï¼
+ØÍ¥ò"very useful.
+Òšò"haoyong
+ù‡–ò"
+Wonderful!
+šàâğ"good
+àÁ£ğ"Useful.
+3Şşï")Works very well with anki-editor in Emacs
+Ÿôëî"Works great! Thanks.
+ÎüÕî"ready
+ˆ‚Ïî"Awesome!
+æÆ­î"
+goodï¼ï¼
+’É§î"100!!!
+‰µõ‘î"Works great. I was able to integrate it into emacs's pdftools pdf reader and send the selected word directly to Anki. 
+Thanks!
+Ô…Òí"Thanks
+À‡ší"doesnt work for me
+7Ò¹Ôì"-Testing it for PowerApps Solution development
+ÿĞ‘ì"222
+&àÏÿê"Useful for chrome extension.
+Å¿Áê"Super cool!
+CÎâêé"9It's really helpful for making notes out side of the app.
+Ö’Âé"ok
+&ª©¢é"usefulï¼Œhighly recommendï¼
+ä×è"mark
+CŠ‘²è"9Great tool to automate some of the tedious things! Kudos!
+Ş×¨è"Must have !
+ö½—è"Great!
+;ÆŞêç"1Wonderful. But context.reverso.net does not work.
+MòëŞç"Cvery useful addon, I could use Emacs to create Anki cards, amazing.
+lÁ•×ç"bI combined it with Google search. It works great.
+https://github.com/yekingyan/anki_search_on_web
+©‘×ç"Great
+°ûºç"
+excellent!
+l‰¥‘ç"blooks great and the idea is brilliant! Hope it will support other languages as well in the future.
+…¬ğæ"good
+çª§æ"Thanks.
+,ÿ†œæ""éå¸¸å¥½ å¸®åŠ©äº†æˆ‘å­¦ä¹ è¯­è¨€
+Æª†æ"	very good
+ü€ıå"good use
+„ßòå"nice
+Äê¹å"cool
+™‹©å"	good tool
+¿ôå"Works great
+Ç´‚å"Everything works!
+Î ıä"
+good thing
+ˆ˜ôä"works great, thanks
+‰Úê«ä"mac å·¥å…·åœ¨å±å¹•æœ€å·¦ä¸Šè§’  é™„åŠ ç»„ä»¶å¿«æ·é”® command+Shift+A ç‚¹å‡»ç¬¬ä¸€ä¸ª è·å–æ’ä»¶ è¾“å…¥ 2055492159 å°±è¡Œäº†
+&Ö¿—ä"goodï¼ï¼ï¼ï¼ï¼ç‰›é€¼ï¼
+ê‰éã"good,awesomeï¼
+ªĞã"Very useful
+)¦À¡ã"æœ¬æ¥è¯„è®ºå…¶ä»–æ’ä»¶çš„....
+îª‘ã"wIt hasn't been working with firefox for three days now. I can't get the + signs in yomichan to show up for some reason.
+H’Šã">Mac users remember to change app nap as the below review says.
+©·×â"essential add-on.
+d“ĞÊâ"ZI think it's a great idea, and it gives a lot of freedom to augment/redesign Anki. Thanks!
+ş¼‡â"it is very good
+óÂãá"wI use it on my application that retrieves definitions and examples for words.
+
+https://github.com/Virility/AnkiLookup
+™ÙÆá"	fabulous!
+/ÛÃá"%é…åˆankiåˆ’è¯åŠ©æ‰‹ä½¿ç”¨éå¸¸æ£’
+¤“á"very useful
+å²„á"Very useful!
+şëæğà"óFor Mac User
+
+Anki 2.1.6 2.1.7 changed it's app domain name,
+
+so if you want to change the app nap for anki
+
+1. Start the Terminal application.
+2. Execute the following commands in the terminal window:
+
+defaults write net.ankiweb.dtop NSAppSleepDisabled -bool true
+defaults write org.qt-project.Qt.QtWebEngineCore NSAppSleepDisabled -bool true
+3. Restart Anki.
+ÀÚãà"	excellent
+­Ô®Øà"¢I use this with Chrome Yomichan extension and it works great. Has worked well since I first installed it over half a year ago. Thank you for the awesome add-on :)
+,Ü´¹à""This is a really excellent project
+ŒèúÆß"Love this plugin.. We use it with Polar to sync flashcards form PDF books directly into Anki. You can read your PDFs and HTML content in Polar and create the flashcards there and then we use Anki Connect to transfer them to Anki.
+
+https://getpolarized.io/
+(Ç°ß"This is such a fantastic idea!
+æŒ¦ß"	wonderful
+–ÓéùŞ"‹Great add-on. One drawback that I don't know if it's the fault of Anki or the add-on:
+I can't figure out how to make fields keep new line characters when sending them to Anki. Adding both 
+ and \r
+ to the field doesn't result in Anki breaking the text up into lines.
+µÁÖŞ"Very Good , Thanks
+£Ö¢Ş"This app is helpful
+œ›ßšŞ"‘Thanks so much!! This plugin helped me write this Hammerspoon Spoon https://github.com/ldanilov/AnkiShortcuts to add notes with simple shortcuts.
+ç¼‹Ş"Required for Yomichan
+¹ƒƒŞ"®Great app!
+
+And I'm so happy that there's a firefox extension. I've always been using chrome since I assumed the more niche extensions would never make their way to firefox. But this is the only "killer" extension I need, and I didn't even check if it was on firefox lol.
+
+Cheers for the good work.
+5îĞîÜ"+Hot damn, this makes adding cards a breeze!
+¨¼¾Ü"Really useful
+#¯ı´Ü"Extremely useful feature.
+,üæ°Û""Very useful to automate add cards!
+œÀ„Ú"Very useful
+¾ö—Ù"just very good
+€éí×"Works perfectly!
+š€®¾×"The only "approved" way to interact with the app after https://anki.tenderapp.com/discussions/ankiweb/1886-issue-with-saving-cards-via-rest-api
+T€Å®×"JCan't imagine building a vocabulary deck without AnkiConnect (+ Yomichan).
+€¡ïÖ"great
+4€ÃºÖ"*Great documentation, great add-on, thanks!
+\€ªÖÕ"RThis extension made it possible for me to make an emacs-based ui for anki! Thanks!
+€úÕ"Thanks!
+;€³½Ô"1Thankyou let me save a lot of time as this add-on
+,€ÕˆÔ""Very helpful. Thank you very much!
+M€‹–Ò"CThank you for the effort, saves a lot of time for adding new notes!
+v€”ıĞ"lI have some ideal to use this API,
+your add-on really save me a lots of time,
+Thank you for contribute it.
+„€†ôÏ"zI'm sure this addon is awesome but
+If you could speak in plain english what this add-on does, it would be quite helpful...
+ç€°ìÍ"ÜException when requesting from AnkiConnect
+I'm using last Anki 2.1 beta 15 and cot exception when trying default request:
+curl localhost:8765 -X POST -d '{"action": "deckNames", "version": 5}'
+Caught exception:
+  File "C:/Users/VC/AppData/Roaming/Anki2\addons21\2055492159\__init__.py", line 889, in advance
+    self.server.advance()
+  File "C:/Users/VC/AppData/Roaming/Anki2\addons21\2055492159\__init__.py", line 235, in advance
+    self.advanceClients()
+  File "C:/Users/VC/AppData/Roaming/Anki2\addons21\2055492159\__init__.py", line 250, in advanceClients
+    self.clients = list(filter(lambda c: c.advance(), self.clients))
+  File "C:/Users/VC/AppData/Roaming/Anki2\addons21\2055492159\__init__.py", line 250, in <lambda>
+    self.clients = list(filter(lambda c: c.advance(), self.clients))
+  File "C:/Users/VC/AppData/Roaming/Anki2\addons21\2055492159\__init__.py", line 159, in advance
+    self.writeBuff += self.handler(req)
+  File "C:/Users/VC/AppData/Roaming/Anki2\addons21\2055492159\__init__.py", line 285, in handlerWrapper
+    resp += body
+<class 'TypeError'>: can't concat bytes to str
+?€ì²É"5Incredibly helpful addition by a very responsive dev
+
+Ğ€ñ±Æ"ÅThis is the add-on that's been keeping a bunch of Anki-related Google/Firefox ex
+Not sure it the author would see it or not, but thank you for your work!
+As a code-dummy,I don't know whether this is a beautifully written py. file or not, but sure to say that without it, a couple of Anki extension would be at great trouble.*AnkiConnect2$ yomichan anki api ankiconnect rest 8»È@¯ÜÃÈJù<p>AnkiConnect enables external applications such as Yomichan to communicate with Anki over a simple HTTP API. Its capabilities include executing queries against the user's card deck, automatically creating new cards, and more. AnkiConnect is compatible with the latest stable (2.1.x) releases of Anki; older versions (2.0.x and below) are no longer supported.</p>
+<p>See the <a href="https://foosoft.net/projects/anki-connect" rel="noopener noreferrer">AnkiConnect homepage</a> for more information.</p>
+Z+
+2.1.0-2.1.44ŞòÁ–
+2.1.45+¯ÜÃÈb*https://foosoft.net/projects/anki-connect/h¼˜+
