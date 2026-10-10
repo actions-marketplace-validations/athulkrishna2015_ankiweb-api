@@ -2,14 +2,152 @@
 
 [![CI](https://github.com/danny900714/upload-anki-addon/actions/workflows/ci.yml/badge.svg)](https://github.com/danny900714/upload-anki-addon/actions/workflows/ci.yml)
 
-A GitHub Action for uploading an [Anki](https://apps.ankiweb.net/) add-on to [AnkiWeb](https://ankiweb.net/shared/addons).
+Upload an [Anki](https://apps.ankiweb.net/) add-on to [AnkiWeb](https://ankiweb.net/shared/addons) — from GitHub Actions or from your terminal.
+
+> Fork of [danny900714/upload-anki-addon](https://github.com/danny900714/upload-anki-addon) (`upstream/main` remote).
+> The Node upload engine (`dist/index.js`) is unmodified upstream code; this fork adds the terminal tooling below.
 
 ## Features
 
 - **Multiple branches**: Upload different add-on files targeting different Anki version ranges.
 - **Description file**: Use a separate file for the add-on description, making it easier to edit and format.
+- **Terminal CLI**: Upload, inspect, and download add-ons without GitHub Actions.
+- **Metadata-only updates**: Change title/description/tags without re-uploading the `.ankiaddon`.
 
-## Usage
+## Table of contents
+
+- [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
+- [GitHub Actions usage](#github-actions-usage) — [inputs](#inputs) · [outputs](#outputs)
+
+## Terminal usage
+
+Requires Python 3.9+ with `requests`, plus Node 24 if you upload (the action engine runs on Node).
+`info` and `download` are Python-only and need no Node.
+
+### Setup
+
+```sh
+git clone https://github.com/athulkrishna2015/upload-anki-addon.git
+cd upload-anki-addon
+pip install -r requirements-terminal.txt
+```
+
+Keep credentials in `.env` (gitignored — never commit it):
+
+```sh
+cp .env.example .env
+$EDITOR .env     # ANKIWEB_USERNAME=... / ANKIWEB_PASSWORD=...
+```
+
+`upload.py` reads `./.env` automatically. Exported shell variables take precedence, and
+`--username` / `--password` override both.
+
+### Upload
+
+Same inputs as the action, as CLI flags. `upload.py` maps them to the action's `INPUT_*`
+variables and runs the upstream engine — no separate upload implementation.
+
+```sh
+# New add-on (omit --addon-id)
+./upload.py --title "My Anki add-on" \
+    --description "Description for my add-on" \
+    --branches "2.1.1-25.09.4+" \
+    --addon-files my-addon.ankiaddon
+
+# Update an existing add-on, with description from a file
+./upload.py --addon-id 805854302 --title "My Anki add-on" \
+    --description-file DESCRIPTION.md \
+    --branches "2.1.1-25.09.4+" \
+    --addon-files my-addon.ankiaddon
+```
+
+**Metadata-only** — update title/description/tags with no file upload. Use `-` for the file,
+the same convention the action uses:
+
+```sh
+./upload.py --addon-id 805854302 --title "My Anki add-on" \
+    --description "Updated description" \
+    --branches "2.1.1-2.1.1+" \
+    --addon-files -
+```
+
+Useful flags:
+
+| Flag                  | Description                                                             |
+| --------------------- | ----------------------------------------------------------------------- |
+| `--tags "a b"`        | Space-separated tags.                                                   |
+| `--support-page URL`  | Must start with `http`.                                                 |
+| `--dry-run`           | Print the `INPUT_*` mapping and exit without network access.            |
+| `--env-file PATH`     | Use a different `.env` (default `./.env`).                             |
+| `--node PATH`         | Node binary to run the engine with (default `node`).                    |
+
+Multi-branch works the same way — one branch and one file per line, in matching order:
+
+```sh
+./upload.py --addon-id 805854302 --title "My Anki add-on" --description "Desc" \
+    --branches "2.1.1-2.1.66" "23.10-25.09.4+" \
+    --addon-files first.ankiaddon second.ankiaddon
+```
+
+> [!IMPORTANT]
+> Branch notation is `min-max`. A bare `2.1.1+` is rejected. Trailing `+` means
+> "and all future versions". Reproduce an existing range by reading it first:
+> `minpt`/`maxpt` from `./ankicli.py download <id> -o -` output map to it.
+
+### Info (add-on metadata)
+
+Public, no auth. Reads title, tags, support page, size, versions, and description
+from AnkiWeb's `svc/shared/item-info` protobuf endpoint.
+
+```sh
+./ankicli.py info 805854302
+```
+
+```text
+id:           805854302
+title:        testingaddon for me [private]
+size:         16631
+last_updated: 1761920298 (2025-10-31T14:18:18+00:00)
+versions:     2.1.1+
+description:
+<p>test upload via terminal - 2026-10-10T13:15:37Z</p>
+```
+
+### Download `.ankiaddon`
+
+Public, no auth. Follows the `/shared/download/<id>` redirect and writes the file.
+
+```sh
+./ankicli.py download 805854302
+./ankicli.py download 805854302 -o /tmp/test.ankiaddon
+./ankicli.py download 805854302 --point-version 250902    # Anki int_version
+```
+
+```text
+saved:    testingaddon_for_me_private.ankiaddon
+filename: testingaddon_for_me_private.ankiaddon
+size:     16631
+t=1761920298 minpt=1 maxpt=1 bidx=0
+```
+
+Equivalent one-liner, no Python needed:
+
+```sh
+curl -sL "https://ankiweb.net/shared/download/805854302?v=2.1&p=250902" -o addon.ankiaddon
+```
+
+### Terminal notes
+
+- `v=2.1` is required on the download URL; without it AnkiWeb replies 404
+  ("Your version of Anki is too old"). `p` is Anki's `int_version()`.
+- The `.ankiaddon` must be a zip with `__init__.py` at the root — no wrapping
+  folder, no `__pycache__` (see [Anki's sharing docs](https://addon-docs.ankiweb.net/sharing.html)).
+- Never commit `.env` or AnkiWeb credentials.
+
+## GitHub Actions usage
+
+The action itself is unchanged from upstream. Use this fork's reference if you want the
+terminal additions from CI; otherwise `danny900714/upload-anki-addon@v1` behaves identically.
 
 ### Upload a new add-on to AnkiWeb
 
@@ -46,6 +184,11 @@ jobs:
           branches: 2.1.1-25.09.4+
           addon-files: my-addon.ankiaddon
 ```
+
+> [!TIP]
+> Package the add-on before uploading. `zip -r ../../my-addon.ankiaddon *` from inside the
+> add-on folder keeps `__init__.py` at the zip root (no wrapping folder, no `__pycache__`),
+> which is what AnkiWeb requires and what `./upload.py --addon-files` expects locally.
 
 ### Using a description file
 
@@ -154,6 +297,23 @@ The following inputs can be used as `step.with` keys:
 >
 > - `description` takes precedence over `description-file` if both are provided.
 > - The number of `addon-files` must match the number of `branches`.
+
+### Terminal flag equivalents
+
+`upload.py` takes the same values as CLI flags. Each input maps 1:1:
+
+| Input             | Terminal flag       | Notes                                          |
+| ----------------- | ------------------- | ---------------------------------------------- |
+| `username`        | `--username`        | Default `$ANKIWEB_USERNAME` / `.env`.          |
+| `password`        | `--password`        | Default `$ANKIWEB_PASSWORD` / `.env`.          |
+| `addon-id`        | `--addon-id`        | Omit to create a new add-on.                   |
+| `title`           | `--title`           | Required, fewer than 80 characters.            |
+| `tags`            | `--tags "a b"`      | Space-separated.                               |
+| `support-page`    | `--support-page`    | Must start with `http`.                        |
+| `branches`        | `--branches a b`    | Repeat the flag once per branch.               |
+| `addon-files`     | `--addon-files a b` | `-` skips a branch's file.                     |
+| `description`     | `--description`     | Takes precedence over `--description-file`.    |
+| `description-file`| `--description-file`| Read from disk.                                |
 
 ### Outputs
 

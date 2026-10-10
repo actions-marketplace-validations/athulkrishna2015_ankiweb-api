@@ -52,7 +52,12 @@ def build_env(args) -> dict:
     load_dotenv(Path(args.env_file).expanduser() if args.env_file else HERE / ".env")
     env = dict(os.environ)
     def inp(name: str, value: str):
-        env[f"INPUT_{name.upper().replace('-', '_')}"] = value
+        # @actions/core only replaces spaces with underscores, so hyphenated
+        # inputs (addon-files, description-file) are read as INPUT_ADDON-FILES.
+        # GitHub Actions uses the same hyphenated form. Set both for safety.
+        base = name.upper()
+        env[f"INPUT_{base}"] = value
+        env[f"INPUT_{base.replace('-', '_')}"] = value
     username = args.username or os.environ.get("ANKIWEB_USERNAME", "")
     password = args.password or os.environ.get("ANKIWEB_PASSWORD", "")
     missing = [n for n, v in (("ANKIWEB_USERNAME", username), ("ANKIWEB_PASSWORD", password)) if not v]
