@@ -22,11 +22,70 @@ your terminal or GitHub Actions.
 
 ## Table of contents
 
-- [AnkiWeb API client](docs/API.md) · [full endpoint reference](docs/ENDPOINTS.md)
+- [Python API client](#python-api-client-full-svc-coverage) — [quick start](#quick-start) · [endpoint reference](docs/ENDPOINTS.md)
+- [AnkiWeb API docs](docs/API.md) · [full endpoint reference](docs/ENDPOINTS.md)
 - [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
 - [List your own shared items](#list-your-own-shared-items)
 - [Tests](#tests)
 - [GitHub Actions usage](#github-actions-usage) — [inputs](#inputs) · [outputs](#outputs)
+
+## Python API client (full `/svc/*` coverage)
+
+All **41 public endpoints** are typed methods on `AnkiWebClient` — account (12),
+decks (8), editor (3), search (1), shared (12), and study (4). The wire schema
+is decoded from AnkiWeb's own frontend bundle (revision `2026-10-10`, all
+request/response/nested messages resolved) and verified live. Full field-level
+reference: [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
+
+### Quick start
+
+Requires Python 3.9+ with `requests` (same install as the terminal tools):
+
+```python
+from ankiweb_client import AnkiWebClient
+
+client = AnkiWebClient()          # auto-loads .env (ANKIWEB_USERNAME/PASSWORD)
+client.login()
+
+mine = client.shared_list_mine()          # your shared add-ons & decks
+for item in mine["items"]:
+    print(item["id"], item["title"])
+
+# Public, no auth needed:
+item = client.shared_item_info(shared_id=2055492159)
+print(item["available"]["title"])
+
+# The rest of the surface:
+client.decks_create_deck("My Deck")
+client.search_search("deck:My Deck")
+info = client.decks_deck_list_info(minutes_west_of_utc=0)
+```
+
+Method names mirror the path (`/svc/shared/list-mine` → `shared_list_mine`).
+Legacy aliases `login`, `list_mine`, and `item_info` still work.
+
+### Any endpoint from the terminal
+
+`ankicli.py` can call any public endpoint and print decoded JSON:
+
+```sh
+./ankicli.py endpoints                      # list all 41 with request/response types
+./ankicli.py call shared_item_info --query sharedId=2055492159
+./ankicli.py call shared_list_addons        # public, no auth
+./ankicli.py call decks_create_deck --request '{"name": "New Deck"}'   # uses .env
+```
+
+### Keeping the schema fresh
+
+AnkiWeb ships no official API, so the schema can change. Regenerate and review
+the diff whenever something breaks:
+
+```sh
+python3 tools/generate_schema.py            # re-decode the live frontend bundle
+```
+
+Details: [docs/API.md](docs/API.md) (client usage, regeneration, codec) and
+[docs/ENDPOINTS.md](docs/ENDPOINTS.md) (every endpoint, field, and enum).
 
 ## Terminal usage
 
@@ -202,9 +261,9 @@ python3 -m unittest -v test_ankiweb_proto.py  # API codec and schema regressions
 
 Offline tests parse real captured responses in `fixtures/` (private add-on and
 AnkiConnect, which carries 133 KB of reviews) and cover CLI exit codes.
-Live tests hit `info` / `download` / error paths. The API client and codec
-documentation is in [docs/API.md](docs/API.md); its endpoints are undocumented
-AnkiWeb internals and are not a supported public API.
+Live tests hit `info` / `download` / error paths. API client and codec
+documentation is in [docs/API.md](docs/API.md); the complete field-level
+reference for all 41 public endpoints is [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
 
 ## GitHub Actions usage
 
