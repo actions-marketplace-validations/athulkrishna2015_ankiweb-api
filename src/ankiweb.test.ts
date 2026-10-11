@@ -25,7 +25,7 @@ describe("uploadAddonRequest", () => {
           addonId: process.env.ANKIWEB_ADDON_ID
             ? parseInt(process.env.ANKIWEB_ADDON_ID, 10)
             : undefined,
-          title: "Integration test for ankiweb client of @danny900714/upload-anki-addon",
+          title: "Integration test for ankiweb client of @athulkrishna2015/ankiweb-api",
           tags: "integration test tag",
           supportUrl: "https://github.com/danny900714/upload-anki-addon",
           description:

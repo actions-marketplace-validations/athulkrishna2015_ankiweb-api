@@ -102,7 +102,7 @@ jobs:
           addon-id: ${{ vars.ADDON_ID }}
           username: ${{ secrets.ANKIWEB_USERNAME }}
           password: ${{ secrets.ANKIWEB_PASSWORD }}
-          title: "Test for @danny900714/upload-anki-addon"
+          title: "Test for @athulkrishna2015/ankiweb-api"
           tags: "github action test upload"
           support-page: "https://github.com/danny900714/upload-anki-addon"
           branches: |
