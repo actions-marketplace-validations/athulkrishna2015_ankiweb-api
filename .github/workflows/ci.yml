@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - main
+  # The `test` and `test-action` jobs upload to the real AnkiWeb account, which
+  # is rate-limited (user_upload_status TOO_NEW). They only run on demand.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -66,6 +69,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    # Uploads to the live AnkiWeb account; skipped on push/PR to avoid
+    # tripping the upload rate limit. Run via Actions -> CI -> Run workflow.
+    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -83,6 +89,8 @@ jobs:
   test-action:
     name: GitHub Actions Test
     runs-on: ubuntu-latest
+    # Same as `test`: real upload, so manual runs only.
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -102,8 +110,8 @@ jobs:
           addon-id: ${{ vars.ADDON_ID }}
           username: ${{ secrets.ANKIWEB_USERNAME }}
           password: ${{ secrets.ANKIWEB_PASSWORD }}
-          title: "Test for @athulkrishna2015/ankiweb-api"
-          tags: "github action test upload"
+          title: "Integration test for ankiweb client of @athulkrishna2015/ankiweb-api"
+          tags: "integration test tag"
           support-page: "https://github.com/danny900714/upload-anki-addon"
           branches: |
             2.1.1-25.09.4+
