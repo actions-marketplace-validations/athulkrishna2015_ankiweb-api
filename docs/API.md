@@ -19,6 +19,9 @@ complete field-level reference in [ENDPOINTS.md](ENDPOINTS.md). Schema revision
 > [escape hatch](#generic-escape-hatch) · [schema](#schema-regeneration) ·
 > [codec](#codec) · [upload](#upload-verification) ·
 > [limits & caching](#description-limits-and-stale-reads) · [testing](#testing)
+>
+> The 22 `/svc/radmin/*` admin endpoints are decoded but **not** exposed on the
+> client — see [reference only](ENDPOINTS.md#admin-endpoints-reference-only-not-callable).
 
 ## Contents
 
@@ -273,7 +276,11 @@ ankiweb call decks_create_deck --request '{"name": "New Deck"}'
   synthetic or offline fixtures during development. **Never test uploads with a
   real add-on file** — an upload replaces the file on AnkiWeb irreversibly;
   follow the synthetic-fixture instructions in the [README](../README.md#upload).
-- `/svc/radmin/*` endpoints are decoded but deliberately not exposed.
+- `/svc/radmin/*` endpoints are decoded but deliberately not exposed. They act
+  on other users' accounts and several are destructive; they are listed as
+  [reference only](ENDPOINTS.md#admin-endpoints-reference-only-not-callable) so
+  the decode coverage stays auditable, and the client refuses to synthesise a
+  wrapper for them (`AttributeError`).
 
 ## Schema regeneration
 

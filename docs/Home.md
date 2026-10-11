@@ -36,7 +36,8 @@ for item in client.shared_list_mine()["items"]:
 
 - **41/41 public endpoints** as typed methods — account, decks, editor, search,
   shared, study. The 22 `/svc/radmin/*` admin endpoints are decoded but
-  deliberately not exposed.
+  deliberately not exposed; they are listed as
+  [reference only](ENDPOINTS.md#admin-endpoints-reference-only-not-callable).
 - **Schema revision 2026-10-10**, 174 messages, regenerated from AnkiWeb's live
   bundle by `tools/generate_schema.py`.
 - **Pure stdlib codec** — `requests` is the only runtime dependency.

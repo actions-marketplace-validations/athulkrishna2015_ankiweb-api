@@ -7,15 +7,16 @@
 >
 > AnkiWeb exposes no official public API. These endpoints are reverse-engineered
 > from the site's own frontend bundle, may change without notice, and are
-> subject to AnkiWeb's terms and rate limits. `/svc/radmin/*` admin endpoints
-> are decoded into the schema for completeness but are **not** exposed on the
-> client. Use only with an account and data you are authorized to access.
+> subject to AnkiWeb's terms and rate limits. The 22 `/svc/radmin/*` admin
+> endpoints are decoded into the schema for completeness but are **not** exposed
+> on the client — see [reference only](#admin-endpoints-reference-only-not-callable).
+> Use only with an account and data you are authorized to access.
 
 **Jump to:** [Account](#account-12) · [Decks](#decks-8) ·
 [Editor and search](#editor-and-search-4) ·
 [Shared public reads](#shared-public-reads-5-no-auth) ·
 [Shared account reads and writes](#shared-account-reads-and-writes-7-auth) ·
-[Study](#study-4) · [Admin](#admin-endpoints-excluded-from-the-client) ·
+[Study](#study-4) · [Admin (reference only)](#admin-endpoints-reference-only-not-callable) ·
 [Wire details](#wire-details)
 
 > Client concepts, safety rules, and schema regeneration are in
@@ -118,17 +119,56 @@ and the three public GET endpoints (`item-info`, `list-addons`, `list-decks`).
 | `study_study_cards(answer?, next_card_id?)`                               | POST `/svc/study/study-cards`       | `answer{card_id, answer_button, time_taken_millis, answered_at_millis, current/next_state}?`, `next_card_id?: int64` | `{sched_ver: uint32, cards[{card_id, question, answer, count_index, button_labels[], note_id, ...}], new/learn/review_count}` |
 | `study_upgrade_scheduler(v3=True)`                                        | POST `/svc/study/upgrade-scheduler` | `v3: bool`                                                                                                           | — (empty)                                                                                                                     |
 
-## Admin endpoints (excluded from the client)
+## Admin endpoints — reference only, not callable
 
-22 `/svc/radmin/*` endpoints are decoded in `SCHEMA` (all request/response
-names resolve) but intentionally not exposed on `AnkiWebClient` — they require
-administrator privileges. They are listed here for decode-coverage honesty:
-`all-shared-items`, `balance-users`, `ban-user`, `become-user`,
-`bulk-disable-sharing`, `bulk-remove-reviews`, `clear-reviews`,
-`dump-all-addons`, `email-status`, `export-revlogs`, `fix-media`,
-`get-collection-backups`, `get-user-info`, `list-media`, `lookup-users`,
-`migrate-user`, `migrate-users`, `move-addon`, `recalculate-ratings`,
-`restore-collection-backup`, `restore-media`, `support-notes`.
+> [!CAUTION]
+> **Reference only. Not part of the supported surface.** The 22 `/svc/radmin/*`
+> endpoints below are decoded in `SCHEMA` — all request/response/nested names
+> resolve — but are **deliberately not exposed** on `AnkiWebClient` and have no
+> typed wrapper. They require AnkiWeb staff privileges and act on _other users'
+> accounts_, so several are destructive and irreversible (`ban-user`,
+> `clear-reviews`, `bulk-remove-reviews`, `move-addon`, `restore-collection-backup`,
+> `balance-users`). They are listed so the decode coverage is honest and auditable,
+> **not** as an invitation to call them.
+
+They remain reachable through the codec if you deliberately construct a request
+(`ankiweb_proto.encode("RadminBanUserRequest", {"user_id": 1})`), because removing
+them from the schema would misreport what was actually decoded. Don't, unless you
+are AnkiWeb staff debugging a live incident.
+
+| Reference name (no wrapper exists) | Endpoint                                     | Request fields                                 | Response fields                            |
+| ---------------------------------- | -------------------------------------------- | ---------------------------------------------- | ------------------------------------------ |
+| `radmin_all_shared_items`          | POST `/svc/radmin/all-shared-items`          | `user_id`                                      | `items`, `reviews`                         |
+| `radmin_balance_users`             | POST `/svc/radmin/balance-users`             | `batch_size`, `batch_count`, `shards_to_drain` | — (empty)                                  |
+| `radmin_ban_user`                  | POST `/svc/radmin/ban-user`                  | `user_id`                                      | — (empty)                                  |
+| `radmin_become_user`               | POST `/svc/radmin/become-user`               | `user_id`                                      | `token`                                    |
+| `radmin_bulk_disable_sharing`      | POST `/svc/radmin/bulk-disable-sharing`      | `user_ids`, `reason`                           | — (empty)                                  |
+| `radmin_bulk_remove_reviews`       | POST `/svc/radmin/bulk-remove-reviews`       | `user_ids`, `reason`                           | — (empty)                                  |
+| `radmin_clear_reviews`             | POST `/svc/radmin/clear-reviews`             | `user_id`, `mode`                              | — (empty)                                  |
+| `radmin_dump_all_addons`           | POST `/svc/radmin/dump-all-addons`           | —                                              | — (empty)                                  |
+| `radmin_email_status`              | POST `/svc/radmin/email-status`              | `email`, `action`                              | `sent`, `changed`, `verified`, `state`     |
+| `radmin_export_revlogs`            | POST `/svc/radmin/export-revlogs`            | `shard`, `options`                             | — (empty)                                  |
+| `radmin_fix_media`                 | POST `/svc/radmin/fix-media`                 | `user_id`, `dry_run`                           | `files_processed`                          |
+| `radmin_get_collection_backups`    | POST `/svc/radmin/get-collection-backups`    | `user_id`                                      | `backups`                                  |
+| `radmin_get_user_info`             | POST `/svc/radmin/get-user-info`             | `user_id`                                      | `user`                                     |
+| `radmin_list_media`                | POST `/svc/radmin/list-media`                | `user_id`                                      | `entries`                                  |
+| `radmin_lookup_users`              | POST `/svc/radmin/lookup-users`              | `search`                                       | `matched_users`, `first_match`, `ip_match` |
+| `radmin_migrate_user`              | POST `/svc/radmin/migrate-user`              | `user_id`, `target_shard`                      | — (empty)                                  |
+| `radmin_migrate_users`             | POST `/svc/radmin/migrate-users`             | `source_shard`, `target_shard`, `count`        | — (empty)                                  |
+| `radmin_move_addon`                | POST `/svc/radmin/move-addon`                | `shared_id`, `target_user_id`                  | — (empty)                                  |
+| `radmin_recalculate_ratings`       | POST `/svc/radmin/recalculate-ratings`       | `shared_id`                                    | — (empty)                                  |
+| `radmin_restore_collection_backup` | POST `/svc/radmin/restore-collection-backup` | `user_id`, `version`                           | — (empty)                                  |
+| `radmin_restore_media`             | POST `/svc/radmin/restore-media`             | `user_id`, `days`, `dry_run`                   | `files_processed`                          |
+| `radmin_support_notes`             | POST `/svc/radmin/support-notes`             | `user_id`, `new_note`                          | `notes`                                    |
+
+> [!NOTE]
+> The first column is a **documentation label, not a method name**. There is no
+> `AnkiWebClient.radmin_ban_user()` — calling it raises `AttributeError`. Only
+> the 41 public endpoints in the sections above are callable.
+
+The client enforces this in code, not just in docs: `public_endpoints()` filters
+`/radmin/` out of the schema's endpoint list, and `AnkiWebClient.__getattr__`
+refuses to synthesise a wrapper for any path that is admin-only.
 
 ## Wire details
 
