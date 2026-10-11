@@ -1,4 +1,4 @@
-name: Upload Anki add-on to AnkiWeb
+name: Upload Anki add-on to AnkiWeb via ankiweb-api
 description: Upload Anki add-on to AnkiWeb inside your GitHub Actions workflow.
 author: Tzu-Hsien Chao
 branding:
