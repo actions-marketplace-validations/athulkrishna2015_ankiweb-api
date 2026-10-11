@@ -10,10 +10,13 @@ subject to AnkiWeb's terms and rate limits.
 
 ## Pages
 
-| Page                         | Contents                                                                                                                                                    |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [API.md](API.md)             | Client reference: installation, authentication, all 46 public methods, error handling, the codec, upload verification, and the description/caching gotchas. |
-| [ENDPOINTS.md](ENDPOINTS.md) | All 41 public `/svc/*` endpoints with every request field, response field and enum, grouped by area.                                                        |
+| Page                         | Contents                                                                                                                                                                                           |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [API.md](API.md)             | Client reference: installation, authentication, all 46 public methods, error handling, the codec, upload verification, and the description/caching gotchas.                                        |
+| [ENDPOINTS.md](ENDPOINTS.md) | All 41 public `/svc/*` endpoints with every request field, response field and enum, grouped by area.                                                                                               |
+| [ECOSYSTEM.md](ECOSYSTEM.md) | Map of every Anki API surface discovered in the `ankitects` and `ankidroid` GitHub orgs — which one to use for what, and the repositories that host them.                                          |
+| [SYNC.md](SYNC.md)           | The official Anki sync protocol and self-hosted sync server: `/sync/*` + `/msync/*` endpoints, wire format (`anki-sync` header, zstd), host-key auth, `SYNC_*` server configuration, client setup. |
+| [ANKIDROID.md](ANKIDROID.md) | AnkiDroid integration APIs: Instant-Add/ContentProvider (URIs, columns, `AddContentApi`), the intent API, and the `AnkiDroidJS` JavaScript bridge for card templates.                              |
 
 ## Quick start
 

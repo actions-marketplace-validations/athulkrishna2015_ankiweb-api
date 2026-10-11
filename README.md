@@ -38,13 +38,19 @@ your terminal or GitHub Actions.
 
 ## Documentation
 
-Two deeper references live in [`docs/`](docs/):
+Deeper references live in [`docs/`](docs/) — covering this client **and** the
+other official Anki API surfaces discovered in the
+[ankitects](https://github.com/ankitects) / [ankidroid](https://github.com/ankidroid)
+orgs:
 
 | Doc                                    | What it covers                                                                                                                                                                                                                                                                                                                                                                    |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/Home.md](docs/Home.md)           | Wiki landing page and quick-start                                                                                                                                                                                                                                                                                                                                                 |
 | [docs/API.md](docs/API.md)             | Client reference: [install](docs/API.md#installation), [authentication](docs/API.md#authentication), all [46 public methods](docs/API.md#method-reference), [errors](docs/API.md#errors-and-status-codes), [codec](docs/API.md#codec), [upload verification](docs/API.md#upload-verification), [description limits & stale reads](docs/API.md#description-limits-and-stale-reads) |
 | [docs/ENDPOINTS.md](docs/ENDPOINTS.md) | All [41 endpoints](docs/ENDPOINTS.md#quick-start) with every field and enum — [account](docs/ENDPOINTS.md#account-12), [decks](docs/ENDPOINTS.md#decks-8), [editor & search](docs/ENDPOINTS.md#editor-and-search-4), [shared](docs/ENDPOINTS.md#shared-public-reads-5-no-auth), [study](docs/ENDPOINTS.md#study-4), [wire details](docs/ENDPOINTS.md#wire-details)                |
+| [docs/ECOSYSTEM.md](docs/ECOSYSTEM.md) | Map of every Anki API surface across the [ankitects](https://github.com/ankitects) and [ankidroid](https://github.com/ankidroid) GitHub orgs — what each API does, who maintains it, and which page documents it                                                                                                                                                                  |
+| [docs/SYNC.md](docs/SYNC.md)           | The official Anki sync protocol and self-hosted sync server: all [`/sync/*` (12)](docs/SYNC.md#collection-endpoints-12) + [`/msync/*` (5)](docs/SYNC.md#media-endpoints-5) endpoints, wire format, host-key auth, `SYNC_*` configuration, client setup                                                                                                                            |
+| [docs/ANKIDROID.md](docs/ANKIDROID.md) | AnkiDroid integration APIs: [Instant-Add/ContentProvider](docs/ANKIDROID.md#contentprovider-uri-map) (URI map, columns, `AddContentApi` methods), the [intent API](docs/ANKIDROID.md#intent-api), and the [`AnkiDroidJS` bridge](docs/ANKIDROID.md#javascript-api)                                                                                                                |
 
 `docs/` is published to the repository wiki by
 [`.github/workflows/sync-wiki.yml`](.github/workflows/sync-wiki.yml) whenever it
