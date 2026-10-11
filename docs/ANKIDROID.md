@@ -13,6 +13,7 @@
 **Jump to:** [Surfaces](#api-surfaces) · [Setup](#client-setup-instant-add) ·
 [Methods](#addcontentapi-methods) · [Provider URIs](#contentprovider-uri-map) ·
 [Columns](#column-reference) · [Intents](#intent-api) ·
+[Hidden surfaces](#hidden-surfaces-found-in-source) ·
 [JS API](#javascript-api) · [Testing](#testing-and-samples)
 
 ## API surfaces
@@ -122,20 +123,34 @@ Authority: **`com.ichi2.anki.flashcards`** (constant `FlashCardsContract.AUTHORI
 base `content://com.ichi2.anki.flashcards`. The contract lives in
 [`FlashCardsContract.kt`](https://github.com/ankidroid/Anki-Android/blob/main/api/src/main/java/com/ichi2/anki/FlashCardsContract.kt).
 
-| URI                       | Supported     | Notes                                                                                                                              |
-| ------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `/notes`                  | query, insert | Selection may use **libanki browser search syntax**; insert needs `mid`, `flds`, `tags` (+ `?deckId=` query param for bulk insert) |
-| `/notes_v2`               | query         | Same rows, but selection is a **direct SQL WHERE** against the notes table                                                         |
-| `/notes/<id>`             | query, update | Single note; append the id                                                                                                         |
-| `/notes/<id>/cards`       | query         | All cards of the note as high-level rows (deck, question, answer)                                                                  |
-| `/notes/<id>/cards/<ord>` | query, update | One card of the note (e.g. move it to another deck via `deck_id`)                                                                  |
-| `/models`                 | query, insert | Note types; `/models/current` resolves the current model                                                                           |
-| `/models/<id>`            | query         | One note type (field names, templates, css, counts)                                                                                |
-| `/cards`                  | query         | All cards with scheduling columns (`Card.DEFAULT_COLUMNS`)                                                                         |
-| `/schedule`               | query, update | ReviewInfo: next due cards & answering; selection `limit=?, deckID=?`                                                              |
-| `/decks`                  | query, insert | All decks (`deck_name`, `deck_id`, counts, options…)                                                                               |
-| `/selected_deck`          | query         | The deck last selected in the deck-chooser                                                                                         |
-| `/media`                  | insert        | Copy a file into `collection.media` (`file_uri`, `preferred_name`)                                                                 |
+| URI (path under the authority) | Query | Insert | Update | Delete | Notes                                                                                                              |
+| ------------------------------ | ----- | ------ | ------ | ------ | ------------------------------------------------------------------------------------------------------------------ |
+| `/notes`                       | ✅    | ✅     | —      | —      | Selection is **libanki browser search syntax**; insert needs `mid`, `flds`, `tags`; bulk insert honours `?deckId=` |
+| `/notes_v2`                    | ✅    | —      | —      | —      | Same rows, selection is a **direct SQL WHERE**                                                                     |
+| `/notes/<id>`                  | ✅    | —      | ✅     | ✅     | Update: `flds`, `tags`. Delete removes the note                                                                    |
+| `/notes/<id>/cards`            | ✅    | —      | ✗      | —      | All cards of the note (deck, question, answer)                                                                     |
+| `/notes/<id>/cards/<ord>`      | ✅    | —      | ✅     | —      | Update: `deck_id` (move card), `flags`                                                                             |
+| `/models`                      | ✅    | ✅     | ✗      | —      | Note types; bulk update rejected                                                                                   |
+| `/models/<id>` (or `current`)  | ✅    | —      | ✅     | —      | Update: `deck_id` (default deck for the type)                                                                      |
+| `/models/<id>/empty_cards`     | —     | —      | —      | ✅     | Registered + `getType`, but **query throws**; delete purges empty cards                                            |
+| `/models/<id>/templates`       | ✅    | ✅     | ✗      | —      | Read/add card templates (see CardTemplate below)                                                                   |
+| `/models/<id>/templates/<ord>` | ✅    | —      | ✅     | —      | Edit one template's qfmt/afmt                                                                                      |
+| `/models/<id>/fields`          | —     | ✅     | —      | —      | **Insert-only** — query is not implemented and throws                                                              |
+| `/cards`                       | ✅    | —      | —      | —      | All cards with scheduling columns (`Card.DEFAULT_COLUMNS`)                                                         |
+| `/cards/<id>`                  | ✅    | —      | —      | —      | Single card, read-only                                                                                             |
+| `/schedule`                    | ✅    | —      | ✅     | —      | ReviewInfo: query next due cards (`limit=?, deckID=?`), update = answer a card                                     |
+| `/decks`                       | ✅    | ✅     | ✗      | —      | All decks; insert = create (`deck_name`)                                                                           |
+| `/decks/<id>`                  | ✅    | —      | ✗\*    | —      | \*Update is stubbed “Not yet implemented”                                                                          |
+| `/selected_deck`               | ✅    | —      | ✅     | —      | Update: `deck_id` selects the active deck                                                                          |
+| `/media`                       | —     | ✅     | —      | —      | Copy a file into `collection.media` (`file_uri`, `preferred_name`)                                                 |
+
+— = no branch in the provider (throws `IllegalArgumentException` /
+`UnsupportedOperationException`); ✗ = explicitly rejected with a message.
+The full matcher list is the `addUri(...)` block in
+[`CardContentProvider.kt`](https://github.com/ankidroid/Anki-Android/blob/main/AnkiDroid/src/main/java/com/ichi2/anki/provider/CardContentProvider.kt)
+(lines 186–207) — **18 paths**, several of which the wiki never mentions.
+There is **no `ContentProvider.call()` RPC** (no `call()` override exists), so
+this URI surface is the entire provider API.
 
 MIME types follow `vnd.android.cursor.(dir|item)/vnd.com.ichi2.anki.(note|card|model)`.
 
@@ -176,6 +191,14 @@ Default projection: `_id, note_id, ord, card_name, deck_id, question, answer, fl
 `sort_field_index`, `type`, `latex_pre`, `latex_post`, `deck_id`.
 `CURRENT_MODEL_ID = "current"` addresses the current model.
 
+### CardTemplate (`/models/<id>/templates`)
+
+`_id`, `model_id`, `ord`, `card_template_name` (`NAME`),
+`question_format` (`QFMT`), `answer_format` (`AFMT`),
+`browser_question_format`, `browser_answer_format`, `card_count`.
+Queryable per template via `/models/<id>/templates/<ord>`; insertable in bulk
+via `/models/<id>/templates`.
+
 ### Deck (`/decks`, `/selected_deck`)
 
 `deck_name`, `deck_id`, `deck_count`, `options`, `deck_dyn`, `deck_desc`.
@@ -214,6 +237,60 @@ if (shareIntent.resolveActivity(context.getPackageManager()) != null) {
     context.startActivity(shareIntent);
 }
 ```
+
+## Hidden surfaces (found in source)
+
+Not mentioned on the API wiki — recovered from `AndroidManifest.xml`,
+`IntentHandler.kt` and `CardContentProvider.kt` on `main`:
+
+1. **Card Browser deep link** — an exported activity-alias handles the
+   x-callback-url scheme, including an optional search query:
+
+   ```sh
+   am start -a android.intent.action.VIEW \
+     -d 'anki://x-callback-url/browser?search=deck%3Adefault'
+   ```
+
+   (`anki://x-callback-url/browser` with no `search` just opens the browser.)
+
+2. **Direct-to-reviewer intent** — any intent addressed to the exported
+   `com.ichi2.anki.IntentHandler` that carries a **long extra
+   `EXTRA_DECK_ID`** selects that deck and jumps straight into the reviewer:
+
+   ```sh
+   am start -n com.ichi2.anki/com.ichi2.anki.IntentHandler --el EXTRA_DECK_ID 1
+   ```
+
+   Upstream's own helper `IntentHandler.getReviewDeckIntent(context, deckId)`
+   builds exactly this intent (used by widgets) — but because the activity is
+   exported, any app can start studying a deck by id.
+
+3. **`com.ichi2.anki.COPY_DEBUG_INFO`** — action handled by `IntentHandler`
+   with a string extra **`clip_data`**: AnkiDroid copies the supplied text to
+   the clipboard and finishes. It has _no_ intent-filter in the manifest, so it
+   only works as an explicit-component intent.
+
+4. **The DO_SYNC throttle is 2 minutes, not 5.** The wiki says "once every 5
+   minutes", but current source defines
+   `INTENT_SYNC_MIN_INTERVAL = 2 * 60000` (2 min) in `IntentHandler.kt` and
+   shows a "try again in N s" style notice inside that window.
+
+5. **No hidden provider RPC.** `CardContentProvider` does **not** override
+   `ContentProvider.call()`, so the 18 URIs above (query/insert/update/delete)
+   are the entire provider surface; the provider spec version is advertised via
+   the `com.ichi2.anki.provider.spec` manifest meta-data.
+
+6. **Internal-only broadcasts.** `com.ichi2.widget.UPDATE_WIDGET` and
+   `com.ichi2.widget.ACTION_ROLLOVER` exist in the manifest but their
+   receivers are `exported="false"` — not callable by third-party apps.
+
+7. **Richer implicit-intent matrix than the wiki's ACTION_SEND example.**
+   The launcher activity also accepts `ACTION_VIEW`/`ACTION_SEND` for
+   `application/apkg`, `application/colpkg`, `application/vnd.anki`,
+   `application/x-apkg`, `x-colpkg`, CSV/TSV (and extension-less variants
+   Gmail hides), plain text (shared-text → add-note flow), any `image/*`
+   (image-occlusion import), and `ACTION_PROCESS_TEXT` from Android's
+   text-selection menu.
 
 ## JavaScript API
 

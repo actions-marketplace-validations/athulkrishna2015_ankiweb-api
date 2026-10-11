@@ -198,6 +198,15 @@ session key).
    proxies must offer **TLS 1.2** (not 1.3 only) or AnkiMobile fails with error
    `-9836`.
 
+Client defaults (from
+[`rslib/src/sync/http_client/mod.rs`](https://github.com/ankitects/anki/blob/main/rslib/src/sync/http_client/mod.rs)):
+when no custom server is configured the endpoint is
+**`https://sync.ankiweb.net/`** (not `ankiweb.net`), the per-request I/O
+timeout is **30 s**, and the session key (`s` in the header) is a random
+base-62 id regenerated each run. Since sync version 11 the old `hostNum`
+server-sharding parameter is gone — servers hand out an **HTTP redirect**
+instead (see the `SYNC_VERSION_11_DIRECT_POST` notes in `version.rs`).
+
 Older clients expected the endpoints separately:
 
 - `SYNC_ENDPOINT` → `http://host:8080/sync/`
