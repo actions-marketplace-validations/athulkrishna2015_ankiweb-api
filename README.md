@@ -211,12 +211,14 @@ from AnkiWeb's `svc/shared/item-info` protobuf endpoint.
 
 ```text
 id:           805854302
-title:        testingaddon for me [private]
-size:         737
-last_updated: 1791703741 (2026-10-11T07:29:01+00:00)
+title:        Integration test for ankiweb client of @athulkrishna2015/ankiweb-api
+tags:         integration test tag
+support:      https://github.com/danny900714/upload-anki-addon
+size:         172
+last_updated: 1791704155 (2026-10-11T07:35:55+00:00)
 versions:     2.1.1-25.09.4+
 description:
-<p>test upload via GitHub-Actions engine - 2026-10-11T07:28:56Z</p>
+<p>This is the test addon uploaded during integration test for ankiweb client.</p>
 ```
 
 ### Download `.ankiaddon`
@@ -230,10 +232,10 @@ Public, no auth. Follows the `/shared/download/<id>` redirect and writes the fil
 ```
 
 ```text
-saved:    testingaddon_for_me_private.ankiaddon
-filename: testingaddon_for_me_private.ankiaddon
-size:     737
-t=1791703741 minpt=1 maxpt=250904 bidx=0
+saved:    Integration_test_for_ankiweb_client_of_athulkrishna2015ankiweb-api.ankiaddon
+filename: Integration_test_for_ankiweb_client_of_athulkrishna2015ankiweb-api.ankiaddon
+size:     172
+t=1791704155 minpt=1 maxpt=250904 bidx=0
 ```
 
 Equivalent one-liner, no Python needed:
@@ -268,20 +270,36 @@ reference for all 41 public endpoints is [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
 ### Live upload verification (GitHub Actions engine)
 
 Verified live on 2026-10-11 against the private throwaway add-on
-[805854302](https://ankiweb.net/shared/info/805854302):
+[805854302](https://ankiweb.net/shared/info/805854302) — saved as
+`ANKIWEB_TEST_ADDON_ID` in `.env` / `.env.example`, used by local runs and
+the CI `test-action` / integration jobs (`vars.ADDON_ID`,
+`vars.INTEGRATION_TEST_ADDON_ID`):
 
 ```sh
 python3 make_test_addon.py -o /tmp/gh-action-test.ankiaddon
-./upload.py --addon-id 805854302 --title "testingaddon for me [private]" \
+./upload.py --addon-id "$ANKIWEB_TEST_ADDON_ID" --title "testingaddon for me [private]" \
     --description "test upload via GitHub-Actions engine - 2026-10-11T07:28:56Z" \
     --branches "2.1.1-25.09.4+" --addon-files /tmp/gh-action-test.ankiaddon
-./ankicli.py info 805854302        # new description + timestamp confirmed
-./ankicli.py download 805854302 -o /tmp/verify.ankiaddon   # sha256 matches upload
+./ankicli.py info "$ANKIWEB_TEST_ADDON_ID"        # new description + timestamp confirmed
+./ankicli.py download "$ANKIWEB_TEST_ADDON_ID" -o /tmp/verify.ankiaddon   # sha256 matches upload
 ```
 
 `upload.py` execs `node dist/index.js` — the exact engine the
 `test-action` CI job runs — so this covers the GitHub Actions upload path.
 Downloaded bytes were sha256-identical to the uploaded fixture.
+
+Same upload verified from real runners: CI run `38121891143` (2026-10-11) is
+fully green, with the `test-action` job uploading from `ubuntu-latest`:
+
+```text
+Successfully login to AnkiWeb.
+Find addon file in test-addon-1.ankiaddon. Uploading it to 2.1.1-25.09.4+ branch ...
+Successfully uploaded addon file: test-addon-1.ankiaddon.
+```
+
+Note: AnkiWeb requires site-wide unique add-on titles, so the fork's CI test
+titles are qualified with `@athulkrishna2015/ankiweb-api` — the inherited
+`@danny900714` titles are already taken and fail with `400 title must be unique`.
 
 ## GitHub Actions usage
 
