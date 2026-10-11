@@ -27,7 +27,7 @@ describe("uploadAddonRequest", () => {
             : undefined,
           title: "Integration test for ankiweb client of @athulkrishna2015/ankiweb-api",
           tags: "integration test tag",
-          supportUrl: "https://ankiweb.net/shared/info/805854302",
+          supportUrl: "https://github.com/athulkrishna2015/ankiweb-api/",
           description:
             "This is the test addon uploaded during integration test for ankiweb client.",
           branches: [{ minVersion: 1, maxVersion: 250904 }],

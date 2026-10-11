@@ -112,7 +112,7 @@ jobs:
           password: ${{ secrets.ANKIWEB_PASSWORD }}
           title: "Integration test for ankiweb client of @athulkrishna2015/ankiweb-api"
           tags: "integration test tag"
-          support-page: "https://ankiweb.net/shared/info/805854302"
+          support-page: "https://github.com/athulkrishna2015/ankiweb-api/"
           branches: |
             2.1.1-25.09.4+
           addon-files: |
