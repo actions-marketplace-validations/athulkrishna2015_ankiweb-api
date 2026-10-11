@@ -12,6 +12,15 @@ intentionally not exposed on the client.
 complete field-level reference in [ENDPOINTS.md](ENDPOINTS.md). Schema revision
 2026-10-10 (174 messages; all request/response/nested names resolve).
 
+> **Related Anki APIs — this page is only one of several surfaces.** The
+> `/svc/*` protocol documented here is specific to AnkiWeb's website (add-ons,
+> shared decks, study, account). Other official surfaces live elsewhere:
+> the **sync protocol / self-hosted sync server** in
+> [SYNC.md](SYNC.md) (collection + media sync over `/sync/*` and `/msync/*`),
+> the **AnkiDroid app APIs** in [ANKIDROID.md](ANKIDROID.md) (ContentProvider,
+> intents, JS bridge), and the desktop **add-on Python API** — see
+> [ECOSYSTEM.md](ECOSYSTEM.md) for the full map and how they differ.
+
 > CLI usage, installation and the GitHub Action live in the
 > [README](../README.md). Jump to:
 > [install](#installation) · [authentication](#authentication) ·

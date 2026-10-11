@@ -21,6 +21,12 @@
 
 > Client concepts, safety rules, and schema regeneration are in
 > [API.md](API.md); installation and the CLI are in the [README](../README.md).
+>
+> **Related APIs:** this reference covers `/svc/*` (AnkiWeb's website JSON
+> API) only. Collection/media sync is a **separate protocol** served under
+> `/sync/*` and `/msync/*` — see [SYNC.md](SYNC.md); AnkiDroid's on-device APIs
+> are in [ANKIDROID.md](ANKIDROID.md); [ECOSYSTEM.md](ECOSYSTEM.md) maps every
+> surface.
 
 ## Quick start
 
@@ -181,3 +187,20 @@ https://ankiweb.net/shared/mine`, exactly as the web app sends.
 - Field numbers/types: see `ankiweb_schema.SCHEMA` (generated, authoritative as
   of the revision date). Regenerate with `python3 tools/generate_schema.py`
   and review the diff before accepting.
+
+### This is not the sync protocol
+
+AnkiWeb serves two unrelated HTTP surfaces; only the first is documented here:
+
+|           | `/svc/*` (this page)                                                     | `/sync/*` + `/msync/*`                                                                    |
+| --------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Purpose   | Website features: add-ons, shared decks, study, account                  | Collection & media sync between clients and a server                                      |
+| Encoding  | Protobuf messages in octet-stream bodies (codec: [API.md](API.md#codec)) | JSON (or multipart/gzip for legacy clients), zstd-compressed, `anki-sync` header envelope |
+| Auth      | `ankiweb` session cookie (or none for public reads)                      | Host key from `POST /sync/hostKey` (`{u, p}`)                                             |
+| Official? | No — reverse-engineered from the frontend bundle                         | Yes — official protocol, client and server in `ankitects/anki`                            |
+| Reference | [ENDPOINTS.md](ENDPOINTS.md) (here)                                      | [SYNC.md](SYNC.md)                                                                        |
+
+There is no overlap: an endpoint under `/svc/*` never appears under
+`/sync/*`, and a self-hosted sync server serves neither `/svc/*` nor any
+website features. In-app "AnkiWeb" messages during sync refer to the sync
+server, even against a custom one.
