@@ -150,19 +150,24 @@ def _is_printable_text(b: bytes) -> bool:
     return pr / max(len(s), 1) > 0.9
 
 
-def fetch_item_info_raw(shared_id: int, timeout: int = 30) -> bytes:
+def fetch_item_info_raw(
+    shared_id: int, timeout: int = 30, cache_bust: str | None = None
+) -> bytes:
     """GET svc/shared/item-info?sharedId=<id>. No auth. Returns raw protobuf bytes.
 
     AnkiWeb serves this with `max-age=600`, so a stable URL returns up to 10
     minutes of stale data -- after an upload, reads looked like the server had
     silently wiped a long description. Append the same `cb` cache-buster the
-    web frontend uses to force a fresh read.
+    web frontend uses to force a fresh read. Pass `cache_bust` to reuse the
+    exact value, so callers can echo the URL they actually read.
     """
+    if cache_bust is None:
+        cache_bust = str(int(time.time() * 1000))
     r = requests.get(
         ITEM_INFO_URL,
         params={
             "sharedId": shared_id,  # camelCase required; shared_id -> 400
-            "cb": str(int(time.time() * 1000)),
+            "cb": cache_bust,
         },
         headers={"Accept": "*/*", "Cache-Control": "no-cache"},
         timeout=timeout,
@@ -321,7 +326,10 @@ def fetch_list_mine(cookie: str, timeout: int = 30) -> dict:
 
 
 def fetch_item_info(shared_id: int, timeout: int = 30) -> dict:
-    raw = fetch_item_info_raw(shared_id, timeout)
+    # One cache-buster for the read, echoed back as info["cache_bust"] so
+    # callers can print the exact verification URL that was just fetched.
+    cache_bust = str(int(time.time() * 1000))
+    raw = fetch_item_info_raw(shared_id, timeout, cache_bust=cache_bust)
     info = parse_item_info(raw)
     # Defensive: a real ItemInfo always carries a title or a description.
     if not info["title"] and not info["description"]:
@@ -330,4 +338,5 @@ def fetch_item_info(shared_id: int, timeout: int = 30) -> dict:
             f"(wrong id, deleted, or not public)"
         )
     info["shared_id"] = shared_id
+    info["cache_bust"] = cache_bust
     return info

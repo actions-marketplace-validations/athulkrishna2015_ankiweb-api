@@ -179,6 +179,21 @@ def test_cache_busting() -> None:
         repr(captured.get("headers")),
     )
 
+    # fetch_item_info must surface the exact cache-buster it read with, so the
+    # CLI can print a verification URL that shows the same (fresh) state.
+    with mock.patch("terminal_ankiweb.requests.get", fake_get):
+        parsed = fetch_item_info(805854302)
+    check(
+        "fetch_item_info echoes its cache_bust",
+        parsed.get("cache_bust") == captured.get("params", {}).get("cb"),
+        f"{parsed.get('cache_bust')!r} vs {captured.get('params', {}).get('cb')!r}",
+    )
+    check(
+        "cache_bust yields a usable verification URL",
+        f"https://ankiweb.net/shared/info/{parsed['shared_id']}?cb={parsed['cache_bust']}".count("?cb=") == 1,
+        repr(parsed.get("cache_bust")),
+    )
+
 
 def test_login_codec() -> None:
     """Round-trip the LoginRequest/Response protobuf codec (offline)."""

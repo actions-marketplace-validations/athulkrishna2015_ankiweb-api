@@ -56,6 +56,11 @@ def cmd_info(args) -> int:
         print(f"versions:     {', '.join(info['versions'])}")
     print("description:")
     print(info["description"] or "(empty)")
+    # AnkiWeb caches item-info for 10 minutes, so the page link needs the same
+    # `cb` cache-buster the CLI just read with, or the browser shows stale data.
+    cb = info.get("cache_bust")
+    if cb:
+        print(f"verify:   https://ankiweb.net/shared/info/{info['shared_id']}?cb={cb}")
     if args.verbose:
         print(f"timestamps_seen: {info['timestamps_seen']}")
     return 0

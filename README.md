@@ -218,7 +218,9 @@ size:         172
 last_updated: 1791704155 (2026-10-11T07:35:55+00:00)
 versions:     2.1.1-25.09.4+
 description:
-<p>This is the test addon uploaded during integration test for ankiweb client.</p>
+<p>Throwaway fixture for upload integration tests. Limit probe: 65535 bytes OK, 65536 rejected.</p>
+
+verify:   https://ankiweb.net/shared/info/805854302?cb=1791710745423
 ```
 
 ### Download `.ankiaddon`
@@ -246,6 +248,14 @@ curl -sL "https://ankiweb.net/shared/download/805854302?v=2.1&p=250902" -o addon
 
 ### Terminal notes
 
+- **Description size limit: 65,535 bytes.** Measured on 2026-10-11 by probing
+  the throwaway add-on — 65,535 stores, 65,536 is rejected. An over-limit
+  upload is **rejected, not truncated**: the add-on keeps its previous
+  description, so verify after every large upload.
+- `info` prints a `verify:` line with a cache-busted link. AnkiWeb serves
+  `item-info` with `max-age=600`, so a plain `/shared/info/<id>` URL can show
+  up to 10 minutes of stale data; the `cb` query is required to see what was
+  just uploaded.
 - `v=2.1` is required on the download URL; without it AnkiWeb replies 404
   ("Your version of Anki is too old"). `p` is Anki's `int_version()`.
 - The `.ankiaddon` must be a zip with `__init__.py` at the root — no wrapping
