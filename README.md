@@ -94,13 +94,22 @@ Requires Python 3.9+ with `requests`, plus Node 24 if you upload (the action eng
 
 ### Setup
 
+Install as a command:
+
+```sh
+uv tool install ankiweb-api         # provides: ankiweb, ankiweb-upload, ankiweb-test-addon
+```
+
+Or run it straight from a checkout:
+
 ```sh
 git clone https://github.com/athulkrishna2015/ankiweb-api.git
 cd ankiweb-api
-pip install -r requirements-terminal.txt
+uv run --with requests ./ankicli.py info 805854302
 ```
 
-Keep credentials in `.env` (gitignored — never commit it):
+Keep credentials in `.env` (gitignored — never commit it). The tools look for `.env` in
+the current directory first, then next to the script:
 
 ```sh
 cp .env.example .env
@@ -108,7 +117,21 @@ $EDITOR .env     # ANKIWEB_USERNAME=... / ANKIWEB_PASSWORD=...
 ```
 
 `upload.py` reads `./.env` automatically. Exported shell variables take precedence, and
-`--username` / `--password` override both.
+`--username` / `--password` override both. When installed as a tool, point the engine at
+your own Node build with `ANKIWEB_ENGINE=/path/to/dist/index.js`.
+
+Every example below uses the in-checkout form; the installed commands are equivalent:
+
+| Script                 | Installed command    |
+| ---------------------- | -------------------- |
+| `./ankicli.py …`       | `ankiweb …`          |
+| `./upload.py …`        | `ankiweb-upload …`   |
+| `./make_test_addon.py` | `ankiweb-test-addon` |
+
+> [!IMPORTANT]
+> If you build the wheel yourself, send the artifacts somewhere other than `dist/` —
+> that directory holds `dist/index.js`, the action's upload engine, and CI diffs it:
+> `uv build --out-dir /tmp/wheel`.
 
 ### Upload
 

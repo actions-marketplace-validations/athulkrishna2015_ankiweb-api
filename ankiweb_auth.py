@@ -85,6 +85,22 @@ def decode_login_response(buf: bytes) -> tuple[int, str]:
     return status, token
 
 
+def default_env_file():
+    """Best-guess `.env` location: current directory first, then this file's dir.
+
+    Running from a clone (`./ankicli.py`) wants the repo's `.env`; running an
+    installed console script wants `./.env` from wherever the user invoked it,
+    since site-packages is not a sane place to keep credentials.
+    """
+    import os as _os
+    from pathlib import Path as _Path
+
+    cwd_env = _Path.cwd() / ".env"
+    if cwd_env.is_file():
+        return cwd_env
+    return _Path(__file__).resolve().parent / ".env"
+
+
 def load_dotenv(path) -> None:
     """Minimal .env loader (no dependency). Existing env vars win."""
     from pathlib import Path as _Path

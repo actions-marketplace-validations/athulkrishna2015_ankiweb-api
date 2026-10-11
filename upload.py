@@ -27,9 +27,36 @@ import subprocess
 import sys
 from pathlib import Path
 
-from ankiweb_auth import load_dotenv as load_env_file
+from ankiweb_auth import default_env_file, load_dotenv as load_env_file
 
 HERE = Path(__file__).resolve().parent
+
+
+def find_engine() -> Path | None:
+    """Locate the Node upload engine (dist/index.js).
+
+    Order: $ANKIWEB_ENGINE, a repo checkout's dist/, then the copy bundled into
+    the installed wheel. Keeps `./upload.py` in a clone working unchanged while
+    letting `uv tool install` ship the engine as package data.
+    """
+    import os
+
+    override = os.environ.get("ANKIWEB_ENGINE", "")
+    if override:
+        cand = Path(override).expanduser()
+        return cand if cand.is_file() else None
+
+    local = HERE / "dist" / "index.js"
+    if local.is_file():
+        return local
+
+    # Installed layout: this module and ankiweb_engine/ sit side by side in
+    # site-packages, so anchor on this file rather than importlib.resources
+    # (ankiweb_engine is not an importable package).
+    bundled = HERE / "ankiweb_engine" / "index.js"
+    if bundled.is_file():
+        return bundled
+    return None
 
 
 def load_dotenv(path: Path) -> None:
@@ -65,7 +92,7 @@ def validate_branch(branch: str) -> None:
 
 
 def build_env(args) -> dict:
-    load_dotenv(Path(args.env_file).expanduser() if args.env_file else HERE / ".env")
+    load_dotenv(Path(args.env_file).expanduser() if args.env_file else default_env_file())
     env = dict(os.environ)
     def inp(name: str, value: str):
         # @actions/core only replaces spaces with underscores, so hyphenated
@@ -154,9 +181,12 @@ def main() -> int:
         print(f"engine: {HERE/'dist/index.js'}")
         return 0
 
-    entry = HERE / "dist" / "index.js"
-    if not entry.is_file():
-        sys.exit(f"error: upstream engine missing: {entry} (did the fork merge complete?)")
+    entry = find_engine()
+    if entry is None:
+        sys.exit(
+            "error: upload engine not found (dist/index.js).\n"
+            "       Run from a clone of the repo, or set ANKIWEB_ENGINE=/path/to/dist/index.js"
+        )
     r = subprocess.run([args.node, str(entry)], env=env)
     return r.returncode
 

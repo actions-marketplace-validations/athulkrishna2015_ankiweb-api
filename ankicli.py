@@ -19,7 +19,7 @@ import os
 import sys
 from pathlib import Path
 
-from ankiweb_auth import AuthError, load_dotenv, login
+from ankiweb_auth import AuthError, default_env_file, load_dotenv, login
 from terminal_ankiweb import (
     AnkiWebError,
     NotFoundError,
@@ -81,7 +81,7 @@ def cmd_download(args) -> int:
 
 
 def load_creds(env_file: str = "") -> tuple[str, str]:
-    env_path = Path(env_file).expanduser() if env_file else HERE / ".env"
+    env_path = Path(env_file).expanduser() if env_file else default_env_file()
     load_dotenv(env_path)
     u = os.environ.get("ANKIWEB_USERNAME", "")
     p = os.environ.get("ANKIWEB_PASSWORD", "")

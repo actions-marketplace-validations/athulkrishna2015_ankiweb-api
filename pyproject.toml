@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ankiweb-api"
+version = "1.0.0"
+description = "Full AnkiWeb /svc/* API client plus add-on upload/download tooling for the terminal and GitHub Actions"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "Tzu-Hsien Chao" }]
+keywords = ["anki", "ankiweb", "ankiaddon", "cli", "protobuf"]
+classifiers = [
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Topic :: Utilities",
+]
+dependencies = ["requests>=2.31"]
+
+[project.urls]
+Homepage = "https://github.com/athulkrishna2015/ankiweb-api"
+Issues = "https://github.com/athulkrishna2015/ankiweb-api/issues"
+
+[project.scripts]
+ankiweb = "ankicli:main"
+ankiweb-upload = "upload:main"
+ankiweb-test-addon = "make_test_addon:main"
+
+[tool.hatch.build.targets.wheel]
+only-include = [
+  "ankicli.py",
+  "upload.py",
+  "make_test_addon.py",
+  "terminal_ankiweb.py",
+  "ankiweb_auth.py",
+  "ankiweb_client.py",
+  "ankiweb_proto.py",
+  "ankiweb_schema.py",
+]
+
+# The upload engine is Node code; bundle it so `uv tool install` can upload too.
+[tool.hatch.build.targets.wheel.force-include]
+"dist/index.js" = "ankiweb_engine/index.js"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/ankicli.py",
+  "/upload.py",
+  "/make_test_addon.py",
+  "/terminal_ankiweb.py",
+  "/ankiweb_auth.py",
+  "/ankiweb_client.py",
+  "/ankiweb_proto.py",
+  "/ankiweb_schema.py",
+  "/docs",
+  "/dist/index.js",
+  "/README.md",
+  "/LICENSE",
+  "/action.yml",
+]

@@ -29,7 +29,12 @@ from ankiweb_schema import (
     public_endpoints,
     endpoint,
 )
-from ankiweb_auth import login as auth_login, load_dotenv as auth_load_dotenv, AuthError
+from ankiweb_auth import (
+    AuthError,
+    default_env_file,
+    load_dotenv as auth_load_dotenv,
+    login as auth_login,
+)
 
 BASE = "https://ankiweb.net"
 SHARED = f"{BASE}/shared/"
@@ -84,7 +89,7 @@ class AnkiWebClient:
         self._timeout = timeout
         self._username = username
         self._password = password
-        self._env_file = Path(env_file) if env_file else (Path(__file__).parent / ".env")
+        self._env_file = Path(env_file) if env_file else default_env_file()
         auth_load_dotenv(self._env_file)
 
     def login(self, username=None, password=None) -> str:
