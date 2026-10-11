@@ -153,13 +153,13 @@ the same convention the action uses:
 
 Useful flags:
 
-| Flag                  | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `--tags "a b"`        | Space-separated tags.                                                   |
-| `--support-page URL`  | Must start with `http`.                                                 |
-| `--dry-run`           | Print the `INPUT_*` mapping and exit without network access.            |
-| `--env-file PATH`     | Use a different `.env` (default `./.env`).                             |
-| `--node PATH`         | Node binary to run the engine with (default `node`).                    |
+| Flag                 | Description                                                  |
+| -------------------- | ------------------------------------------------------------ |
+| `--tags "a b"`       | Space-separated tags.                                        |
+| `--support-page URL` | Must start with `http`.                                      |
+| `--dry-run`          | Print the `INPUT_*` mapping and exit without network access. |
+| `--env-file PATH`    | Use a different `.env` (default `./.env`).                   |
+| `--node PATH`        | Node binary to run the engine with (default `node`).         |
 
 Multi-branch works the same way — one branch and one file per line, in matching order:
 
@@ -212,11 +212,11 @@ from AnkiWeb's `svc/shared/item-info` protobuf endpoint.
 ```text
 id:           805854302
 title:        testingaddon for me [private]
-size:         16631
-last_updated: 1761920298 (2025-10-31T14:18:18+00:00)
-versions:     2.1.1+
+size:         737
+last_updated: 1791703741 (2026-10-11T07:29:01+00:00)
+versions:     2.1.1-25.09.4+
 description:
-<p>test upload via terminal - 2026-10-10T13:15:37Z</p>
+<p>test upload via GitHub-Actions engine - 2026-10-11T07:28:56Z</p>
 ```
 
 ### Download `.ankiaddon`
@@ -232,8 +232,8 @@ Public, no auth. Follows the `/shared/download/<id>` redirect and writes the fil
 ```text
 saved:    testingaddon_for_me_private.ankiaddon
 filename: testingaddon_for_me_private.ankiaddon
-size:     16631
-t=1761920298 minpt=1 maxpt=1 bidx=0
+size:     737
+t=1791703741 minpt=1 maxpt=250904 bidx=0
 ```
 
 Equivalent one-liner, no Python needed:
@@ -264,6 +264,24 @@ AnkiConnect, which carries 133 KB of reviews) and cover CLI exit codes.
 Live tests hit `info` / `download` / error paths. API client and codec
 documentation is in [docs/API.md](docs/API.md); the complete field-level
 reference for all 41 public endpoints is [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
+
+### Live upload verification (GitHub Actions engine)
+
+Verified live on 2026-10-11 against the private throwaway add-on
+[805854302](https://ankiweb.net/shared/info/805854302):
+
+```sh
+python3 make_test_addon.py -o /tmp/gh-action-test.ankiaddon
+./upload.py --addon-id 805854302 --title "testingaddon for me [private]" \
+    --description "test upload via GitHub-Actions engine - 2026-10-11T07:28:56Z" \
+    --branches "2.1.1-25.09.4+" --addon-files /tmp/gh-action-test.ankiaddon
+./ankicli.py info 805854302        # new description + timestamp confirmed
+./ankicli.py download 805854302 -o /tmp/verify.ankiaddon   # sha256 matches upload
+```
+
+`upload.py` execs `node dist/index.js` — the exact engine the
+`test-action` CI job runs — so this covers the GitHub Actions upload path.
+Downloaded bytes were sha256-identical to the uploaded fixture.
 
 ## GitHub Actions usage
 
@@ -423,18 +441,18 @@ The following inputs can be used as `step.with` keys:
 
 `upload.py` takes the same values as CLI flags. Each input maps 1:1:
 
-| Input             | Terminal flag       | Notes                                          |
-| ----------------- | ------------------- | ---------------------------------------------- |
-| `username`        | `--username`        | Default `$ANKIWEB_USERNAME` / `.env`.          |
-| `password`        | `--password`        | Default `$ANKIWEB_PASSWORD` / `.env`.          |
-| `addon-id`        | `--addon-id`        | Omit to create a new add-on.                   |
-| `title`           | `--title`           | Required, fewer than 80 characters.            |
-| `tags`            | `--tags "a b"`      | Space-separated.                               |
-| `support-page`    | `--support-page`    | Must start with `http`.                        |
-| `branches`        | `--branches a b`    | Repeat the flag once per branch.               |
-| `addon-files`     | `--addon-files a b` | `-` skips a branch's file.                     |
-| `description`     | `--description`     | Takes precedence over `--description-file`.    |
-| `description-file`| `--description-file`| Read from disk.                                |
+| Input              | Terminal flag        | Notes                                       |
+| ------------------ | -------------------- | ------------------------------------------- |
+| `username`         | `--username`         | Default `$ANKIWEB_USERNAME` / `.env`.       |
+| `password`         | `--password`         | Default `$ANKIWEB_PASSWORD` / `.env`.       |
+| `addon-id`         | `--addon-id`         | Omit to create a new add-on.                |
+| `title`            | `--title`            | Required, fewer than 80 characters.         |
+| `tags`             | `--tags "a b"`       | Space-separated.                            |
+| `support-page`     | `--support-page`     | Must start with `http`.                     |
+| `branches`         | `--branches a b`     | Repeat the flag once per branch.            |
+| `addon-files`      | `--addon-files a b`  | `-` skips a branch's file.                  |
+| `description`      | `--description`      | Takes precedence over `--description-file`. |
+| `description-file` | `--description-file` | Read from disk.                             |
 
 ### Outputs
 

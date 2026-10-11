@@ -78,3 +78,12 @@ retains unknown fields for round-tripping. Offline regression tests:
 python3 -m unittest -v test_ankiweb_proto.py
 python3 test_terminal_ankiweb.py
 ```
+
+## Upload verification
+
+The GitHub Actions upload path (`node dist/index.js`, wrapped locally by
+`upload.py`) is verified live against the private throwaway add-on 805854302:
+upload a synthetic fixture from `make_test_addon.py`, confirm the new
+description/timestamp via `ankicli.py info`, and confirm the re-downloaded
+bytes are sha256-identical to the upload. See the README Tests section for the
+exact commands and latest verified snapshot.
