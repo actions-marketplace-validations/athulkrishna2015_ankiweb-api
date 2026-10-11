@@ -457,7 +457,7 @@ The following inputs can be used as `step.with` keys:
 | `support-page`     | String | false    | A bug tracker, forum link, or other page where users can reach you. Must start with http.                                                                                                                                 |
 | `branches`         | List   | true     | A list of Anki version branches that your add-on supports. Each branch must be in the format `min-max`, where `min` and `max` are Anki versions. Use `+` for the max version to indicate support for all future versions. |
 | `addon-files`      | List   | true     | A list of add-on files to upload, in the same order as `branches`. Use `-` to skip updating the add-on file for a branch.                                                                                                 |
-| `description`      | String | false    | The description of the add-on. Markdown and basic HTML are supported.                                                                                                                                                     |
+| `description`      | String | false    | The description of the add-on. Markdown and basic HTML are supported. AnkiWeb **rejects** descriptions larger than 65,535 bytes — the upload is refused and the add-on keeps its previous description.                    |
 | `description-file` | String | false    | Path to a file containing the add-on description. Markdown and basic HTML are supported. Ignored if `description` is also provided.                                                                                       |
 
 > [!NOTE]

@@ -89,3 +89,32 @@ description/timestamp via `ankicli.py info`, and confirm the re-downloaded
 bytes are sha256-identical to the upload. The same path is covered on real
 runners by the CI `test-action` job (run `38121891143`, green). See the README
 Tests section for the exact commands and latest verified snapshot.
+
+## Description limits and stale reads
+
+Two AnkiWeb behaviours that look like data loss but are not. Both are handled
+in this client; neither is a server bug you can work around by changing the
+uploader.
+
+**Size limit: 65,535 bytes.** Measured 2026-10-11 on the throwaway add-on by
+bisection: 65,535 stores, 65,536 does not. An over-limit upload is _rejected_,
+not truncated — the add-on keeps whatever description it already had, so a
+failed large upload looks like "my new text vanished" while the old text is
+still live. Verify after every large description upload.
+
+**`item-info` is cached for 10 minutes** (`Cache-Control: max-age=600`). Reads
+of a stable URL can therefore return pre-upload state, which again looks like
+a silent wipe. `fetch_item_info_raw` sends the same cache-buster AnkiWeb's own
+frontend uses — `cb=<Date.now()>` in epoch milliseconds, from its `cacheBust`
+helper — plus `Cache-Control: no-cache`, and surfaces the value as
+`info["cache_bust"]` so `ankicli.py info` can print a `verify:` URL that
+matches the data it just read:
+
+```sh
+./ankicli.py info 805854302
+# ...
+# verify:   https://ankiweb.net/shared/info/805854302?cb=1791710745423
+```
+
+Without the `cb` query the browser will happily show you stale data for up to
+ten minutes.
