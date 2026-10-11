@@ -125,3 +125,26 @@ matches the data it just read:
 
 Without the `cb` query the browser will happily show you stale data for up to
 ten minutes.
+
+`_next_cache_bust()` is strictly monotonic rather than a bare `Date.now()`: two
+reads inside the same millisecond would otherwise produce the same URL, and the
+second could be served the first one's cached copy.
+
+### Testing against a cache
+
+Any test that reads live `item-info` must go through `fetch_item_info()` rather
+than building a URL by hand. A stable URL means the assertions may silently run
+against pre-upload state. The live suite checks this explicitly:
+
+```sh
+python3 test_terminal_ankiweb.py --live
+```
+
+- consecutive reads must carry **different** cache-busters and agree on content
+- a long (>20,000 char) description must survive the round-trip — this is the
+  regression guard for the 5,000-byte parser cap that made uploads look wiped
+- the live bundle is re-discovered and diffed against the committed schema, so
+  new or removed endpoints fail loudly instead of drifting
+
+While this passes, `python3 tools/generate_schema.py` rewrites
+`ankiweb_schema.py` byte-for-byte.

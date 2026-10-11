@@ -330,8 +330,9 @@ curl -sL "https://ankiweb.net/shared/download/805854302?v=2.1&p=250902" -o addon
 
 ```sh
 python3 test_terminal_ankiweb.py          # offline, no network
-python3 test_terminal_ankiweb.py --live   # + live AnkiWeb round-trips
+python3 test_terminal_ankiweb.py --live   # + live AnkiWeb round-trips + API discovery
 python3 -m unittest -v test_ankiweb_proto.py  # API codec and schema regressions
+pnpm test                                # GitHub Action unit tests (mocked)
 ```
 
 Offline tests parse real captured responses in `fixtures/` (private add-on and
@@ -339,6 +340,20 @@ AnkiConnect, which carries 133 KB of reviews) and cover CLI exit codes.
 Live tests hit `info` / `download` / error paths. API client and codec
 documentation is in [docs/API.md](docs/API.md#codec); the complete field-level
 reference for all 41 public endpoints is [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
+
+`--live` additionally re-discovers AnkiWeb's live bundle and diffs it against the
+committed schema, so a new or removed endpoint fails loudly instead of drifting.
+It also asserts that long descriptions survive a real round-trip and that every
+read carries a distinct cache-buster — see
+[docs/API.md](docs/API.md#description-limits-and-stale-reads). Full run: 56 offline
+
+- live checks, plus 5 codec tests and 16 Action tests.
+
+> [!NOTE]
+> Live assertions must read through the cache-buster. `item-info` is served with
+> `max-age=600`, so a test hitting a stable URL can pass or fail against stale
+> data — which is exactly how a parser bug came to look like a server-side wipe.
+> Always go through `fetch_item_info()` / `ankicli.py info`, never a hand-built URL.
 
 ### Live upload verification (GitHub Actions engine)
 

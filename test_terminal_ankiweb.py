@@ -9,11 +9,13 @@ Offline tests run anywhere. Live tests (--live) hit AnkiWeb and need network.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from unittest import mock
 
 from terminal_ankiweb import (
+    AnkiWebError,
     NotFoundError,
     download_addon,
     fetch_item_info,
@@ -194,6 +196,24 @@ def test_cache_busting() -> None:
         repr(parsed.get("cache_bust")),
     )
 
+    # A frozen cache-buster would defeat the purpose: two reads must not reuse
+    # the same URL, or the second would return the first one's cached copy.
+    seen = []
+    for _ in range(2):
+        with mock.patch("terminal_ankiweb.requests.get", fake_get):
+            fetch_item_info(805854302)
+        seen.append(captured["params"]["cb"])
+    check("each read uses a fresh cache_buster", seen[0] != seen[1], repr(seen))
+
+    # An explicit cache_bust must be honoured, not regenerated.
+    with mock.patch("terminal_ankiweb.requests.get", fake_get):
+        fetch_item_info_raw(805854302, cache_bust="1234567890123")
+    check(
+        "explicit cache_bust is reused",
+        captured["params"]["cb"] == "1234567890123",
+        repr(captured["params"].get("cb")),
+    )
+
 
 def test_login_codec() -> None:
     """Round-trip the LoginRequest/Response protobuf codec (offline)."""
@@ -237,6 +257,51 @@ def test_list_mine_parse() -> None:
           str(titles[:3]))
 
 
+def test_api_discovery_live() -> None:
+    """Re-discover AnkiWeb's live bundle and check it against the snapshot.
+
+    Guards against silent drift: if AnkiWeb adds or removes an endpoint, the
+    committed schema stops matching reality. Regenerating with
+    `python3 tools/generate_schema.py` should produce a byte-identical file
+    while this passes.
+    """
+    print("api discovery (live bundle)")
+    import importlib.util
+    import re
+
+    spec = importlib.util.spec_from_file_location(
+        "generate_schema", Path(__file__).resolve().parent / "tools" / "generate_schema.py"
+    )
+    gen = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gen)
+
+    from ankiweb_schema import ENDPOINTS
+
+    try:
+        src = gen.discover_bundle()
+    except SystemExit as e:
+        check("live bundle discovered", False, str(e))
+        return
+
+    live = set(re.findall(r'"/svc/[a-zA-Z0-9/_-]+"', src))
+    live_paths = {p.strip('"') for p in live}
+    known = {e["path"] for e in ENDPOINTS}
+
+    check("live bundle discovered", bool(live_paths), f"{len(live_paths)} paths")
+    check(
+        "every live /svc path is in the schema",
+        live_paths <= known,
+        f"missing: {sorted(live_paths - known)}",
+    )
+    check(
+        "no stale /svc paths in the schema",
+        known <= live_paths,
+        f"stale: {sorted(known - live_paths)}",
+    )
+    public = [p for p in live_paths if "/radmin/" not in p]
+    check("41 public endpoints present", len(public) == 41, f"got {len(public)}")
+
+
 def test_live() -> None:
     print("live (network)")
     try:
@@ -269,6 +334,40 @@ def test_live() -> None:
     except Exception as e:  # noqa: BLE001
         check("download works", False, str(e))
 
+    # Cache-busting, live. `item-info` is served `max-age=600`, so a live test
+    # that reads a stable URL can silently assert against stale data -- which is
+    # exactly how a parser bug came to look like AnkiWeb wiping descriptions.
+    try:
+        first = fetch_item_info(805854302)
+        second = fetch_item_info(805854302)
+        check("live read is cache-busted", bool(first.get("cache_bust")), str(first)[:120])
+        check("consecutive live reads use different cache_busters",
+              first.get("cache_bust") != second.get("cache_bust"),
+              f"{first.get('cache_bust')} vs {second.get('cache_bust')}")
+        check("consecutive live reads agree",
+              first["title"] == second["title"] and first["size"] == second["size"],
+              f"{first['title']!r}/{first['size']} vs {second['title']!r}/{second['size']}")
+        check("verify URL carries the cache_buster",
+              f"https://ankiweb.net/shared/info/805854302?cb={first['cache_bust']}".count("cb=") == 1,
+              repr(first.get("cache_bust")))
+    except Exception as e:  # noqa: BLE001
+        check("live cache-busted read", False, str(e))
+
+    # Long descriptions must survive a real round-trip. This parser used to drop
+    # anything over 5000 bytes, so a full README read back as "(empty)" and was
+    # misdiagnosed as a server-side wipe.
+    long_id = int(os.environ.get("ANKIWEB_LONG_DESCRIPTION_ID", "2119980872"))
+    try:
+        big = fetch_item_info(long_id)
+        desc = big["description"]
+        check("long description not dropped (live)", len(desc) > 20000,
+              f"id {long_id}: got {len(desc)} chars")
+        check("long description is real content (live)",
+              len(desc) > 20000 and "<" in desc and len(desc.split()) > 100,
+              f"{len(desc)} chars, {len(desc.split())} words")
+    except (AnkiWebError, NotFoundError) as e:
+        check("long description round-trip (live)", False, f"id {long_id}: {e}")
+
 
 def test_cli() -> None:
     print("cli exit codes")
@@ -290,6 +389,7 @@ if __name__ == "__main__":
     test_login_codec()
     test_list_mine_parse()
     if LIVE:
+        test_api_discovery_live()
         test_live()
     test_cli()
     print(f"\n{passes} passed, {len(failures)} failed")

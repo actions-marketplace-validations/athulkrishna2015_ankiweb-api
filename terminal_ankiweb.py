@@ -150,6 +150,22 @@ def _is_printable_text(b: bytes) -> bool:
     return pr / max(len(s), 1) > 0.9
 
 
+_last_cache_bust = 0
+
+
+def _next_cache_bust() -> str:
+    """Strictly increasing epoch-ms value for the `cb` query parameter.
+
+    Mirrors AnkiWeb's `cacheBust` helper (Date.now()), but monotonic: two reads
+    within the same millisecond would otherwise produce the same URL and the
+    second could be served the first one's cached copy.
+    """
+    global _last_cache_bust
+    now = int(time.time() * 1000)
+    _last_cache_bust = max(now, _last_cache_bust + 1)
+    return str(_last_cache_bust)
+
+
 def fetch_item_info_raw(
     shared_id: int, timeout: int = 30, cache_bust: str | None = None
 ) -> bytes:
@@ -162,7 +178,7 @@ def fetch_item_info_raw(
     exact value, so callers can echo the URL they actually read.
     """
     if cache_bust is None:
-        cache_bust = str(int(time.time() * 1000))
+        cache_bust = _next_cache_bust()
     r = requests.get(
         ITEM_INFO_URL,
         params={
@@ -328,7 +344,7 @@ def fetch_list_mine(cookie: str, timeout: int = 30) -> dict:
 def fetch_item_info(shared_id: int, timeout: int = 30) -> dict:
     # One cache-buster for the read, echoed back as info["cache_bust"] so
     # callers can print the exact verification URL that was just fetched.
-    cache_bust = str(int(time.time() * 1000))
+    cache_bust = _next_cache_bust()
     raw = fetch_item_info_raw(shared_id, timeout, cache_bust=cache_bust)
     info = parse_item_info(raw)
     # Defensive: a real ItemInfo always carries a title or a description.
