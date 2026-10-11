@@ -257,6 +257,62 @@ def test_list_mine_parse() -> None:
           str(titles[:3]))
 
 
+# File/binary endpoints discovered by sweeping *all* frontend chunks (not just
+# the schema chunk). They carry no protobuf message, so the generated schema
+# can never contain them; they are documented in docs/ENDPOINTS.md under
+# "Discovered live, beyond the schema".
+LIVE_FILE_ENDPOINTS = {
+    "/svc/shared/download-deck",
+    "/svc/radmin/collection",
+    "/svc/radmin/get-collection-backup",
+    "/svc/radmin/get-media",
+}
+
+
+def sweep_all_chunks() -> set[str]:
+    """Every /svc/<area>/<action> prefix referenced anywhere in the app chunks."""
+    import importlib.util
+    import re
+    import urllib.request
+    import concurrent.futures
+
+    spec = importlib.util.spec_from_file_location(
+        "generate_schema", Path(__file__).resolve().parent / "tools" / "generate_schema.py"
+    )
+    gen = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gen)
+
+    # start from the schema chunk's shell, then follow every chunk import
+    with urllib.request.urlopen("https://ankiweb.net/shared/mine", timeout=30) as r:
+        shell = r.read().decode("utf-8", "replace")
+    seeds = set(re.findall(r"/_app/immutable/[a-zA-Z0-9_/.-]+\.(?:mjs|js)", shell))
+
+    def fetch(path: str) -> str | None:
+        try:
+            with urllib.request.urlopen("https://ankiweb.net" + path, timeout=30) as r:
+                return r.read().decode("utf-8", "replace")
+        except Exception:
+            return None
+
+    downloaded: dict[str, str] = {}
+    pending = set(seeds)
+    paths: set[str] = set()
+    while pending:
+        wave = list(pending)
+        pending = set()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=12) as ex:
+            for path, body in zip(wave, ex.map(fetch, wave)):
+                if not body or path in downloaded:
+                    continue
+                downloaded[path] = body
+                paths.update(re.findall(r"/svc/[a-z0-9-]+/[a-z0-9-]+", body))
+                for dep in re.findall(r'"\.\./(chunks|nodes)/([^"]+\.mjs)"', body):
+                    newp = f"/_app/immutable/{dep[0]}/{dep[1]}"
+                    if newp not in downloaded:
+                        pending.add(newp)
+    return paths
+
+
 def test_api_discovery_live() -> None:
     """Re-discover AnkiWeb's live bundle and check it against the snapshot.
 
@@ -300,6 +356,26 @@ def test_api_discovery_live() -> None:
     )
     public = [p for p in live_paths if "/radmin/" not in p]
     check("41 public endpoints present", len(public) == 41, f"got {len(public)}")
+
+    # Full-chunk sweep: the schema chunk alone misses the binary/file endpoints
+    # (download-deck, radmin file links) which live in lazily-loaded route
+    # chunks. Verify those are still present and nothing else appeared.
+    try:
+        swept = sweep_all_chunks()
+    except Exception as e:  # noqa: BLE001
+        check("full chunk sweep", False, str(e))
+        return
+    extras = {p for p in swept if p not in known}
+    check(
+        "no unknown /svc paths across all chunks",
+        extras <= LIVE_FILE_ENDPOINTS,
+        f"unexpected: {sorted(extras - LIVE_FILE_ENDPOINTS)}",
+    )
+    check(
+        "known file endpoints still live",
+        LIVE_FILE_ENDPOINTS <= swept,
+        f"missing: {sorted(LIVE_FILE_ENDPOINTS - swept)}",
+    )
 
 
 def test_live() -> None:
@@ -367,6 +443,39 @@ def test_live() -> None:
               f"{len(desc)} chars, {len(desc.split())} words")
     except (AnkiWebError, NotFoundError) as e:
         check("long description round-trip (live)", False, f"id {long_id}: {e}")
+
+
+    # --- newly discovered endpoints (download-deck / mpreview), live ---
+    # 911122782 = public "Tae Kim's grammar guide" deck (stable, public).
+    try:
+        from ankiweb_client import AnkiWebClient
+
+        client = AnkiWebClient()
+        rows = client.shared_list_decks(search="japanese").get("rows", [])
+        check("live list-decks with search returns rows", len(rows) > 0, f"{len(rows)} rows")
+    except Exception as e:  # noqa: BLE001
+        check("live list-decks with search", False, str(e))
+
+    try:
+        from ankiweb_client import AnkiWebClient
+
+        client = AnkiWebClient()
+        mp3 = client.shared_media_preview(911122782, "0.mp3", last_updated=1697739853)
+        check("live mpreview returns mp3 bytes", mp3[:3] == b"ID3", f"{len(mp3)} bytes")
+    except Exception as e:  # noqa: BLE001
+        check("live mpreview", False, str(e))
+
+    try:
+        from ankiweb_client import AnkiWebClient
+
+        client = AnkiWebClient()
+        n = client.shared_download_deck(
+            911122782, dest="/tmp/_test_deck.apkg", max_bytes=65536)
+        head = open("/tmp/_test_deck.apkg", "rb").read(4)
+        check("live download-deck streams a zip (.apkg)",
+              head == b"PK\x03\x04", f"{n} bytes, magic {head.hex()}")
+    except Exception as e:  # noqa: BLE001
+        check("live download-deck", False, str(e))
 
 
 def test_cli() -> None:

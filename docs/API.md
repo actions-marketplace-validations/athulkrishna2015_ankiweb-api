@@ -8,7 +8,8 @@ only with an account and data you are authorized to access.
 `/svc/radmin/*` administrative endpoints are decoded in the schema but
 intentionally not exposed on the client.
 
-**Coverage: 41/41 public endpoints** as typed `AnkiWebClient` methods, plus a
+**Coverage: 41/41 public endpoints** as typed `AnkiWebClient` methods (48
+methods counting the two live-discovered binary endpoints), plus a
 complete field-level reference in [ENDPOINTS.md](ENDPOINTS.md). Schema revision
 2026-10-10 (174 messages; all request/response/nested names resolve).
 
@@ -184,20 +185,26 @@ request mapping** (nested `fields`, `current_notetype_id`, `audio`, `video`,
 
 ### Shared (12)
 
-| Method                                          | auth | Returns                                                                                                                  |
-| ----------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------ |
-| `shared_item_info(shared_id=None, query=None)`  | no   | `{available{title, tags, description, size, last_updated, support_url, addon{versions[]}, ...}, missing, access_denied}` |
-| `shared_list_addons()`                          | no   | `{rows[], user_upload_status}`                                                                                           |
-| `shared_list_decks()`                           | no   | `{rows[]}`                                                                                                               |
-| `shared_items_by_author(shared_id)`             | yes  | `{items[{shared_id, title}]}`                                                                                            |
-| `shared_get_addon_info(addon_id)`               | yes  | `{addon{title, tags, support_url, description, branches[]}}`                                                             |
-| `shared_list_mine()`                            | yes  | `{items[], reviews[], expired_decks[]}`                                                                                  |
-| `shared_upload_addon(info, file=None)`          | yes  | `{addon_id}`                                                                                                             |
-| `shared_remove_item(shared_id)`                 | yes  | empty — **deletes the shared item**                                                                                      |
-| `shared_get_own_review(shared_id)`              | yes  | `{review{body, thumbs_up}, shared_item_title, support_page?}`                                                            |
-| `shared_set_own_review(shared_id, review)`      | yes  | empty; `review={body, thumbs_up}`                                                                                        |
-| `shared_reply_to_review(shared_id, hash, body)` | yes  | empty                                                                                                                    |
-| `shared_report_copyright(shared_id)`            | yes  | empty                                                                                                                    |
+| Method                                                         | auth | Returns                                                                                                                  |
+| -------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------ |
+| `shared_item_info(shared_id=None, query=None)`                 | no   | `{available{title, tags, description, size, last_updated, support_url, addon{versions[]}, ...}, missing, access_denied}` |
+| `shared_list_addons()`                                         | no   | `{rows[], user_upload_status}`                                                                                           |
+| `shared_list_decks(search="")`                                 | no   | `{rows[]}` — **`search` is required**; empty search returns no rows                                                      |
+| `shared_download_deck(shared_id, dest=None, max_bytes=None)`   | no   | The shared deck's `.apkg` bytes (or byte count when `dest` is given); auto-retries logged-in on 429                      |
+| `shared_media_preview(shared_id, filename, last_updated=None)` | no   | Raw bytes of one media preview file (audio/image) from `/shared/mpreview/`                                               |
+| `shared_items_by_author(shared_id)`                            | yes  | `{items[{shared_id, title}]}`                                                                                            |
+| `shared_get_addon_info(addon_id)`                              | yes  | `{addon{title, tags, support_url, description, branches[]}}`                                                             |
+| `shared_list_mine()`                                           | yes  | `{items[], reviews[], expired_decks[]}`                                                                                  |
+| `shared_upload_addon(info, file=None)`                         | yes  | `{addon_id}`                                                                                                             |
+| `shared_remove_item(shared_id)`                                | yes  | empty — **deletes the shared item**                                                                                      |
+| `shared_get_own_review(shared_id)`                             | yes  | `{review{body, thumbs_up}, shared_item_title, support_page?}`                                                            |
+| `shared_set_own_review(shared_id, review)`                     | yes  | empty; `review={body, thumbs_up}`                                                                                        |
+| `shared_reply_to_review(shared_id, hash, body)`                | yes  | empty                                                                                                                    |
+| `shared_report_copyright(shared_id)`                           | yes  | empty                                                                                                                    |
+
+`shared_download_deck` and `shared_media_preview` are binary/file endpoints that
+carry no protobuf message — see
+[ENDPOINTS.md — discovered live](ENDPOINTS.md#discovered-live-beyond-the-schema).
 
 `shared_upload_addon` takes the nested `info` mapping directly, e.g.:
 

@@ -17,7 +17,7 @@
 [Shared public reads](#shared-public-reads-5-no-auth) ·
 [Shared account reads and writes](#shared-account-reads-and-writes-7-auth) ·
 [Study](#study-4) · [Admin (reference only)](#admin-endpoints-reference-only-not-callable) ·
-[Wire details](#wire-details)
+[Discovered live](#discovered-live-beyond-the-schema) · [Wire details](#wire-details)
 
 > Client concepts, safety rules, and schema regeneration are in
 > [API.md](API.md); installation and the CLI are in the [README](../README.md).
@@ -96,13 +96,13 @@ and the three public GET endpoints (`item-info`, `list-addons`, `list-decks`).
 
 ## Shared public reads (5, no auth)
 
-| Method                              | Endpoint                                  | Request                  | Response                                                                                                                                            |
-| ----------------------------------- | ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shared_item_info(shared_id)`       | GET `/svc/shared/item-info?sharedId=<id>` | query `sharedId: uint32` | `{available{title, description, tags, versions[], size, last_updated, reviews[]...}, missing: bool, access_denied: bool}` — cached 600s server-side |
-| `shared_list_addons()`              | GET `/svc/shared/list-addons`             | —                        | `{rows[{id, title, thumbs_up/down, mtime, max_supported_version}], user_upload_status}` — UNSPECIFIED / NO_USER / TOO_NEW / CAN_UPLOAD              |
-| `shared_list_decks()`               | GET `/svc/shared/list-decks`              | —                        | `{rows[{id, title, thumbs_up/down, mtime, notes, audio, images, ...}]}`                                                                             |
-| `shared_items_by_author(shared_id)` | POST `/svc/shared/items-by-author`        | `shared_id: uint32`      | `{items[{shared_id, title}]}`                                                                                                                       |
-| `shared_get_addon_info(addon_id)`   | POST `/svc/shared/get-addon-info`         | `addon_id: uint32`       | `{addon{addon_id?, title, tags, support_url, description, branches[{min_version, max_version}]}}`                                                   |
+| Method                              | Endpoint                                  | Request                       | Response                                                                                                                                            |
+| ----------------------------------- | ----------------------------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared_item_info(shared_id)`       | GET `/svc/shared/item-info?sharedId=<id>` | query `sharedId: uint32`      | `{available{title, description, tags, versions[], size, last_updated, reviews[]...}, missing: bool, access_denied: bool}` — cached 600s server-side |
+| `shared_list_addons()`              | GET `/svc/shared/list-addons`             | —                             | `{rows[{id, title, thumbs_up/down, mtime, max_supported_version}], user_upload_status}` — UNSPECIFIED / NO_USER / TOO_NEW / CAN_UPLOAD              |
+| `shared_list_decks(search="")`      | GET `/svc/shared/list-decks?search=`      | — (but **`search` required**) | `{rows[{id, title, thumbs_up/down, mtime, notes, audio, images, ...}]}`                                                                             |
+| `shared_items_by_author(shared_id)` | POST `/svc/shared/items-by-author`        | `shared_id: uint32`           | `{items[{shared_id, title}]}`                                                                                                                       |
+| `shared_get_addon_info(addon_id)`   | POST `/svc/shared/get-addon-info`         | `addon_id: uint32`            | `{addon{addon_id?, title, tags, support_url, description, branches[{min_version, max_version}]}}`                                                   |
 
 ## Shared account reads and writes (7, auth)
 
@@ -204,3 +204,37 @@ There is no overlap: an endpoint under `/svc/*` never appears under
 `/sync/*`, and a self-hosted sync server serves neither `/svc/*` nor any
 website features. In-app "AnkiWeb" messages during sync refer to the sync
 server, even against a custom one.
+
+## Discovered live, beyond the schema
+
+Discovered 2026-10-11 by sweeping **every** chunk of AnkiWeb's live frontend
+bundle (the schema generator only reads the single `frontend.*.mjs` chunk) and
+probing the endpoints with a live session. These carry **no protobuf
+message**, so they can never appear in the generated schema — they are binary
+file endpoints wired up as plain links in the SvelteKit routes. All were
+verified live.
+
+| Endpoint                                                    | Auth       | What it does                                                                                                                                                                                                                                                       | Client                   |
+| ----------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ |
+| `GET /svc/shared/download-deck/<sharedId>?t=<download_key>` | public     | Downloads a shared deck's **`.apkg`** file (zip). The one-time `download_key` is a short JWT (`{"op":"sdd",...}`) minted by `item-info` under `available.deck.download_key`. Verified: `200`, `Content-Disposition: ...apkg`, zip magic `PK\x03\x04`, ~111 MB deck | `shared_download_deck()` |
+| `GET /shared/mpreview/<sharedId>/<file>?<lastUpdated>`      | public     | Media **preview** files for a shared deck (audio/images). The query key is the bare `last_updated` timestamp (`...?1697739853=`). Verified: `200 audio/mpeg` for `0.mp3`                                                                                           | `shared_media_preview()` |
+| `/svc/radmin/collection/<userId>/download`                  | admin only | Direct collection download link on the radmin user page. **404 for non-admin sessions**                                                                                                                                                                            | — (reference only)       |
+| `/svc/radmin/get-collection-backup/<userId>/<backupId>`     | admin only | Single backup download (distinct from the protobuf `get-collection-backups` list). **404 for non-admin sessions**                                                                                                                                                  | — (reference only)       |
+| `/svc/radmin/get-media/<userId>/<file>`                     | admin only | Single media file download on the radmin page. **404 for non-admin sessions**                                                                                                                                                                                      | — (reference only)       |
+
+Two live behaviours worth knowing (both discovered by probing):
+
+1. **`list-decks` requires the `search` query field.** The schema registers no
+   query params, but the server rejects a bare call with
+   `400 Failed to deserialize query string: missing field 'search'`. An empty
+   search returns an empty result; pass a term to list decks.
+2. **Anonymous use is rate-limited.** After a handful of anonymous calls the
+   server answers `429 Please log in to perform more searches` (list-decks,
+   search) and `429 Please log in to download more decks` (download-deck).
+   The client therefore retries once with a session cookie when credentials are
+   available (`login_on_429=True`), which lifts the limit.
+
+The live test suite (`python3 test_terminal_ankiweb.py --live`) now sweeps all
+chunks and asserts this exact set: any _new_ `/svc/` path that appears in the
+bundle fails the `no unknown /svc paths across all chunks` check, and the
+`download-deck` / `mpreview` endpoints are exercised end-to-end.

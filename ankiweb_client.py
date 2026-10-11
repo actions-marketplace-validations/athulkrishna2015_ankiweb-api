@@ -115,7 +115,8 @@ class AnkiWebClient:
     def is_authenticated(self) -> bool:
         return self._cookie is not None
 
-    def _request(self, method, path, request_obj=None, response_name=None, query=None) -> dict:
+    def _request(self, method, path, request_obj=None, response_name=None, query=None,
+                 login_on_429: bool = True) -> dict:
         ep = endpoint(path)
         if ep is None:
             raise AnkiWebError(f"Unknown endpoint: {path}")
@@ -138,6 +139,21 @@ class AnkiWebClient:
             r = requests.request(method, url, data=body, headers=headers, timeout=self._timeout)
         except requests.RequestException as e:
             raise AnkiWebError(f"Network error: {e}") from e
+        if r.status_code == 429 and login_on_429 and not self._cookie:
+            # AnkiWeb rate-limits anonymous use (searches, deck downloads, ...).
+            # Retry once with a session if credentials are available.
+            try:
+                cookie = self.login()
+            except AuthError:
+                cookie = None
+            if cookie:
+                headers["Cookie"] = f"has_auth=1; ankiweb={cookie}"
+                headers["Referer"] = f"{BASE}/shared/mine"
+                try:
+                    r = requests.request(method, url, data=body, headers=headers,
+                                         timeout=self._timeout)
+                except requests.RequestException as e:
+                    raise AnkiWebError(f"Network error: {e}") from e
         if r.status_code in (401, 403):
             self._cookie = None
             raise AnkiWebError("Session expired or invalid credentials")
@@ -296,9 +312,104 @@ class AnkiWebClient:
         """GET /svc/shared/list-addons (no auth) -> {rows[], user_upload_status}."""
         return self._call("/svc/shared/list-addons")
 
-    def shared_list_decks(self) -> dict:
-        """GET /svc/shared/list-decks (no auth) -> {rows[]}."""
-        return self._call("/svc/shared/list-decks")
+    def shared_list_decks(self, search: str = "") -> dict:
+        """GET /svc/shared/list-decks?search=<q> (no auth) -> {rows[]}.
+
+        Note: the `search` query field is required by the server even though the
+        schema registers no query params - calling without it fails with HTTP 400
+        "missing field `search`". An empty search returns an empty (zero-row) result.
+        """
+        return self._call("/svc/shared/list-decks", query={"search": search})
+
+    def shared_download_deck(self, shared_id: int, dest=None, chunk_size: int = 1 << 16,
+                             max_bytes: int | None = None, login_on_429: bool = True):
+        """Download a shared deck's .apkg file (public, no auth).
+
+        Resolves the one-time download key from item-info, then streams
+        GET /svc/shared/download-deck/<sharedId>?t=<key> (returns the .apkg zip).
+
+        Anonymous downloads are rate-limited by AnkiWeb: once the anonymous
+        quota is used up the server answers 429 "Please log in to download more
+        decks". With `login_on_429` (default) the client logs in once and
+        retries with the session cookie, which lifts the limit.
+
+        :param shared_id: the shared deck id
+        :param dest: path to write the file to; if None, returns the raw bytes
+        :param max_bytes: stop after this many bytes (partial download)
+        :param login_on_429: on 429, login and retry authenticated
+        :return: number of bytes written (dest given) or the raw .apkg bytes
+        """
+        info = self.shared_item_info(shared_id=shared_id)
+        avail = info.get("available") or {}
+        key = (avail.get("deck") or {}).get("download_key")
+        if not key:
+            raise AnkiWebError(
+                f"no download_key in item-info for {shared_id} "
+                "(deck may be missing or access-denied)")
+        url = f"{BASE}/svc/shared/download-deck/{shared_id}"
+
+        def _fetch(cookie: str | None):
+            headers = {"Referer": f"{BASE}/shared/decks"}
+            if cookie:
+                headers["Cookie"] = f"has_auth=1; ankiweb={cookie}"
+            return requests.get(url, params={"t": key}, stream=True,
+                                headers=headers, timeout=self._timeout)
+
+        try:
+            r = _fetch(self._cookie)
+        except requests.RequestException as e:
+            raise AnkiWebError(f"Network error: {e}") from e
+        if r.status_code == 429 and login_on_429 and not self._cookie:
+            # anonymous quota exhausted -> retry with a session if creds exist
+            try:
+                cookie = self.login()
+            except AuthError:
+                cookie = None
+            if cookie:
+                try:
+                    r = _fetch(cookie)
+                except requests.RequestException as e:
+                    raise AnkiWebError(f"Network error: {e}") from e
+        if r.status_code == 404:
+            raise NotFoundError(f"404 for {url}")
+        if r.status_code != 200:
+            raise AnkiWebError(f"HTTP {r.status_code}: {r.text[:300]}")
+        if dest is None:
+            return r.content
+        total = 0
+        with open(dest, "wb") as fh:
+            for chunk in r.iter_content(chunk_size):
+                if not chunk:
+                    continue
+                fh.write(chunk)
+                total += len(chunk)
+                if max_bytes is not None and total >= max_bytes:
+                    break
+        return total
+
+    def shared_media_preview(self, shared_id: int, filename: str,
+                             last_updated=None) -> bytes:
+        """Fetch a shared deck's media preview file (public, no auth).
+
+        GET /shared/mpreview/<sharedId>/<filename>?<lastUpdated> - the query key
+        is the bare last-updated timestamp (e.g. ...?1697739853=).
+        Returns the raw file bytes (audio/image). 404 if the file doesn't exist.
+        """
+        params = {str(last_updated): ""} if last_updated is not None else None
+        url = f"{BASE}/shared/mpreview/{shared_id}/{filename}"
+        headers = {}
+        if self._cookie:
+            headers["Cookie"] = f"has_auth=1; ankiweb={self._cookie}"
+        try:
+            r = requests.get(url, params=params, headers=headers, timeout=self._timeout)
+        except requests.RequestException as e:
+            raise AnkiWebError(f"Network error: {e}") from e
+        if r.status_code == 404:
+            raise NotFoundError(f"404 for {url}")
+        if r.status_code != 200:
+            raise AnkiWebError(f"HTTP {r.status_code}: {r.text[:300]}")
+        return r.content
+
 
     def shared_items_by_author(self, shared_id: int) -> dict:
         """POST /svc/shared/items-by-author -> {items[{shared_id, title}]}."""
