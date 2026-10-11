@@ -83,7 +83,7 @@ python3 test_terminal_ankiweb.py
 
 The GitHub Actions upload path (`node dist/index.js`, wrapped locally by
 `upload.py`) is verified live against the private throwaway add-on 805854302
-(saved as `ANKIWEB_TEST_ADDON_ID` in `.env` / `.env.example`):
+(saved as `ANKIWEB_TEST_ADDON_ID` in the gitignored `.env`):
 upload a synthetic fixture from `make_test_addon.py`, confirm the new
 description/timestamp via `ankicli.py info`, and confirm the re-downloaded
 bytes are sha256-identical to the upload. The same path is covered on real

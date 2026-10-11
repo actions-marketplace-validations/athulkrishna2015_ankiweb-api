@@ -271,8 +271,8 @@ reference for all 41 public endpoints is [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
 
 Verified live on 2026-10-11 against the private throwaway add-on
 [805854302](https://ankiweb.net/shared/info/805854302) — saved as
-`ANKIWEB_TEST_ADDON_ID` in `.env` / `.env.example`, used by local runs and
-the CI `test-action` / integration jobs (`vars.ADDON_ID`,
+`ANKIWEB_TEST_ADDON_ID` in the gitignored `.env` (never committed), used by
+local runs and the CI `test-action` / integration jobs (`vars.ADDON_ID`,
 `vars.INTEGRATION_TEST_ADDON_ID`):
 
 ```sh
