@@ -1,0 +1,70 @@
+name: Publish to PyPI
+
+# Trusted publishing (OIDC): no long-lived token. PyPI exchanges this job's
+# short-lived GitHub token for an upload token, so there is no secret to leak.
+#
+# One-time setup on PyPI: create the project "ankiweb-api", then under
+# Publishing -> add a pending publisher with:
+#   PyPI project name : ankiweb-api
+#   Owner             : athulkrishna2015
+#   Repository name   : ankiweb-api
+#   Workflow name     : publish.yml
+#
+# Builds run from the tag, never a branch, so only tagged code can be published.
+# dist/index.js is the action's upload engine and must NOT be committed into
+# dist/, so build artifacts go to a scratch directory.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required: OIDC token exchange with PyPI
+    environment:
+      name: pypi
+      url: https://pypi.org/project/ankiweb-api/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Build distributions
+        run: |
+          # --out-dir must not be dist/: that directory holds dist/index.js,
+          # the GitHub Action's engine, and CI diffs it after pnpm build.
+          uv build --out-dir "${RUNNER_TEMP}/dist"
+
+      - name: Verify wheel contents
+        run: |
+          cd "${RUNNER_TEMP}/dist"
+          python - <<'PY'
+          import glob, zipfile
+          wheels = glob.glob("*.whl")
+          assert wheels, "no wheel built"
+          names = zipfile.ZipFile(wheels[0]).namelist()
+          assert "ankiweb_engine/index.js" in names, "upload engine not bundled"
+          assert "ankicli.py" in names, "CLI module missing"
+          print("wheel contents verified:", len(names), "entries")
+          PY
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: ${{ runner.temp }}/dist

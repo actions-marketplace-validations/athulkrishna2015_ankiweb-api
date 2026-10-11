@@ -133,6 +133,28 @@ Every example below uses the in-checkout form; the installed commands are equiva
 > that directory holds `dist/index.js`, the action's upload engine, and CI diffs it:
 > `uv build --out-dir /tmp/wheel`.
 
+#### Releasing to PyPI
+
+Publishing uses **trusted publishing (OIDC)** — there is no API token stored anywhere.
+`.github/workflows/publish.yml` builds on a tag and uploads with a short-lived token
+that PyPI exchanges for an upload token.
+
+One-time setup, once the project exists:
+
+1. Create the project `ankiweb-api` on PyPI (under `athulkrishna2015`).
+2. On that project: **Manage → Publishing → Add a pending publisher**:
+
+   | Field             | Value              |
+   | ----------------- | ------------------ |
+   | PyPI project name | `ankiweb-api`      |
+   | Owner             | `athulkrishna2015` |
+   | Repository name   | `ankiweb-api`      |
+   | Workflow name     | `publish.yml`      |
+
+3. Publish a release — `workflow_dispatch` on that workflow, or tag a release, and it
+   builds and uploads. The first successful upload activates the pending publisher;
+   the name is then permanently claimed.
+
 ### Upload
 
 Same inputs as the action, as CLI flags. `upload.py` maps them to the action's `INPUT_*`
