@@ -11,11 +11,13 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from unittest import mock
 
 from terminal_ankiweb import (
     NotFoundError,
     download_addon,
     fetch_item_info,
+    fetch_item_info_raw,
     parse_item_info,
 )
 
@@ -80,8 +82,34 @@ def build_review_pollution() -> bytes:
     return _msg(1, item_info)
 
 
+def build_long_description() -> bytes:
+    """ItemInfoResponse whose description is a full 22 KB README.
+
+    Regression: the parser used to reject any string over 5000 bytes
+    (`len(b) > 5000`), silently dropping real add-on descriptions. Reads then
+    looked like AnkiWeb had wiped a long description after every upload.
+    """
+    readme = "# AI-Hints Anki Add-on\n\n" + ("Markdown body line.\n" * 1500) + "build / test / release)."
+    item_info = _s(5, "AnkiWeb API") + _s(9, readme)
+    return _msg(1, item_info)
+
+
 def test_offline() -> None:
     print("offline parsing")
+
+    # Long descriptions must survive parsing intact (was capped at 5000 bytes).
+    long_info = parse_item_info(build_long_description())
+    check(
+        "long description is not dropped",
+        len(long_info["description"]) > 20000,
+        f"got {len(long_info['description'])} chars",
+    )
+    check(
+        "long description keeps its content",
+        long_info["description"].startswith("# AI-Hints Anki Add-on")
+        and long_info["description"].endswith("build / test / release)."),
+        repr(long_info["description"][:40]),
+    )
 
     info = parse_item_info(PRIVATE_ITEM)
     check("title extracted", info["title"] == "testingaddon for me [private]", repr(info["title"]))
@@ -114,6 +142,42 @@ def test_offline() -> None:
     ei = parse_item_info(empty)
     check("empty payload yields no title", ei["title"] == "", repr(ei["title"]))
     check("empty payload is tiny", len(empty) <= 3)
+
+
+def test_cache_busting() -> None:
+    """item-info must be read with a cache-buster.
+
+    AnkiWeb serves /svc/shared/item-info with `max-age=600`, so a stable URL
+    returns up to 10 minutes of stale data -- right after an upload the CLI
+    reported the previous (or empty) description. The web frontend appends
+    `cb=<Date.now()>` (its `cacheBust` helper); the CLI must do the same.
+    """
+    print("item-info cache-busting")
+
+    captured: dict = {}
+
+    class FakeResponse:
+        status_code = 200
+        content = _msg(1, _s(5, "Cached Add-on") + _s(9, "<p>body</p>"))
+
+    def fake_get(url, params=None, headers=None, timeout=None, **kw):
+        captured["params"] = params or {}
+        captured["headers"] = headers or {}
+        return FakeResponse()
+
+    with mock.patch("terminal_ankiweb.requests.get", fake_get):
+        fetch_item_info_raw(805854302)
+
+    params = captured.get("params", {})
+    cb = str(params.get("cb", ""))
+    check("sends camelCase sharedId", params.get("sharedId") == 805854302, repr(params))
+    check("sends cb cache-buster", bool(cb), repr(params))
+    check("cb is epoch milliseconds", cb.isdigit() and len(cb) >= 13, repr(cb))
+    check(
+        "asks intermediaries not to serve a stale copy",
+        "no-cache" in str(captured.get("headers", {})).lower(),
+        repr(captured.get("headers")),
+    )
 
 
 def test_login_codec() -> None:
@@ -207,6 +271,7 @@ def test_cli() -> None:
 
 if __name__ == "__main__":
     test_offline()
+    test_cache_busting()
     test_login_codec()
     test_list_mine_parse()
     if LIVE:

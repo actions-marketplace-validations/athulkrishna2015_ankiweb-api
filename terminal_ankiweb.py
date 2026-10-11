@@ -13,6 +13,7 @@ Only dependency: requests.
 from __future__ import annotations
 
 import re
+import time
 from urllib.parse import urlparse, parse_qs
 
 import requests
@@ -132,7 +133,11 @@ def _walk(buf: bytes, depth: int = 0, max_depth: int = 6):
 
 
 def _is_printable_text(b: bytes) -> bool:
-    if not b or len(b) > 5000:
+    # No length cap: add-on descriptions are legitimately 20KB+ READMEs, and a
+    # 5000-byte cutoff silently dropped them (the description then read back as
+    # empty and looked like AnkiWeb had wiped it). UTF-8 decodability plus the
+    # printable ratio are what actually distinguish text from binary payloads.
+    if not b:
         return False
     try:
         s = b.decode("utf-8")
@@ -146,11 +151,20 @@ def _is_printable_text(b: bytes) -> bool:
 
 
 def fetch_item_info_raw(shared_id: int, timeout: int = 30) -> bytes:
-    """GET svc/shared/item-info?sharedId=<id>. No auth. Returns raw protobuf bytes."""
+    """GET svc/shared/item-info?sharedId=<id>. No auth. Returns raw protobuf bytes.
+
+    AnkiWeb serves this with `max-age=600`, so a stable URL returns up to 10
+    minutes of stale data -- after an upload, reads looked like the server had
+    silently wiped a long description. Append the same `cb` cache-buster the
+    web frontend uses to force a fresh read.
+    """
     r = requests.get(
         ITEM_INFO_URL,
-        params={"sharedId": shared_id},  # camelCase required; shared_id -> 400
-        headers={"Accept": "*/*"},
+        params={
+            "sharedId": shared_id,  # camelCase required; shared_id -> 400
+            "cb": str(int(time.time() * 1000)),
+        },
+        headers={"Accept": "*/*", "Cache-Control": "no-cache"},
         timeout=timeout,
     )
     if r.status_code != 400 and r.status_code != 404 and r.status_code != 200:
