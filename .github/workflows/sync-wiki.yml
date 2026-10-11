@@ -1,0 +1,80 @@
+name: Sync docs to wiki
+
+# Publishes docs/ into the repository wiki so the GitHub wiki mirrors the docs
+# folder. Runs only when docs actually change (plus manual dispatch), and skips
+# the commit entirely when the wiki is already up to date.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".github/workflows/sync-wiki.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-wiki
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Check out wiki repository
+        uses: actions/checkout@v6
+        with:
+          repository: athulkrishna2015/ankiweb-api.wiki
+          ref: master
+          path: .wiki
+          token: ${{ secrets.WIKI_TOKEN }}
+
+      - name: Publish docs as wiki pages
+        run: |
+          set -euo pipefail
+          cp docs/*.md .wiki/
+          # The wiki landing page is Home, not "index".
+          if [ -f .wiki/index.md ]; then
+            mv -f .wiki/index.md .wiki/Home.md
+          fi
+
+          python3 - <<'PY'
+          import pathlib
+
+          repo = "https://github.com/athulkrishna2015/ankiweb-api/blob/main"
+          # Links that escape docs/ cannot resolve inside a wiki page (relative
+          # paths are resolved against the wiki, not the repo), so point them at
+          # the repository instead.
+          mapping = {
+              "../README.md": "https://github.com/athulkrishna2015/ankiweb-api",
+              "../.env.example": f"{repo}/.env.example",
+              "../action.yml": f"{repo}/action.yml",
+              "../fixtures": f"{repo}/tree/main/fixtures",
+              "../tools": f"{repo}/tree/main/tools",
+          }
+          for page in pathlib.Path(".wiki").glob("*.md"):
+              text = page.read_text(encoding="utf-8")
+              updated = text
+              for source, target in mapping.items():
+                  updated = updated.replace(f"]({source}", f"]({target}")
+              if updated != text:
+                  page.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Commit and push changes
+        working-directory: .wiki
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "Wiki is already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions-bot@users.noreply.github.com"
+          git add -A
+          git commit -m "docs: sync docs/ from the repository"
+          git push origin HEAD:master
