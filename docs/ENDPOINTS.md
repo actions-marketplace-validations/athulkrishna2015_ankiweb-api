@@ -11,6 +11,16 @@
 > are decoded into the schema for completeness but are **not** exposed on the
 > client. Use only with an account and data you are authorized to access.
 
+**Jump to:** [Account](#account-12) · [Decks](#decks-8) ·
+[Editor and search](#editor-and-search-4) ·
+[Shared public reads](#shared-public-reads-5-no-auth) ·
+[Shared account reads and writes](#shared-account-reads-and-writes-7-auth) ·
+[Study](#study-4) · [Admin](#admin-endpoints-excluded-from-the-client) ·
+[Wire details](#wire-details)
+
+> Client concepts, safety rules, and schema regeneration are in
+> [API.md](API.md); installation and the CLI are in the [README](../README.md).
+
 ## Quick start
 
 ```python
@@ -67,7 +77,7 @@ and the three public GET endpoints (`item-info`, `list-addons`, `list-decks`).
 | `decks_remove_deck(deck_id)`                         | POST `/svc/decks/remove-deck`      | `deck_id: int64`                           | — (empty)                                                                                                                                                   |
 | `decks_select_deck(deck_id)`                         | POST `/svc/decks/select-deck`      | `deck_id: int64`                           | — (empty)                                                                                                                                                   |
 
-## Editor (3) + Search (1)
+## Editor and search (4)
 
 | Method                                    | Endpoint                               | Request                                        | Response                                                               |
 | ----------------------------------------- | -------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
@@ -77,7 +87,7 @@ and the three public GET endpoints (`item-info`, `list-addons`, `list-decks`).
 | `editor_add_or_update(request)`           | POST `/svc/editor/add-or-update`       | full `EditorAddOrUpdateRequest` (see `SCHEMA`) | `{...}`                                                                |
 | `search_search(search)`                   | POST `/svc/search/search`              | `search: string`                               | `{notes[{...}], error: string}`                                        |
 
-## Shared — public reads (5, no auth)
+## Shared public reads (5, no auth)
 
 | Method                              | Endpoint                                  | Request                  | Response                                                                                                                                            |
 | ----------------------------------- | ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -87,7 +97,7 @@ and the three public GET endpoints (`item-info`, `list-addons`, `list-decks`).
 | `shared_items_by_author(shared_id)` | POST `/svc/shared/items-by-author`        | `shared_id: uint32`      | `{items[{shared_id, title}]}`                                                                                                                       |
 | `shared_get_addon_info(addon_id)`   | POST `/svc/shared/get-addon-info`         | `addon_id: uint32`       | `{addon{addon_id?, title, tags, support_url, description, branches[{min_version, max_version}]}}`                                                   |
 
-## Shared — account reads/writes (7, auth)
+## Shared account reads and writes (7, auth)
 
 | Method                                          | Endpoint                            | Request                                                                                                              | Response                                                                                                                            |
 | ----------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |

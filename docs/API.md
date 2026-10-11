@@ -12,6 +12,13 @@ intentionally not exposed on the client.
 complete reference in [ENDPOINTS.md](ENDPOINTS.md). Schema revision 2026-10-10
 (174 messages; all request/response/nested names resolve).
 
+> CLI usage, installation and the GitHub Action live in the
+> [README](../README.md). Endpoints are listed per area in
+> [ENDPOINTS.md](ENDPOINTS.md): [account](ENDPOINTS.md#account-12) ·
+> [decks](ENDPOINTS.md#decks-8) · [editor & search](ENDPOINTS.md#editor-and-search-4) ·
+> [shared](ENDPOINTS.md#shared-public-reads-5-no-auth) · [study](ENDPOINTS.md#study-4) ·
+> [wire details](ENDPOINTS.md#wire-details).
+
 ## Installation and basic use
 
 Install `requests` from `requirements-terminal.txt`. Pass a session cookie, or
@@ -50,7 +57,7 @@ request mapping. GET methods take `shared_id=` or `query={...}`.
   `remove-item`, `upload-addon`, ...) have real effects. Prefer synthetic or
   offline fixtures during development. **Never test uploads with a real add-on
   file** — an upload replaces the file on AnkiWeb irreversibly; follow the
-  synthetic-fixture instructions in the README.
+  synthetic-fixture instructions in the [README](../README.md#upload).
 
 ## Schema regeneration
 

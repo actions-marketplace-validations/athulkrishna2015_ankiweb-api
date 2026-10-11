@@ -1,6 +1,8 @@
 # AnkiWeb API — full `/svc/*` compatibility + add-on tools
 
 [![CI](https://github.com/athulkrishna2015/ankiweb-api/actions/workflows/ci.yml/badge.svg)](https://github.com/athulkrishna2015/ankiweb-api/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/ankiweb-api.svg)](https://pypi.org/project/ankiweb-api/)
+[![Python](https://img.shields.io/pypi/pyversions/ankiweb-api.svg)](https://pypi.org/project/ankiweb-api/)
 
 A complete Python client for AnkiWeb's reverse-engineered `/svc/*` API —
 **all 41 public endpoints** as typed `AnkiWebClient` methods — plus tools to
@@ -19,15 +21,29 @@ your terminal or GitHub Actions.
 - **Description file**: Use a separate file for the add-on description, making it easier to edit and format.
 - **Terminal CLI**: Upload, inspect, download, and call any endpoint (`ankicli.py call ...`) without GitHub Actions.
 - **Metadata-only updates**: Change title/description/tags without re-uploading the `.ankiaddon`.
+- **Installable**: [`uv tool install ankiweb-api`](https://pypi.org/project/ankiweb-api/) — see [setup](#setup).
+
+> [!CAUTION]
+> These call AnkiWeb's reverse-engineered, unofficial API. Read the
+> [safety notes](docs/API.md#safety) before pointing it at anything real.
 
 ## Table of contents
 
+- [Documentation](#documentation)
 - [Python API client](#python-api-client-full-svc-coverage) — [quick start](#quick-start) · [endpoint reference](docs/ENDPOINTS.md)
-- [AnkiWeb API docs](docs/API.md) · [full endpoint reference](docs/ENDPOINTS.md)
 - [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
 - [List your own shared items](#list-your-own-shared-items)
 - [Tests](#tests)
 - [GitHub Actions usage](#github-actions-usage) — [inputs](#inputs) · [outputs](#outputs)
+
+## Documentation
+
+Two deeper references live in [`docs/`](docs/):
+
+| Doc                                    | What it covers                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [docs/API.md](docs/API.md)             | Client usage, [safety rules](docs/API.md#safety), [schema regeneration](docs/API.md#schema-regeneration), [protobuf codec](docs/API.md#codec), [upload verification](docs/API.md#upload-verification), [description limits & stale reads](docs/API.md#description-limits-and-stale-reads)                                                                          |
+| [docs/ENDPOINTS.md](docs/ENDPOINTS.md) | All [41 endpoints](docs/ENDPOINTS.md#quick-start) with every field and enum — [account](docs/ENDPOINTS.md#account-12), [decks](docs/ENDPOINTS.md#decks-8), [editor & search](docs/ENDPOINTS.md#editor-and-search-4), [shared](docs/ENDPOINTS.md#shared-public-reads-5-no-auth), [study](docs/ENDPOINTS.md#study-4), [wire details](docs/ENDPOINTS.md#wire-details) |
 
 ## Python API client (full `/svc/*` coverage)
 
@@ -84,7 +100,7 @@ the diff whenever something breaks:
 python3 tools/generate_schema.py            # re-decode the live frontend bundle
 ```
 
-Details: [docs/API.md](docs/API.md) (client usage, regeneration, codec) and
+Details: [docs/API.md](docs/API.md#schema-regeneration) (client usage, regeneration, codec) and
 [docs/ENDPOINTS.md](docs/ENDPOINTS.md) (every endpoint, field, and enum).
 
 ## Terminal usage
@@ -94,10 +110,11 @@ Requires Python 3.9+ with `requests`, plus Node 24 if you upload (the action eng
 
 ### Setup
 
-Install as a command:
+Install as a command from [PyPI](https://pypi.org/project/ankiweb-api/):
 
 ```sh
 uv tool install ankiweb-api         # provides: ankiweb, ankiweb-upload, ankiweb-test-addon
+# or: pipx install ankiweb-api
 ```
 
 Or run it straight from a checkout:
@@ -296,7 +313,8 @@ curl -sL "https://ankiweb.net/shared/download/805854302?v=2.1&p=250902" -o addon
 - **Description size limit: 65,535 bytes.** Measured on 2026-10-11 by probing
   the throwaway add-on — 65,535 stores, 65,536 is rejected. An over-limit
   upload is **rejected, not truncated**: the add-on keeps its previous
-  description, so verify after every large upload.
+  description, so verify after every large upload. Full write-up:
+  [docs/API.md](docs/API.md#description-limits-and-stale-reads).
 - `info` prints a `verify:` line with a cache-busted link. AnkiWeb serves
   `item-info` with `max-age=600`, so a plain `/shared/info/<id>` URL can show
   up to 10 minutes of stale data; the `cb` query is required to see what was
@@ -319,7 +337,7 @@ python3 -m unittest -v test_ankiweb_proto.py  # API codec and schema regressions
 Offline tests parse real captured responses in `fixtures/` (private add-on and
 AnkiConnect, which carries 133 KB of reviews) and cover CLI exit codes.
 Live tests hit `info` / `download` / error paths. API client and codec
-documentation is in [docs/API.md](docs/API.md); the complete field-level
+documentation is in [docs/API.md](docs/API.md#codec); the complete field-level
 reference for all 41 public endpoints is [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
 
 ### Live upload verification (GitHub Actions engine)
