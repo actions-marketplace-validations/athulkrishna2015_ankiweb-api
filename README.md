@@ -4,23 +4,28 @@
 [![PyPI](https://img.shields.io/pypi/v/ankiweb-api.svg)](https://pypi.org/project/ankiweb-api/)
 [![Python](https://img.shields.io/pypi/pyversions/ankiweb-api.svg)](https://pypi.org/project/ankiweb-api/)
 
-A complete Python client for AnkiWeb's reverse-engineered `/svc/*` API —
-**all 41 public endpoints** as typed `AnkiWebClient` methods — plus tools to
-inspect, download, and upload [Anki](https://apps.ankiweb.net/) add-ons from
-your terminal or GitHub Actions.
+A Python client for AnkiWeb's reverse-engineered `/svc/*` API — **all 41 public
+protobuf endpoints** plus two live-discovered binary endpoints — alongside
+references to the separate official Anki sync protocol and AnkiDroid APIs. Also
+includes tools to inspect, download and upload [Anki](https://apps.ankiweb.net/)
+add-ons from your terminal or GitHub Actions.
 
 > Fork of [danny900714/upload-anki-addon](https://github.com/danny900714/upload-anki-addon) (`upstream/main` remote).
 > The Node upload engine (`dist/index.js`) is unmodified upstream code. This repository adds terminal tooling and a full schema-driven API client decoded from AnkiWeb's own frontend bundle.
 
 ## Features
 
-- **Full API coverage**: All 41 public `/svc/*` endpoints as typed methods
+- **Full AnkiWeb `/svc/*` coverage**: All 41 public protobuf endpoints as typed methods
   ([reference](docs/ENDPOINTS.md)) — account, decks, editor, search, shared,
   study — decoded from AnkiWeb's own frontend bundle, verified live.
 - **Live-discovered file endpoints**: `shared_download_deck()` downloads any
   public shared deck's `.apkg` and `shared_media_preview()` fetches its media
   previews — endpoints found by sweeping AnkiWeb's live bundle
   ([details](docs/ENDPOINTS.md#discovered-live-beyond-the-schema)).
+- **Other Anki APIs documented**: [official collection/media sync](docs/SYNC.md),
+  [AnkiDroid's on-device APIs](docs/ANKIDROID.md), and a
+  [map of the Anki API ecosystem](docs/ECOSYSTEM.md). These are separate from
+  AnkiWeb's `/svc/*` API and are documented for orientation, not implemented here.
 - **Multiple branches**: Upload different add-on files targeting different Anki version ranges.
 - **Description file**: Use a separate file for the add-on description, making it easier to edit and format.
 - **Terminal CLI**: Upload, inspect, download, and call any endpoint (`ankicli.py call ...`) without GitHub Actions.
@@ -34,7 +39,7 @@ your terminal or GitHub Actions.
 ## Table of contents
 
 - [Documentation](#documentation)
-- [Python API client](#python-api-client-full-svc-coverage) — [quick start](#quick-start) · [endpoint reference](docs/ENDPOINTS.md)
+- [Python API client](#python-api-client-ankiweb-svc) — [quick start](#quick-start) · [endpoint reference](docs/ENDPOINTS.md)
 - [Terminal usage](#terminal-usage) — [setup](#setup) · [upload](#upload) · [info](#info-add-on-metadata) · [download](#download-ankiaddon) · [notes](#terminal-notes)
 - [List your own shared items](#list-your-own-shared-items)
 - [Tests](#tests)
@@ -47,26 +52,34 @@ other official Anki API surfaces discovered in the
 [ankitects](https://github.com/ankitects) / [ankidroid](https://github.com/ankidroid)
 orgs:
 
-| Doc                                    | What it covers                                                                                                                                                                                                                                                                                                                                                                    |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [docs/Home.md](docs/Home.md)           | Wiki landing page and quick-start                                                                                                                                                                                                                                                                                                                                                 |
-| [docs/API.md](docs/API.md)             | Client reference: [install](docs/API.md#installation), [authentication](docs/API.md#authentication), all [48 public methods](docs/API.md#method-reference), [errors](docs/API.md#errors-and-status-codes), [codec](docs/API.md#codec), [upload verification](docs/API.md#upload-verification), [description limits & stale reads](docs/API.md#description-limits-and-stale-reads) |
-| [docs/ENDPOINTS.md](docs/ENDPOINTS.md) | All [41 endpoints](docs/ENDPOINTS.md#quick-start) with every field and enum — [account](docs/ENDPOINTS.md#account-12), [decks](docs/ENDPOINTS.md#decks-8), [editor & search](docs/ENDPOINTS.md#editor-and-search-4), [shared](docs/ENDPOINTS.md#shared-public-reads-5-no-auth), [study](docs/ENDPOINTS.md#study-4), [wire details](docs/ENDPOINTS.md#wire-details)                |
-| [docs/ECOSYSTEM.md](docs/ECOSYSTEM.md) | Map of every Anki API surface across the [ankitects](https://github.com/ankitects) and [ankidroid](https://github.com/ankidroid) GitHub orgs — what each API does, who maintains it, and which page documents it                                                                                                                                                                  |
-| [docs/SYNC.md](docs/SYNC.md)           | The official Anki sync protocol and self-hosted sync server: all [`/sync/*` (12)](docs/SYNC.md#collection-endpoints-12) + [`/msync/*` (5)](docs/SYNC.md#media-endpoints-5) endpoints, wire format, host-key auth, `SYNC_*` configuration, client setup                                                                                                                            |
-| [docs/ANKIDROID.md](docs/ANKIDROID.md) | AnkiDroid integration APIs: [Instant-Add/ContentProvider](docs/ANKIDROID.md#contentprovider-uri-map) (URI map, columns, `AddContentApi` methods), the [intent API](docs/ANKIDROID.md#intent-api), and the [`AnkiDroidJS` bridge](docs/ANKIDROID.md#javascript-api)                                                                                                                |
+| Doc                                    | What it covers                                                                                                                                                                                                                                                                                                         |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [docs/Home.md](docs/Home.md)           | Wiki landing page and quick-start for the documentation set.                                                                                                                                                                                                                                                           |
+| [docs/API.md](docs/API.md)             | Python client reference: [installation](docs/API.md#installation), [authentication](docs/API.md#authentication), [all 48 client methods](docs/API.md#method-reference), [errors](docs/API.md#errors-and-status-codes), [codec](docs/API.md#codec), upload verification, description limits and cache-aware testing.    |
+| [docs/ENDPOINTS.md](docs/ENDPOINTS.md) | Field-level reference for [all 41 `/svc/*` endpoints](docs/ENDPOINTS.md#quick-start), the [reference-only admin endpoints](docs/ENDPOINTS.md#admin-endpoints-reference-only-not-callable), and [live-discovered binary endpoints](docs/ENDPOINTS.md#discovered-live-beyond-the-schema).                                |
+| [docs/ECOSYSTEM.md](docs/ECOSYSTEM.md) | Map of Anki API surfaces across the [ankitects](https://github.com/ankitects) and [ankidroid](https://github.com/ankidroid) GitHub orgs; use its [surface map](docs/ECOSYSTEM.md#surface-map) and [choosing guide](docs/ECOSYSTEM.md#choosing-a-surface) to pick the right API.                                        |
+| [docs/SYNC.md](docs/SYNC.md)           | Official collection and media sync protocol plus self-hosted sync server: [`/sync/*` endpoints](docs/SYNC.md#collection-endpoints-12), [`/msync/*` endpoints](docs/SYNC.md#media-endpoints-5), [wire format](docs/SYNC.md#wire-format), [authentication](docs/SYNC.md#authentication), configuration and client setup. |
+| [docs/ANKIDROID.md](docs/ANKIDROID.md) | AnkiDroid's on-device integration APIs: [Instant-Add/ContentProvider](docs/ANKIDROID.md#contentprovider-uri-map), [AddContentApi methods](docs/ANKIDROID.md#addcontentapi-methods), [intents](docs/ANKIDROID.md#intent-api) and the [`AnkiDroidJS` bridge](docs/ANKIDROID.md#javascript-api).                          |
+
+The sync protocol and AnkiDroid APIs are reference documentation only; this
+repository's Python client and GitHub Action target AnkiWeb's website API.
 
 `docs/` is published to the repository wiki by
 [`.github/workflows/sync-wiki.yml`](.github/workflows/sync-wiki.yml) whenever it
 changes, so <https://github.com/athulkrishna2015/ankiweb-api/wiki> mirrors these pages.
 
-## Python API client (full `/svc/*` coverage)
+## Python API client (AnkiWeb `/svc/*`)
 
-All **41 public endpoints** are typed methods on `AnkiWebClient` — account (12),
+All **41 public protobuf endpoints** are typed methods on `AnkiWebClient` — account (12),
 decks (8), editor (3), search (1), shared (12), and study (4). The wire schema
 is decoded from AnkiWeb's own frontend bundle (revision `2026-10-10`, all
 request/response/nested messages resolved) and verified live. Full field-level
-reference: [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
+reference: [docs/ENDPOINTS.md](docs/ENDPOINTS.md). Two additional binary
+endpoints, `shared_download_deck()` and `shared_media_preview()`, were discovered
+by sweeping AnkiWeb's live frontend and are documented in the
+[live-discovered section](docs/ENDPOINTS.md#discovered-live-beyond-the-schema).
+The [sync](docs/SYNC.md) and [AnkiDroid](docs/ANKIDROID.md) docs describe separate
+protocols; they are not extra AnkiWeb `/svc/*` methods.
 
 ### Quick start
 
@@ -171,21 +184,10 @@ Publishing uses **trusted publishing (OIDC)** — there is no API token stored a
 `.github/workflows/publish.yml` builds on a tag and uploads with a short-lived token
 that PyPI exchanges for an upload token.
 
-One-time setup, once the project exists:
-
-1. Create the project `ankiweb-api` on PyPI (under `athulkrishna2015`).
-2. On that project: **Manage → Publishing → Add a pending publisher**:
-
-   | Field             | Value              |
-   | ----------------- | ------------------ |
-   | PyPI project name | `ankiweb-api`      |
-   | Owner             | `athulkrishna2015` |
-   | Repository name   | `ankiweb-api`      |
-   | Workflow name     | `publish.yml`      |
-
-3. Publish a release — `workflow_dispatch` on that workflow, or tag a release, and it
-   builds and uploads. The first successful upload activates the pending publisher;
-   the name is then permanently claimed.
+The `ankiweb-api` project and trusted publisher are already configured. For each
+release, bump `version` in `pyproject.toml`, then publish a GitHub release or
+manually run **Actions → Publish to PyPI**. The workflow builds and publishes
+both distributions. PyPI does not allow re-uploading an existing version.
 
 ### Upload
 
@@ -289,15 +291,14 @@ from AnkiWeb's `svc/shared/item-info` protobuf endpoint.
 ```text
 id:           805854302
 title:        Integration test for ankiweb client of @athulkrishna2015/ankiweb-api
-tags:         integration test tag
-support:      https://github.com/danny900714/upload-anki-addon
-size:         172
-last_updated: 1791704155 (2026-10-11T07:35:55+00:00)
+support:      https://github.com/athulkrishna2015/ankiweb-api/
+size:         737
+last_updated: 1791710361 (2026-10-11T09:19:21+00:00)
 versions:     2.1.1-25.09.4+
 description:
 <p>Throwaway fixture for upload integration tests. Limit probe: 65535 bytes OK, 65536 rejected.</p>
 
-verify:   https://ankiweb.net/shared/info/805854302?cb=1791710745423
+verify:   https://ankiweb.net/shared/info/805854302?cb=&lt;fresh epoch milliseconds&gt;
 ```
 
 ### Download `.ankiaddon`
@@ -313,8 +314,8 @@ Public, no auth. Follows the `/shared/download/<id>` redirect and writes the fil
 ```text
 saved:    Integration_test_for_ankiweb_client_of_athulkrishna2015ankiweb-api.ankiaddon
 filename: Integration_test_for_ankiweb_client_of_athulkrishna2015ankiweb-api.ankiaddon
-size:     172
-t=1791704155 minpt=1 maxpt=250904 bidx=0
+size:     737
+t=1791710361 minpt=1 maxpt=250904 bidx=0
 ```
 
 Equivalent one-liner, no Python needed:
@@ -356,13 +357,15 @@ Live tests hit `info` / `download` / error paths. API client and codec
 documentation is in [docs/API.md](docs/API.md#codec); the complete field-level
 reference for all 41 public endpoints is [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
 
-`--live` additionally re-discovers AnkiWeb's live bundle and diffs it against the
-committed schema, so a new or removed endpoint fails loudly instead of drifting.
+`--live` additionally re-discovers AnkiWeb's live bundle across all frontend
+chunks and diffs its endpoints against the committed schema, so a new or removed
+endpoint fails loudly instead of drifting. It also checks the two binary file
+endpoints that are not represented in the protobuf schema.
 It also asserts that long descriptions survive a real round-trip and that every
 read carries a distinct cache-buster — see
-[docs/API.md](docs/API.md#description-limits-and-stale-reads). Full run: 56 offline
-
-- live checks, plus 5 codec tests and 16 Action tests.
+[docs/API.md](docs/API.md#description-limits-and-stale-reads). Last verified run:
+40 checks offline; 61 checks with `--live` (including the offline checks), plus
+5 codec tests and 16 GitHub Action unit tests.
 
 > [!NOTE]
 > Live assertions must read through the cache-buster. `item-info` is served with
